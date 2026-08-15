@@ -46,4 +46,44 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * User has many reports.
+     */
+    public function reports()
+    {
+        return $this->hasMany(\App\Models\Report::class);
+    }
+
+    /**
+     * Assignments where user is officer.
+     */
+    public function reportAssignments()
+    {
+        return $this->hasMany(\App\Models\ReportAssignment::class, 'officer_id');
+    }
+
+    /**
+     * Points ledger for the user.
+     */
+    public function userPoints()
+    {
+        return $this->hasMany(\App\Models\UserPoint::class);
+    }
+
+    /**
+     * Badges earned by the user.
+     */
+    public function userBadges()
+    {
+        return $this->hasMany(\App\Models\UserBadge::class);
+    }
+
+    /**
+     * Reward redemptions by the user.
+     */
+    public function rewardRedemptions()
+    {
+        return $this->hasMany(\App\Models\RewardRedemption::class);
+    }
 }
