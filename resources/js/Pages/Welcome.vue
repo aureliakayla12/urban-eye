@@ -1,386 +1,1275 @@
+<template>
+    <Head title="UrbanEye" />
+    <div class="min-h-screen bg-white text-black">
+
+        <!-- NAVBAR -->
+      
+        <header
+            class="sticky top-0 z-50 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur"
+        >
+            <div
+                class="mx-auto flex h-20 max-w-6xl items-center justify-between px-6 lg:px-8"
+            >
+                <!-- Logo -->
+                <Link
+                    href="/"
+                    class="shrink-0"
+                >
+                    <img
+                        src="/images/urbaneye-logo.png"
+                        alt="UrbanEye"
+                        class="h-11 w-auto object-contain"
+                    />
+                </Link>
+
+                <!-- Menu -->
+                <nav class="hidden items-center gap-8 lg:flex">
+
+                    <!-- Beranda -->
+                    <button
+                        type="button"
+                        @click="scrollToSection('beranda')"
+                        :class="[
+                            'border-b-2 px-1 py-6 text-sm font-medium transition',
+                            activeSection === 'beranda'
+                                ? 'border-[#1B5E20] text-[#1B5E20]'
+                                : 'border-transparent text-black hover:text-[#1B5E20]',
+                        ]"
+                    >
+                        Beranda
+                    </button>
+
+                    <!-- Fitur -->
+                    <button
+                        type="button"
+                        @click="scrollToSection('fitur')"
+                        :class="[
+                            'border-b-2 px-1 py-6 text-sm font-medium transition',
+                            activeSection === 'fitur'
+                                ? 'border-[#1B5E20] text-[#1B5E20]'
+                                : 'border-transparent text-black hover:text-[#1B5E20]',
+                        ]"
+                    >
+                        Fitur
+                    </button>
+
+                    <!-- Cara Kerja -->
+                    <button
+                        type="button"
+                        @click="scrollToSection('cara-kerja')"
+                        :class="[
+                            'border-b-2 px-1 py-6 text-sm font-medium transition',
+                            activeSection === 'cara-kerja'
+                                ? 'border-[#1B5E20] text-[#1B5E20]'
+                                : 'border-transparent text-black hover:text-[#1B5E20]',
+                        ]"
+                    >
+                        Cara Kerja
+                    </button>
+
+                    <!-- Tentang -->
+                    <button
+                        type="button"
+                        @click="scrollToSection('tentang')"
+                        :class="[
+                            'border-b-2 px-1 py-6 text-sm font-medium transition',
+                            activeSection === 'tentang'
+                                ? 'border-[#1B5E20] text-[#1B5E20]'
+                                : 'border-transparent text-black hover:text-[#1B5E20]',
+                        ]"
+                    >
+                        Tentang
+                    </button>
+
+                    <!-- Kontak -->
+                    <button
+                        type="button"
+                        @click="scrollToSection('kontak')"
+                        :class="[
+                            'border-b-2 px-1 py-6 text-sm font-medium transition',
+                            activeSection === 'kontak'
+                                ? 'border-[#1B5E20] text-[#1B5E20]'
+                                : 'border-transparent text-black hover:text-[#1B5E20]',
+                        ]"
+                    >
+                        Kontak
+                    </button>
+                </nav>
+
+                <!-- Auth -->
+                <div
+                    v-if="canLogin"
+                    class="flex items-center gap-3"
+                >
+                    <Link
+                        :href="route('login')"
+                        class="inline-flex h-10 items-center justify-center rounded-xl border border-[#1B5E20] bg-white px-5 text-sm font-semibold text-[#1B5E20] transition hover:bg-[#1B5E20] transition hover:-translate-y-0.5 hover:text-white"
+                    >
+                        Login
+                    </Link>
+
+                    <Link
+                        v-if="canRegister"
+                        :href="route('register')"
+                        class="inline-flex rounded-xl bg-[#1B5E20] px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#164A19] focus:outline-none focus:ring-2 focus:ring-[#4CAF50] focus:ring-offset-2"
+                    >
+                        Daftar
+                    </Link>
+                </div>
+
+            </div>
+        </header>
+
+        
+        <!-- HERO -->
+       
+        <section
+            id="beranda"
+            class="scroll-mt-20 bg-white"
+        >
+            <div
+                class="mx-auto grid max-w-7xl items-center gap-10 px-6 py-12 lg:grid-cols-[0.9fr_1.1fr] lg:px-20 lg:py-14"
+            >
+
+                <!-- Hero text -->
+                <div>
+                    <div
+                        class="mb-5 inline-flex rounded-full bg-[#E8F5E9] px-4 py-2 text-xs font-medium text-[#1B5E20]"
+                    >
+                        Smart Environment Platform
+                    </div>
+
+                    <h1
+                        class="max-w-xl text-4xl font-bold leading-[1.1] tracking-tight text-black sm:text-5xl lg:text-[52px]"
+                    >
+                        Bangun Kota
+                        <span class="block text-[#1B5E20]">
+                            Lebih Bersih
+                        </span>
+                        Bersama
+                        <span class="text-[#1B5E20]">
+                            UrbanEye
+                        </span>
+                    </h1>
+
+                    <p
+                        class="mt-5 max-w-lg text-sm leading-6 text-[#757575] lg:text-base"
+                    >
+                        UrbanEye membantu masyarakat melaporkan
+                        permasalahan lingkungan secara cepat,
+                        transparan, dan berbasis lokasi.
+                    </p>
+
+                    <div class="mt-7 flex flex-wrap gap-3">
+                        <Link
+                            :href="canLogin ? route('login') : '#fitur'"
+                            class="btn bg-[#1B5E20] px-6 text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#164A19]"
+                        >
+                            Laporkan Sekarang
+                        </Link>
+
+                        <button
+                            type="button"
+                            class="btn btn-outline border-[#1B5E20] bg-white px-6 text-[#1B5E20] transition hover:-translate-y-0.5 hover:border-[#1B5E20] hover:bg-[#1B5E20] hover:text-white"
+                            
+                            @click="scrollToSection('fitur')"
+                        >
+                            Pelajari Lebih Lanjut
+                        </button>
+                    </div>
+                </div>
+
+          
+                <!-- URBANEYE WEB PREVIEW -->
+
+                <div class="flex justify-center lg:justify-end">
+                    <div class="w-full max-w-[570px]">
+
+                        <!-- Browser Window -->
+                        <div
+                            class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_18px_40px_rgba(0,0,0,0.12)]"
+                        >
+
+                            <!-- Browser bar -->
+                            <div
+                                class="flex h-9 items-center justify-between border-b border-gray-200 bg-[#F7F7F7] px-4"
+                            >
+                                <div class="flex gap-1.5">
+                                    <span class="h-2.5 w-2.5 rounded-full bg-[#FF5F57]"></span>
+                                    <span class="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]"></span>
+                                    <span class="h-2.5 w-2.5 rounded-full bg-[#28C840]"></span>
+                                </div>
+
+                                <div
+                                    class="flex h-5 w-[200px] items-center justify-center rounded-md bg-white text-[7px] text-gray-400 shadow-sm"
+                                >
+                                    urbaneye
+                                </div>
+
+                                <span class="text-[9px] text-gray-400">
+                                    ⋯
+                                </span>
+                            </div>
+
+                            <!-- Web App -->
+                            <div class="flex min-h-[315px]">
+
+                                <!-- Sidebar -->
+                                <aside
+                                    class="hidden w-[105px] shrink-0 bg-[#0B1F2A] px-2.5 py-3 text-white sm:block"
+                                >
+                                    <!-- Logo -->
+                                    <div
+                                        class="flex items-center gap-2 border-b border-white/10 pb-3"
+                                    >
+                                        <div
+                                            class="flex h-6 w-6 items-center justify-center rounded-md bg-[#1B5E20] text-[7px] font-bold"
+                                        >
+                                            UE
+                                        </div>
+
+                                        <div>
+                                            <p class="text-[7px] font-bold">
+                                                UrbanEye
+                                            </p>
+
+                                            <p class="text-[4px] text-white/50">
+                                                Smart Environment
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Menu -->
+                                    <div class="mt-3 space-y-1">
+
+                                        <div
+                                            class="flex items-center gap-2 rounded-md bg-[#1B5E20] px-2 py-1.5 text-[6px]"
+                                        >
+                                            <span>⌂</span>
+                                            Dashboard
+                                        </div>
+
+                                        <div
+                                            class="flex items-center gap-2 px-2 py-1.5 text-[6px] text-white/70"
+                                        >
+                                            <span>▤</span>
+                                            Buat Laporan
+                                        </div>
+
+                                        <div
+                                            class="flex items-center gap-2 px-2 py-1.5 text-[6px] text-white/70"
+                                        >
+                                            <span>◫</span>
+                                            Riwayat Laporan
+                                        </div>
+
+                                        <div
+                                            class="flex items-center gap-2 px-2 py-1.5 text-[6px] text-white/70"
+                                        >
+                                            <span>♜</span>
+                                            Leaderboard
+                                        </div>
+
+                                        <div
+                                            class="flex items-center gap-2 px-2 py-1.5 text-[6px] text-white/70"
+                                        >
+                                            <span>🎁</span>
+                                            Reward Saya
+                                        </div>
+
+                                        <div
+                                            class="flex items-center gap-2 px-2 py-1.5 text-[6px] text-white/70"
+                                        >
+                                            <span>⚙</span>
+                                            Pengaturan
+                                        </div>
+
+                                    </div>
+
+                                    <!-- User -->
+                                    <div
+                                        class="mt-8 border-t border-white/10 pt-3"
+                                    >
+                                        <div class="flex items-center gap-2">
+                                            <div
+                                                class="h-5 w-5 rounded-full bg-[#4CAF50]"
+                                            ></div>
+
+                                            <div>
+                                                <p class="text-[6px] font-semibold">
+                                                    Masyarakat
+                                                </p>
+
+                                                <p class="text-[4px] text-white/50">
+                                                    Pengguna
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </aside>
+
+                                <!-- Dashboard -->
+                                <div class="min-w-0 flex-1 bg-[#F7F9F7]">
+
+                                    <!-- Topbar -->
+                                    <div
+                                        class="flex h-9 items-center justify-between border-b border-gray-200 bg-white px-3"
+                                    >
+                                        <div>
+                                            <p class="text-[5px] text-gray-400">
+                                                Dashboard
+                                            </p>
+
+                                            <h3 class="text-[8px] font-bold text-black">
+                                                Selamat datang di UrbanEye
+                                            </h3>
+                                        </div>
+
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[8px] text-gray-400">
+                                                ♧
+                                            </span>
+
+                                            <div
+                                                class="h-5 w-5 rounded-full bg-[#D8E8D9]"
+                                            ></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Dashboard content -->
+                                    <div class="p-3">
+
+                                        <!-- Statistics -->
+                                        <div
+                                            class="grid grid-cols-4 gap-2"
+                                        >
+                                            <div
+                                                class="rounded-lg border border-gray-100 bg-white p-2 shadow-sm"
+                                            >
+                                                <p class="text-[5px] text-gray-400">
+                                                    Total Laporan
+                                                </p>
+
+                                                <p class="mt-1 text-xs font-bold text-black">
+                                                    128
+                                                </p>
+
+                                                <p class="text-[5px] text-green-600">
+                                                    +12%
+                                                </p>
+                                            </div>
+
+                                            <div
+                                                class="rounded-lg border border-gray-100 bg-white p-2 shadow-sm"
+                                            >
+                                                <p class="text-[5px] text-gray-400">
+                                                    Diproses
+                                                </p>
+
+                                                <p class="mt-1 text-xs font-bold text-black">
+                                                    45
+                                                </p>
+
+                                                <span class="badge badge-warning badge-xs mt-1 text-[8px]">
+                                                    Aktif
+                                                </span>
+                                            </div>
+
+                                            <div
+                                                class="rounded-lg border border-gray-100 bg-white p-2 shadow-sm"
+                                            >
+                                                <p class="text-[5px] text-gray-400">
+                                                    Selesai
+                                                </p>
+
+                                                <p class="mt-1 text-xs font-bold text-black">
+                                                    83
+                                                </p>
+
+                                                <p class="text-[5px] text-green-600">
+                                                    65%
+                                                </p>
+                                            </div>
+
+                                            <div
+                                                class="rounded-lg border border-gray-100 bg-white p-2 shadow-sm"
+                                            >
+                                                <p class="text-[5px] text-gray-400">
+                                                    Poin Saya
+                                                </p>
+
+                                                <p class="mt-1 text-xs font-bold text-black">
+                                                    120
+                                                </p>
+
+                                                <p class="text-[5px] text-[#1B5E20]">
+                                                    Pelapor Aktif
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Map + Activity -->
+                                        <div
+                                            class="mt-2 grid grid-cols-[1.35fr_1fr] gap-2"
+                                        >
+
+                                            <!-- Map -->
+                                            <div
+                                                class="overflow-hidden rounded-lg bg-white shadow-sm"
+                                            >
+                                                <div
+                                                    class="flex items-center justify-between px-2.5 py-1.5"
+                                                >
+                                                    <h4 class="text-[6px] font-bold text-black">
+                                                        Peta Laporan
+                                                    </h4>
+
+                                                    <span class="text-[5px] text-[#1B5E20]">
+                                                        Lihat Semua
+                                                    </span>
+                                                </div>
+
+                                                <div
+                                                    class="relative h-[100px] overflow-hidden bg-[#E5EAE4]"
+                                                >
+                                                    <div
+                                                        class="absolute left-[20%] top-[-30%] h-[170%] w-2 rotate-[30deg] bg-white/80"
+                                                    ></div>
+
+                                                    <div
+                                                        class="absolute left-[50%] top-[-25%] h-[170%] w-3 -rotate-[35deg] bg-white/80"
+                                                    ></div>
+
+                                                    <div
+                                                        class="absolute right-[20%] top-[-30%] h-[170%] w-2 rotate-[45deg] bg-white/80"
+                                                    ></div>
+
+                                                    <div
+                                                        class="absolute bottom-[25%] left-[-10%] h-2 w-[120%] rotate-[8deg] bg-white/80"
+                                                    ></div>
+
+                                                    <div
+                                                        class="absolute top-[35%] left-[-10%] h-2 w-[120%] -rotate-[10deg] bg-white/80"
+                                                    ></div>
+
+                                                    <span
+                                                        class="absolute left-[23%] top-[35%] h-4 w-4 rounded-full border-2 border-white bg-red-500 shadow"
+                                                    ></span>
+
+                                                    <span
+                                                        class="absolute left-[58%] top-[23%] h-4 w-4 rounded-full border-2 border-white bg-red-500 shadow"
+                                                    ></span>
+
+                                                    <span
+                                                        class="absolute right-[20%] top-[55%] h-4 w-4 rounded-full border-2 border-white bg-red-500 shadow"
+                                                    ></span>
+
+                                                    <span
+                                                        class="absolute left-[46%] bottom-[14%] h-4 w-4 rounded-full border-2 border-white bg-[#1B5E20] shadow"
+                                                    ></span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Activity -->
+                                            <div
+                                                class="rounded-lg bg-white p-2.5 shadow-sm"
+                                            >
+                                                <div class="flex items-center justify-between">
+                                                    <h4 class="text-[6px] font-bold text-black">
+                                                        Aktivitas
+                                                    </h4>
+
+                                                    <span class="text-[5px] text-gray-400">
+                                                        Terbaru
+                                                    </span>
+                                                </div>
+
+                                                <div class="mt-2.5 space-y-2">
+
+                                                    <div class="flex gap-1.5">
+                                                        <div
+                                                            class="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-[#E8F5E9] text-[6px] text-[#1B5E20]"
+                                                        >
+                                                            ✓
+                                                        </div>
+
+                                                        <div>
+                                                            <p class="text-[6px] font-semibold">
+                                                                Laporan selesai
+                                                            </p>
+
+                                                            <p class="text-[5px] text-gray-400">
+                                                                Sampah di Beji
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex gap-1.5">
+                                                        <div
+                                                            class="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-[#FFF4CC] text-[6px] text-yellow-700"
+                                                        >
+                                                            !
+                                                        </div>
+
+                                                        <div>
+                                                            <p class="text-[6px] font-semibold">
+                                                                Laporan diproses
+                                                            </p>
+
+                                                            <p class="text-[5px] text-gray-400">
+                                                                Lampu jalan
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="flex gap-1.5">
+                                                        <div
+                                                            class="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-[#E3F2FD] text-[6px] text-blue-600"
+                                                        >
+                                                            +
+                                                        </div>
+
+                                                        <div>
+                                                            <p class="text-[6px] font-semibold">
+                                                                Poin bertambah
+                                                            </p>
+
+                                                            <p class="text-[5px] text-gray-400">
+                                                                +10 poin
+                                                            </p>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Recent Reports -->
+                                        <div
+                                            class="mt-2 rounded-lg bg-white p-2.5 shadow-sm"
+                                        >
+                                            <div class="flex items-center justify-between">
+                                                <h4 class="text-[6px] font-bold text-black">
+                                                    Laporan Terbaru
+                                                </h4>
+
+                                                <span class="text-[5px] text-[#1B5E20]">
+                                                    Lihat Semua
+                                                </span>
+                                            </div>
+
+                                            <div
+                                                class="mt-2 grid grid-cols-3 gap-2"
+                                            >
+
+                                                <div
+                                                    class="rounded-md bg-[#F8FAF8] p-1.5"
+                                                >
+                                                    <div
+                                                        class="h-7 rounded bg-gray-200"
+                                                    ></div>
+
+                                                    <p
+                                                        class="mt-1 text-[5px] font-semibold text-black"
+                                                    >
+                                                        Sampah menumpuk
+                                                    </p>
+
+                                                    <span
+                                                        class="badge badge-success badge-xs mt-1 text-[5px] text-white"
+                                                    >
+                                                        Selesai
+                                                    </span>
+                                                </div>
+
+                                                <div
+                                                    class="rounded-md bg-[#F8FAF8] p-1.5"
+                                                >
+                                                    <div
+                                                        class="h-7 rounded bg-gray-200"
+                                                    ></div>
+
+                                                    <p
+                                                        class="mt-1 text-[5px] font-semibold text-black"
+                                                    >
+                                                        Lampu jalan
+                                                    </p>
+
+                                                    <span
+                                                        class="badge badge-warning badge-xs mt-1 text-[5px]"
+                                                    >
+                                                        Diproses
+                                                    </span>
+                                                </div>
+
+                                                <div
+                                                    class="rounded-md bg-[#F8FAF8] p-1.5"
+                                                >
+                                                    <div
+                                                        class="h-7 rounded bg-gray-200"
+                                                    ></div>
+
+                                                    <p
+                                                        class="mt-1 text-[5px] font-semibold text-black"
+                                                    >
+                                                        Drainase
+                                                    </p>
+
+                                                    <span
+                                                        class="badge badge-info badge-xs mt-1 text-[5px]"
+                                                    >
+                                                        Menunggu
+                                                    </span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+       
+        <!-- FEATURES -->
+            <section
+                id="fitur"
+                class="scroll-mt-20 bg-white py-10"
+            >
+                <div class="mx-auto max-w-7x1 px-6 lg:px-20">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-bold text-black lg:text-4xl">
+                            Mengapa Memilih UrbanEye?
+                        </h2>
+
+                        <p
+                            class="mx-auto mt-4 max-w-2xl text-sm leading-6 text-gray-600 lg:text-base"
+                        >
+                            Platform pelaporan lingkungan yang cepat, transparan, dan mudah digunakan oleh masyarakat.
+                        </p>
+                    </div>
+
+                    <div class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+                        <div
+                            v-for="feature in features"
+                            :key="feature.title"
+                           class="group rounded-lg bg-white px-9 py-6 text-center shadow-[0_4px_18px_rgba(0,0,0,0.08)] transition duration-300 hover:-translate-y-1 hover:bg-[#E8F5E9] hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+                        >
+                            <div
+                                class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#E8F5E9] text-[#1B5E20] transition duration-300 group-hover:bg-[#1B5E20] group-hover:text-white"
+                            >
+                                <!-- Location -->
+                                <svg
+                                    v-if="feature.icon === 'location'"
+                                    class="h-8 w-8"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                >
+                                    <path
+                                        d="M12 21s7-4.4 7-10a7 7 0 1 0-14 0c0 5.6 7 10 7 10Z"
+                                    />
+                                    <circle cx="12" cy="11" r="2.5" />
+                                </svg>
+
+                                <!-- Camera -->
+                                <svg
+                                    v-else-if="feature.icon === 'camera'"
+                                    class="h-8 w-8"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                >
+                                    <path
+                                        d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z"
+                                    />
+                                    <circle cx="12" cy="13" r="3.5" />
+                                </svg>
+
+                                <!-- Tracking -->
+                                <svg
+                                    v-else-if="feature.icon === 'tracking'"
+                                    class="h-8 w-8"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                >
+                                    <circle cx="12" cy="12" r="8.5" />
+                                    <path d="M12 7v5l3 2" />
+                                    <path d="m16 17 2 2 3-3" />
+                                </svg>
+
+                                <!-- Notification -->
+                                <svg
+                                    v-else
+                                    class="h-8 w-8"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                >
+                                    <path
+                                        d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                                    />
+                                    <path d="M10 21h4" />
+                                </svg>
+                            </div>
+
+                            <h3
+                                class="mt-5 text-base font-bold text-black"
+                            >
+                                {{ feature.title }}
+                            </h3>
+
+                            <p
+                                class="mt-3 text-sm leading-6 text-gray-600 transition group-hover:text-black"
+                            >
+                                {{ feature.description }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HOW IT WORKS -->
+            <section
+                id="cara-kerja"
+                class="scroll-mt-20 bg-[#F5F5F5] py-10"
+            >
+                <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-bold text-black lg:text-4xl">
+                            Cara Kerja UrbanEye
+                        </h2>
+
+                        <p
+                            class="mx-auto mt-4 max-w-2xl text-sm leading-6 text-gray-600"
+                        >
+                            Hanya dalam 4 langkah mudah untuk melaporkan permasalahan lingkungan.
+                        </p>
+                    </div>
+
+                    <div class="relative mt-14 grid gap-8 md:grid-cols-4">
+                        <div
+                            class="absolute left-[12%] right-[12%] top-8 hidden h-px bg-gray-300 md:block"
+                        ></div>
+
+                        <div
+                            v-for="step in steps"
+                            :key="step.number"
+                            class="group relative text-center"
+                        >
+                            <div
+                                class="relative z-10 mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-white text-[#1B5E20] shadow-sm transition duration-300 group-hover:-translate-y-1 group-hover:bg-[#1B5E20] group-hover:text-white group-hover:shadow-md"
+                            >
+                                <svg
+                                    v-if="step.icon === 'report'"
+                                    class="h-7 w-7"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                >
+                                    <path d="M6 3h12v18H6z" />
+                                    <path d="M9 7h6M9 11h6M9 15h4" />
+                                </svg>
+
+                                <svg
+                                    v-else-if="step.icon === 'location'"
+                                    class="h-7 w-7"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                >
+                                    <path
+                                        d="M12 21s7-4.4 7-10a7 7 0 1 0-14 0c0 5.6 7 10 7 10Z"
+                                    />
+                                    <circle cx="12" cy="11" r="2.5" />
+                                </svg>
+
+                                <svg
+                                    v-else-if="step.icon === 'camera'"
+                                    class="h-7 w-7"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                >
+                                    <path
+                                        d="M4 7h3l1.5-2h7L17 7h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1Z"
+                                    />
+                                    <circle cx="12" cy="13" r="3.5" />
+                                </svg>
+
+                                <svg
+                                    v-else
+                                    class="h-7 w-7"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.8"
+                                >
+                                    <path d="m4 4 16 8-16 8 4-8-4-8Z" />
+                                    <path d="M8 12h12" />
+                                </svg>
+                            </div>
+
+                            <div class="mx-auto mt-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#1B5E20] text-xs font-bold text-white">
+                                {{ step.number }}
+                            </div>
+
+                            <h3 class="mt-4 text-base font-bold text-black">
+                                {{ step.title }}
+                            </h3>
+
+                            <p
+                                class="mx-auto mt-2 max-w-[220px] text-sm leading-6 text-gray-600"
+                            >
+                                {{ step.description }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+     
+            <!-- TENTANG -->
+
+            <section
+                id="tentang"
+                class="scroll-mt-20 bg-white py-16"
+            >
+                <div class="mx-auto max-w-6xl px-6 lg:px-8">
+
+                <div
+                    class="grid items-center gap-10 lg:grid-cols-[1.2fr_0.9fr]"
+                >
+
+            <!-- Text -->
+            <div>
+                <span
+                    class="inline-flex rounded-full bg-[#E8F5E9] px-4 py-2 text-xs font-semibold text-[#1B5E20]"
+                >
+                    Tentang UrbanEye
+                </span>
+
+                <h2
+                    class="mt-4 max-w-xl text-3xl font-bold leading-tight text-black lg:text-4xl"
+                >
+                    Dari Kepedulian Menjadi
+                    <span class="text-[#1B5E20]">
+                        Aksi Nyata
+                    </span>
+                </h2>
+
+                <p
+                    class="mt-5 max-w-xl text-sm leading-7 text-[#757575]"
+                >
+                    UrbanEye hadir sebagai ruang kolaborasi antara masyarakat
+                    dan pihak terkait dalam membangun lingkungan perkotaan
+                    yang lebih tertata. Setiap partisipasi menjadi bagian
+                    dari proses untuk menciptakan perubahan yang berarti.
+                </p>
+
+                <p
+                    class="mt-3 max-w-xl text-sm leading-7 text-[#757575]"
+                >
+                    Melalui semangat kepedulian bersama, UrbanEye mendorong
+                    masyarakat untuk tidak hanya menjadi pengamat, tetapi
+                    ikut mengambil peran dalam menjaga kualitas lingkungan
+                    di sekitarnya.
+                </p>
+            </div>
+
+
+            <!-- Highlight -->
+            <div
+                class="rounded-2xl bg-[#F7FAF7] p-7 shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
+            >
+                <div class="flex items-start gap-4">
+                    <div
+                        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#1B5E20] text-xl text-white"
+                    >
+                        ♻
+                    </div>
+
+                    <div>
+                        <h3 class="text-base font-bold text-black">
+                            Visi UrbanEye
+                        </h3>
+
+                        <p class="mt-2 text-xs leading-6 text-[#757575]">
+                            Mendorong terciptanya lingkungan perkotaan yang
+                            lebih peduli, responsif, dan berkelanjutan melalui
+                            keterlibatan masyarakat.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="mt-6 h-px bg-gray-200"></div>
+
+                <div class="mt-6 flex items-start gap-4">
+                    <div
+                        class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#E8F5E9] text-xl text-[#1B5E20]"
+                    >
+                        🌱
+                    </div>
+
+                    <div>
+                        <h3 class="text-base font-bold text-black">
+                            Semangat UrbanEye
+                        </h3>
+
+                        <p class="mt-2 text-xs leading-6 text-[#757575]">
+                            Karena perubahan sebuah kota dapat dimulai dari
+                            kepedulian sederhana yang dilakukan bersama.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+        <!--Footer-->
+        <footer
+            id="kontak"
+            class="scroll-mt-20 bg-[#2E7D32] text-white"
+        >   
+            <div
+                class="mx-auto grid max-w-7xl gap-2 px-6 py-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:px-8"
+            >
+
+        <!-- Brand -->
+        <div>
+            <h3 class="text-xl font-bold leading-6">
+                Bersama UrbanEye,
+                Kita Wujudkan Kota yang Lebih Bersih & Nyaman
+            </h3>
+
+            <p class="mt-3 max-w-sm text-xs leading-5 text-green-50">
+                Platform pelaporan dan pemantauan masalah lingkungan
+                perkotaan berbasis crowdsourcing.
+            </p>
+        </div>
+
+        <!-- Navigasi -->
+        <div>
+            <h4 class="text-sm font-bold">
+                Navigasi
+            </h4>
+
+            <div class="mt-3 space-y-2 text-xs text-green-50">
+                <button
+                    type="button"
+                    class="block transition hover:text-white"
+                    @click="scrollToSection('beranda')"
+                >
+                    Beranda
+                </button>
+
+                <button
+                    type="button"
+                    class="block transition hover:text-white"
+                    @click="scrollToSection('fitur')"
+                >
+                    Fitur
+                </button>
+
+                <button
+                    type="button"
+                    class="block transition hover:text-white"
+                    @click="scrollToSection('cara-kerja')"
+                >
+                    Cara Kerja
+                </button>
+
+                <button
+                    type="button"
+                    class="block transition hover:text-white"
+                    @click="scrollToSection('tentang')"
+                >
+                    Tentang
+                </button>
+            </div>
+        </div>
+
+        <!-- Informasi -->
+        <div>
+            <h4 class="text-sm font-bold">
+                Informasi
+            </h4>
+
+            <div class="mt-3 space-y-2 text-xs text-green-50">
+                <a
+                    href="#"
+                    class="block transition hover:text-white"
+                >
+                    FAQ
+                </a>
+
+                <a
+                    href="#"
+                    class="block transition hover:text-white"
+                >
+                    Kebijakan Privasi
+                </a>
+
+                <a
+                    href="#"
+                    class="block transition hover:text-white"
+                >
+                    Syarat & Ketentuan
+                </a>
+            </div>
+        </div>
+
+        <!-- Social Media -->
+        <div>
+            <h4 class="text-sm font-bold">
+                Ikuti Kami
+            </h4>
+
+            <div class="mt-4 flex items-center gap-3">
+
+                <!-- Instagram -->
+                <a
+                    href="#"
+                    aria-label="Instagram"
+                    class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:-translate-y-1 hover:bg-white/20"
+                >
+                    <svg
+                        class="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                    >
+                        <rect
+                            x="3"
+                            y="3"
+                            width="18"
+                            height="18"
+                            rx="5"
+                        />
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="4"
+                        />
+                        <circle
+                            cx="17.5"
+                            cy="6.5"
+                            r="1"
+                            fill="currentColor"
+                            stroke="none"
+                        />
+                    </svg>
+                </a>
+
+                <!-- Facebook -->
+                <a
+                    href="#"
+                    aria-label="Facebook"
+                    class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:-translate-y-1 hover:bg-white/20"
+                >
+                    <svg
+                        class="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                    >
+                        <path
+                            d="M14 8h3V4h-3c-2.8 0-5 2.2-5 5v3H6v4h3v4h4v-4h3l1-4h-4V9c0-.6.4-1 1-1Z"
+                        />
+                    </svg>
+                </a>
+
+                <!-- X -->
+                <a
+                    href="#"
+                    aria-label="X"
+                    class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:-translate-y-1 hover:bg-white/20"
+                >
+                    <svg
+                        class="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                    >
+                        <path
+                            d="M5 4h4.7l3.1 4.3L16.6 4H19l-5.1 6 5.5 7H14.7l-3.3-4.6L7.4 17H5l5.3-6.2L5 4Zm3.3 1.7 6.6 9.6h1.8l-6.6-9.6H8.3Z"
+                        />
+                    </svg>
+                </a>
+
+                <!-- YouTube -->
+                <a
+                    href="#"
+                    aria-label="YouTube"
+                    class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:-translate-y-1 hover:bg-white/20"
+                >
+                    <svg
+                        class="h-4 w-4"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                    >
+                        <path
+                            d="M21.6 7.2a2.9 2.9 0 0 0-2-2C17.8 4.7 12 4.7 12 4.7s-5.8 0-7.6.5a2.9 2.9 0 0 0-2 2C1.9 9 1.9 12 1.9 12s0 3 .5 4.8a2.9 2.9 0 0 0 2 2c1.8.5 7.6.5 7.6.5s5.8 0 7.6-.5a2.9 2.9 0 0 0 2-2c.5-1.8.5-4.8.5-4.8s0-3-.5-4.8ZM10 15.5v-7l6 3.5-6 3.5Z"
+                        />
+                    </svg>
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+
+        <!-- Copyright -->
+        <div
+            class="border-t border-white/20 px-6 py-4 text-center text-[10px] text-green-50"
+        >
+            © 2026 UrbanEye. All rights reserved.
+        </div>
+    </footer>
+
+    </div>
+</template>
+
 <script setup>
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 defineProps({
     canLogin: {
         type: Boolean,
+        default: true,
     },
+
     canRegister: {
         type: Boolean,
+        default: true,
     },
-    laravelVersion: {
-        type: String,
-        required: true,
-    },
-    phpVersion: {
-        type: String,
-        required: true,
-    },
-});
+})
 
-function handleImageError() {
-    document.getElementById('screenshot-container')?.classList.add('!hidden');
-    document.getElementById('docs-card')?.classList.add('!row-span-1');
-    document.getElementById('docs-card-content')?.classList.add('!flex-row');
-    document.getElementById('background')?.classList.add('!hidden');
+const activeSection = ref('beranda')
+
+const features = [
+    {
+        title: 'Berbasis Lokasi',
+        description:
+            'Setiap laporan dilengkapi lokasi sehingga memudahkan proses monitoring dan tindak lanjut.',
+        icon: 'location',
+    },
+    {
+        title: 'Upload Foto Bukti',
+        description:
+            'Unggah foto kondisi lingkungan secara langsung untuk memperkuat laporan yang dikirimkan.',
+        icon: 'camera',
+    },
+    {
+        title: 'Realtime Tracking',
+        description:
+            'Pantau perkembangan laporan mulai dari diproses hingga selesai secara realtime.',
+        icon: 'tracking',
+    },
+    {
+        title: 'Notifikasi Otomatis',
+        description:
+            'Dapatkan notifikasi ketika status laporan mengalami perubahan.',
+        icon: 'notification',
+    },
+]
+
+const steps = [
+    {
+        number: '1',
+        title: 'Laporkan Masalah',
+        description:
+            'Pilih kategori permasalahan lingkungan dan lengkapi informasi laporan.',
+        icon: 'report',
+    },
+    {
+        number: '2',
+        title: 'Tentukan Lokasi',
+        description:
+            'Pilih lokasi kejadian pada peta atau aktifkan GPS otomatis.',
+        icon: 'location',
+    },
+    {
+        number: '3',
+        title: 'Lampirkan Bukti',
+        description:
+            'Ambil atau unggah foto sebagai bukti laporan terkait kondisi lingkungan.',
+        icon: 'camera',
+    },
+    {
+        number: '4',
+        title: 'Kirim Laporan',
+        description:
+            'Kirim laporan lalu laporan akan diterima untuk diproses oleh pihak terkait.',
+        icon: 'send',
+    },
+]
+
+let sectionObserver = null
+
+function scrollToSection(id) {
+    activeSection.value = id
+
+    document.getElementById(id)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+    })
 }
+
+onMounted(() => {
+    const sections = [
+        'beranda',
+        'fitur',
+        'cara-kerja',
+        'tentang',
+        'kontak',
+    ]
+        .map((id) => document.getElementById(id))
+        .filter(Boolean)
+
+    sectionObserver = new IntersectionObserver(
+        (entries) => {
+            const visibleSection = entries
+                .filter((entry) => entry.isIntersecting)
+                .sort(
+                    (a, b) =>
+                        b.intersectionRatio - a.intersectionRatio
+                )[0]
+
+            if (visibleSection) {
+                activeSection.value = visibleSection.target.id
+            }
+        },
+        {
+            rootMargin: '-18% 0px -60% 0px',
+            threshold: [0.1, 0.25, 0.5],
+        }
+    )
+
+    sections.forEach((section) => {
+        sectionObserver.observe(section)
+    })
+})
+
+onBeforeUnmount(() => {
+    sectionObserver?.disconnect()
+})
 </script>
 
-<template>
-    <Head title="Welcome" />
-    <div class="bg-gray-50 text-black/50 dark:bg-black dark:text-white/50">
-        <img
-            id="background"
-            class="absolute -left-20 top-0 max-w-[877px]"
-            src="https://laravel.com/assets/img/welcome/background.svg"
-        />
-        <div
-            class="relative flex min-h-screen flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white"
-        >
-            <div class="relative w-full max-w-2xl px-6 lg:max-w-7xl">
-                <header
-                    class="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3"
-                >
-                    <div class="flex lg:col-start-2 lg:justify-center">
-                        <svg
-                            class="h-12 w-auto text-white lg:h-16 lg:text-[#FF2D20]"
-                            viewBox="0 0 62 65"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M61.8548 14.6253C61.8778 14.7102 61.8895 14.7978 61.8897 14.8858V28.5615C61.8898 28.737 61.8434 28.9095 61.7554 29.0614C61.6675 29.2132 61.5409 29.3392 61.3887 29.4265L49.9104 36.0351V49.1337C49.9104 49.4902 49.7209 49.8192 49.4118 49.9987L25.4519 63.7916C25.3971 63.8227 25.3372 63.8427 25.2774 63.8639C25.255 63.8714 25.2338 63.8851 25.2101 63.8913C25.0426 63.9354 24.8666 63.9354 24.6991 63.8913C24.6716 63.8838 24.6467 63.8689 24.6205 63.8589C24.5657 63.8389 24.5084 63.8215 24.456 63.7916L0.501061 49.9987C0.348882 49.9113 0.222437 49.7853 0.134469 49.6334C0.0465019 49.4816 0.000120578 49.3092 0 49.1337L0 8.10652C0 8.01678 0.0124642 7.92953 0.0348998 7.84477C0.0423783 7.8161 0.0598282 7.78993 0.0697995 7.76126C0.0884958 7.70891 0.105946 7.65531 0.133367 7.6067C0.152063 7.5743 0.179485 7.54812 0.20192 7.51821C0.230588 7.47832 0.256763 7.43719 0.290416 7.40229C0.319084 7.37362 0.356476 7.35243 0.388883 7.32751C0.425029 7.29759 0.457436 7.26518 0.498568 7.2415L12.4779 0.345059C12.6296 0.257786 12.8015 0.211853 12.9765 0.211853C13.1515 0.211853 13.3234 0.257786 13.475 0.345059L25.4531 7.2415H25.4556C25.4955 7.26643 25.5292 7.29759 25.5653 7.32626C25.5977 7.35119 25.6339 7.37362 25.6625 7.40104C25.6974 7.43719 25.7224 7.47832 25.7523 7.51821C25.7735 7.54812 25.8021 7.5743 25.8196 7.6067C25.8483 7.65656 25.8645 7.70891 25.8844 7.76126C25.8944 7.78993 25.9118 7.8161 25.9193 7.84602C25.9423 7.93096 25.954 8.01853 25.9542 8.10652V33.7317L35.9355 27.9844V14.8846C35.9355 14.7973 35.948 14.7088 35.9704 14.6253C35.9792 14.5954 35.9954 14.5692 36.0053 14.5405C36.0253 14.4882 36.0427 14.4346 36.0702 14.386C36.0888 14.3536 36.1163 14.3274 36.1375 14.2975C36.1674 14.2576 36.1923 14.2165 36.2272 14.1816C36.2559 14.1529 36.292 14.1317 36.3244 14.1068C36.3618 14.0769 36.3942 14.0445 36.4341 14.0208L48.4147 7.12434C48.5663 7.03694 48.7383 6.99094 48.9133 6.99094C49.0883 6.99094 49.2602 7.03694 49.4118 7.12434L61.3899 14.0208C61.4323 14.0457 61.4647 14.0769 61.5021 14.1055C61.5333 14.1305 61.5694 14.1529 61.5981 14.1803C61.633 14.2165 61.6579 14.2576 61.6878 14.2975C61.7103 14.3274 61.7377 14.3536 61.7551 14.386C61.7838 14.4346 61.8 14.4882 61.8199 14.5405C61.8312 14.5692 61.8474 14.5954 61.8548 14.6253ZM59.893 27.9844V16.6121L55.7013 19.0252L49.9104 22.3593V33.7317L59.8942 27.9844H59.893ZM47.9149 48.5566V37.1768L42.2187 40.4299L25.953 49.7133V61.2003L47.9149 48.5566ZM1.99677 9.83281V48.5566L23.9562 61.199V49.7145L12.4841 43.2219L12.4804 43.2194L12.4754 43.2169C12.4368 43.1945 12.4044 43.1621 12.3682 43.1347C12.3371 43.1097 12.3009 43.0898 12.2735 43.0624L12.271 43.0586C12.2386 43.0275 12.2162 42.9888 12.1887 42.9539C12.1638 42.9203 12.1339 42.8916 12.114 42.8567L12.1127 42.853C12.0903 42.8156 12.0766 42.7707 12.0604 42.7283C12.0442 42.6909 12.023 42.656 12.013 42.6161C12.0005 42.5688 11.998 42.5177 11.9931 42.4691C11.9881 42.4317 11.9781 42.3943 11.9781 42.3569V15.5801L6.18848 12.2446L1.99677 9.83281ZM12.9777 2.36177L2.99764 8.10652L12.9752 13.8513L22.9541 8.10527L12.9752 2.36177H12.9777ZM18.1678 38.2138L23.9574 34.8809V9.83281L19.7657 12.2459L13.9749 15.5801V40.6281L18.1678 38.2138ZM48.9133 9.14105L38.9344 14.8858L48.9133 20.6305L58.8909 14.8846L48.9133 9.14105ZM47.9149 22.3593L42.124 19.0252L37.9323 16.6121V27.9844L43.7219 31.3174L47.9149 33.7317V22.3593ZM24.9533 47.987L39.59 39.631L46.9065 35.4555L36.9352 29.7145L25.4544 36.3242L14.9907 42.3482L24.9533 47.987Z"
-                                fill="currentColor"
-                            />
-                        </svg>
-                    </div>
-                    <nav v-if="canLogin" class="-mx-3 flex flex-1 justify-end">
-                        <Link
-                            v-if="$page.props.auth.user"
-                            :href="route('dashboard')"
-                            class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                        >
-                            Dashboard
-                        </Link>
-
-                        <template v-else>
-                            <Link
-                                :href="route('login')"
-                                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                            >
-                                Log in
-                            </Link>
-
-                            <Link
-                                v-if="canRegister"
-                                :href="route('register')"
-                                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                            >
-                                Register
-                            </Link>
-                        </template>
-                    </nav>
-                </header>
-
-                <main class="mt-6">
-                    <div class="grid gap-6 lg:grid-cols-2 lg:gap-8">
-                        <a
-                            href="https://laravel.com/docs"
-                            id="docs-card"
-                            class="flex flex-col items-start gap-6 overflow-hidden rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] md:row-span-3 lg:p-10 lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]"
-                        >
-                            <div
-                                id="screenshot-container"
-                                class="relative flex w-full flex-1 items-stretch"
-                            >
-                                <img
-                                    src="https://laravel.com/assets/img/welcome/docs-light.svg"
-                                    alt="Laravel documentation screenshot"
-                                    class="aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.06)] dark:hidden"
-                                    @error="handleImageError"
-                                />
-                                <img
-                                    src="https://laravel.com/assets/img/welcome/docs-dark.svg"
-                                    alt="Laravel documentation screenshot"
-                                    class="hidden aspect-video h-full w-full flex-1 rounded-[10px] object-cover object-top drop-shadow-[0px_4px_34px_rgba(0,0,0,0.25)] dark:block"
-                                />
-                                <div
-                                    class="absolute -bottom-16 -left-16 h-40 w-[calc(100%+8rem)] bg-gradient-to-b from-transparent via-white to-white dark:via-zinc-900 dark:to-zinc-900"
-                                ></div>
-                            </div>
-
-                            <div
-                                class="relative flex items-center gap-6 lg:items-end"
-                            >
-                                <div
-                                    id="docs-card-content"
-                                    class="flex items-start gap-6 lg:flex-col"
-                                >
-                                    <div
-                                        class="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16"
-                                    >
-                                        <svg
-                                            class="size-5 sm:size-6"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                fill="#FF2D20"
-                                                d="M23 4a1 1 0 0 0-1.447-.894L12.224 7.77a.5.5 0 0 1-.448 0L2.447 3.106A1 1 0 0 0 1 4v13.382a1.99 1.99 0 0 0 1.105 1.79l9.448 4.728c.14.065.293.1.447.1.154-.005.306-.04.447-.105l9.453-4.724a1.99 1.99 0 0 0 1.1-1.789V4ZM3 6.023a.25.25 0 0 1 .362-.223l7.5 3.75a.251.251 0 0 1 .138.223v11.2a.25.25 0 0 1-.362.224l-7.5-3.75a.25.25 0 0 1-.138-.22V6.023Zm18 11.2a.25.25 0 0 1-.138.224l-7.5 3.75a.249.249 0 0 1-.329-.099.249.249 0 0 1-.033-.12V9.772a.251.251 0 0 1 .138-.224l7.5-3.75a.25.25 0 0 1 .362.224v11.2Z"
-                                            />
-                                            <path
-                                                fill="#FF2D20"
-                                                d="m3.55 1.893 8 4.048a1.008 1.008 0 0 0 .9 0l8-4.048a1 1 0 0 0-.9-1.785l-7.322 3.706a.506.506 0 0 1-.452 0L4.454.108a1 1 0 0 0-.9 1.785H3.55Z"
-                                            />
-                                        </svg>
-                                    </div>
-
-                                    <div class="pt-3 sm:pt-5 lg:pt-0">
-                                        <h2
-                                            class="text-xl font-semibold text-black dark:text-white"
-                                        >
-                                            Documentation
-                                        </h2>
-
-                                        <p class="mt-4 text-sm/relaxed">
-                                            Laravel has wonderful documentation
-                                            covering every aspect of the
-                                            framework. Whether you are a
-                                            newcomer or have prior experience
-                                            with Laravel, we recommend reading
-                                            our documentation from beginning to
-                                            end.
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <svg
-                                    class="size-6 shrink-0 stroke-[#FF2D20]"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke-width="1.5"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                                    />
-                                </svg>
-                            </div>
-                        </a>
-
-                        <a
-                            href="https://laracasts.com"
-                            class="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]"
-                        >
-                            <div
-                                class="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16"
-                            >
-                                <svg
-                                    class="size-5 sm:size-6"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <g fill="#FF2D20">
-                                        <path
-                                            d="M24 8.25a.5.5 0 0 0-.5-.5H.5a.5.5 0 0 0-.5.5v12a2.5 2.5 0 0 0 2.5 2.5h19a2.5 2.5 0 0 0 2.5-2.5v-12Zm-7.765 5.868a1.221 1.221 0 0 1 0 2.264l-6.626 2.776A1.153 1.153 0 0 1 8 18.123v-5.746a1.151 1.151 0 0 1 1.609-1.035l6.626 2.776ZM19.564 1.677a.25.25 0 0 0-.177-.427H15.6a.106.106 0 0 0-.072.03l-4.54 4.543a.25.25 0 0 0 .177.427h3.783c.027 0 .054-.01.073-.03l4.543-4.543ZM22.071 1.318a.047.047 0 0 0-.045.013l-4.492 4.492a.249.249 0 0 0 .038.385.25.25 0 0 0 .14.042h5.784a.5.5 0 0 0 .5-.5v-2a2.5 2.5 0 0 0-1.925-2.432ZM13.014 1.677a.25.25 0 0 0-.178-.427H9.101a.106.106 0 0 0-.073.03l-4.54 4.543a.25.25 0 0 0 .177.427H8.4a.106.106 0 0 0 .073-.03l4.54-4.543ZM6.513 1.677a.25.25 0 0 0-.177-.427H2.5A2.5 2.5 0 0 0 0 3.75v2a.5.5 0 0 0 .5.5h1.4a.106.106 0 0 0 .073-.03l4.54-4.543Z"
-                                        />
-                                    </g>
-                                </svg>
-                            </div>
-
-                            <div class="pt-3 sm:pt-5">
-                                <h2
-                                    class="text-xl font-semibold text-black dark:text-white"
-                                >
-                                    Laracasts
-                                </h2>
-
-                                <p class="mt-4 text-sm/relaxed">
-                                    Laracasts offers thousands of video
-                                    tutorials on Laravel, PHP, and JavaScript
-                                    development. Check them out, see for
-                                    yourself, and massively level up your
-                                    development skills in the process.
-                                </p>
-                            </div>
-
-                            <svg
-                                class="size-6 shrink-0 self-center stroke-[#FF2D20]"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                                />
-                            </svg>
-                        </a>
-
-                        <a
-                            href="https://laravel-news.com"
-                            class="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] transition duration-300 hover:text-black/70 hover:ring-black/20 focus:outline-none focus-visible:ring-[#FF2D20] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800 dark:hover:text-white/70 dark:hover:ring-zinc-700 dark:focus-visible:ring-[#FF2D20]"
-                        >
-                            <div
-                                class="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16"
-                            >
-                                <svg
-                                    class="size-5 sm:size-6"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <g fill="#FF2D20">
-                                        <path
-                                            d="M8.75 4.5H5.5c-.69 0-1.25.56-1.25 1.25v4.75c0 .69.56 1.25 1.25 1.25h3.25c.69 0 1.25-.56 1.25-1.25V5.75c0-.69-.56-1.25-1.25-1.25Z"
-                                        />
-                                        <path
-                                            d="M24 10a3 3 0 0 0-3-3h-2V2.5a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2V20a3.5 3.5 0 0 0 3.5 3.5h17A3.5 3.5 0 0 0 24 20V10ZM3.5 21.5A1.5 1.5 0 0 1 2 20V3a.5.5 0 0 1 .5-.5h14a.5.5 0 0 1 .5.5v17c0 .295.037.588.11.874a.5.5 0 0 1-.484.625L3.5 21.5ZM22 20a1.5 1.5 0 1 1-3 0V9.5a.5.5 0 0 1 .5-.5H21a1 1 0 0 1 1 1v10Z"
-                                        />
-                                        <path
-                                            d="M12.751 6.047h2a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-2A.75.75 0 0 1 12 7.3v-.5a.75.75 0 0 1 .751-.753ZM12.751 10.047h2a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-2A.75.75 0 0 1 12 11.3v-.5a.75.75 0 0 1 .751-.753ZM4.751 14.047h10a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-10A.75.75 0 0 1 4 15.3v-.5a.75.75 0 0 1 .751-.753ZM4.75 18.047h7.5a.75.75 0 0 1 .75.75v.5a.75.75 0 0 1-.75.75h-7.5A.75.75 0 0 1 4 19.3v-.5a.75.75 0 0 1 .75-.753Z"
-                                        />
-                                    </g>
-                                </svg>
-                            </div>
-
-                            <div class="pt-3 sm:pt-5">
-                                <h2
-                                    class="text-xl font-semibold text-black dark:text-white"
-                                >
-                                    Laravel News
-                                </h2>
-
-                                <p class="mt-4 text-sm/relaxed">
-                                    Laravel News is a community driven portal
-                                    and newsletter aggregating all of the latest
-                                    and most important news in the Laravel
-                                    ecosystem, including new package releases
-                                    and tutorials.
-                                </p>
-                            </div>
-
-                            <svg
-                                class="size-6 shrink-0 self-center stroke-[#FF2D20]"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke-width="1.5"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"
-                                />
-                            </svg>
-                        </a>
-
-                        <div
-                            class="flex items-start gap-4 rounded-lg bg-white p-6 shadow-[0px_14px_34px_0px_rgba(0,0,0,0.08)] ring-1 ring-white/[0.05] lg:pb-10 dark:bg-zinc-900 dark:ring-zinc-800"
-                        >
-                            <div
-                                class="flex size-12 shrink-0 items-center justify-center rounded-full bg-[#FF2D20]/10 sm:size-16"
-                            >
-                                <svg
-                                    class="size-5 sm:size-6"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <g fill="#FF2D20">
-                                        <path
-                                            d="M16.597 12.635a.247.247 0 0 0-.08-.237 2.234 2.234 0 0 1-.769-1.68c.001-.195.03-.39.084-.578a.25.25 0 0 0-.09-.267 8.8 8.8 0 0 0-4.826-1.66.25.25 0 0 0-.268.181 2.5 2.5 0 0 1-2.4 1.824.045.045 0 0 0-.045.037 12.255 12.255 0 0 0-.093 3.86.251.251 0 0 0 .208.214c2.22.366 4.367 1.08 6.362 2.118a.252.252 0 0 0 .32-.079 10.09 10.09 0 0 0 1.597-3.733ZM13.616 17.968a.25.25 0 0 0-.063-.407A19.697 19.697 0 0 0 8.91 15.98a.25.25 0 0 0-.287.325c.151.455.334.898.548 1.328.437.827.981 1.594 1.619 2.28a.249.249 0 0 0 .32.044 29.13 29.13 0 0 0 2.506-1.99ZM6.303 14.105a.25.25 0 0 0 .265-.274 13.048 13.048 0 0 1 .205-4.045.062.062 0 0 0-.022-.07 2.5 2.5 0 0 1-.777-.982.25.25 0 0 0-.271-.149 11 11 0 0 0-5.6 2.815.255.255 0 0 0-.075.163c-.008.135-.02.27-.02.406.002.8.084 1.598.246 2.381a.25.25 0 0 0 .303.193 19.924 19.924 0 0 1 5.746-.438ZM9.228 20.914a.25.25 0 0 0 .1-.393 11.53 11.53 0 0 1-1.5-2.22 12.238 12.238 0 0 1-.91-2.465.248.248 0 0 0-.22-.187 18.876 18.876 0 0 0-5.69.33.249.249 0 0 0-.179.336c.838 2.142 2.272 4 4.132 5.353a.254.254 0 0 0 .15.048c1.41-.01 2.807-.282 4.117-.802ZM18.93 12.957l-.005-.008a.25.25 0 0 0-.268-.082 2.21 2.21 0 0 1-.41.081.25.25 0 0 0-.217.2c-.582 2.66-2.127 5.35-5.75 7.843a.248.248 0 0 0-.09.299.25.25 0 0 0 .065.091 28.703 28.703 0 0 0 2.662 2.12.246.246 0 0 0 .209.037c2.579-.701 4.85-2.242 6.456-4.378a.25.25 0 0 0 .048-.189 13.51 13.51 0 0 0-2.7-6.014ZM5.702 7.058a.254.254 0 0 0 .2-.165A2.488 2.488 0 0 1 7.98 5.245a.093.093 0 0 0 .078-.062 19.734 19.734 0 0 1 3.055-4.74.25.25 0 0 0-.21-.41 12.009 12.009 0 0 0-10.4 8.558.25.25 0 0 0 .373.281 12.912 12.912 0 0 1 4.826-1.814ZM10.773 22.052a.25.25 0 0 0-.28-.046c-.758.356-1.55.635-2.365.833a.25.25 0 0 0-.022.48c1.252.43 2.568.65 3.893.65.1 0 .2 0 .3-.008a.25.25 0 0 0 .147-.444c-.526-.424-1.1-.917-1.673-1.465ZM18.744 8.436a.249.249 0 0 0 .15.228 2.246 2.246 0 0 1 1.352 2.054c0 .337-.08.67-.23.972a.25.25 0 0 0 .042.28l.007.009a15.016 15.016 0 0 1 2.52 4.6.25.25 0 0 0 .37.132.25.25 0 0 0 .096-.114c.623-1.464.944-3.039.945-4.63a12.005 12.005 0 0 0-5.78-10.258.25.25 0 0 0-.373.274c.547 2.109.85 4.274.901 6.453ZM9.61 5.38a.25.25 0 0 0 .08.31c.34.24.616.561.8.935a.25.25 0 0 0 .3.127.631.631 0 0 1 .206-.034c2.054.078 4.036.772 5.69 1.991a.251.251 0 0 0 .267.024c.046-.024.093-.047.141-.067a.25.25 0 0 0 .151-.23A29.98 29.98 0 0 0 15.957.764a.25.25 0 0 0-.16-.164 11.924 11.924 0 0 0-2.21-.518.252.252 0 0 0-.215.076A22.456 22.456 0 0 0 9.61 5.38Z"
-                                        />
-                                    </g>
-                                </svg>
-                            </div>
-
-                            <div class="pt-3 sm:pt-5">
-                                <h2
-                                    class="text-xl font-semibold text-black dark:text-white"
-                                >
-                                    Vibrant Ecosystem
-                                </h2>
-
-                                <p class="mt-4 text-sm/relaxed">
-                                    Laravel's robust library of first-party
-                                    tools and libraries, such as
-                                    <a
-                                        href="https://forge.laravel.com"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white dark:focus-visible:ring-[#FF2D20]"
-                                        >Forge</a
-                                    >,
-                                    <a
-                                        href="https://vapor.laravel.com"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                        >Vapor</a
-                                    >,
-                                    <a
-                                        href="https://nova.laravel.com"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                        >Nova</a
-                                    >,
-                                    <a
-                                        href="https://envoyer.io"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                        >Envoyer</a
-                                    >, and
-                                    <a
-                                        href="https://herd.laravel.com"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                        >Herd</a
-                                    >
-                                    help you take your projects to the next
-                                    level. Pair them with powerful open source
-                                    libraries like
-                                    <a
-                                        href="https://laravel.com/docs/billing"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                        >Cashier</a
-                                    >,
-                                    <a
-                                        href="https://laravel.com/docs/dusk"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                        >Dusk</a
-                                    >,
-                                    <a
-                                        href="https://laravel.com/docs/broadcasting"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                        >Echo</a
-                                    >,
-                                    <a
-                                        href="https://laravel.com/docs/horizon"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                        >Horizon</a
-                                    >,
-                                    <a
-                                        href="https://laravel.com/docs/sanctum"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                        >Sanctum</a
-                                    >,
-                                    <a
-                                        href="https://laravel.com/docs/telescope"
-                                        class="rounded-sm underline hover:text-black focus:outline-none focus-visible:ring-1 focus-visible:ring-[#FF2D20] dark:hover:text-white"
-                                        >Telescope</a
-                                    >, and more.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </main>
-
-                <footer
-                    class="py-16 text-center text-sm text-black dark:text-white/70"
-                >
-                    Laravel v{{ laravelVersion }} (PHP v{{ phpVersion }})
-                </footer>
-            </div>
-        </div>
-    </div>
-</template>
