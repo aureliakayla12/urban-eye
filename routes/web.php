@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Petugas\PetugasDashboardController;
 use App\Http\Controllers\Masyarakat\MasyarakatDashboardController;
+use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -26,6 +27,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+// Google OAuth Authentication
+Route::get('/auth/google', [GoogleController::class, 'redirect'])
+    ->name('google.redirect');
+
+Route::get('/auth/google/callback', [GoogleController::class, 'callback'])
+    ->name('google.callback');
+
+
 
 require __DIR__.'/auth.php';
 
