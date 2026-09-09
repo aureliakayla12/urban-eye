@@ -1,9 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Petugas\PetugasDashboardController;
-use App\Http\Controllers\Masyarakat\MasyarakatDashboardController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Auth\GoogleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -18,9 +16,9 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -38,16 +36,3 @@ Route::get('/auth/google/callback', [GoogleController::class, 'callback'])
 
 
 require __DIR__.'/auth.php';
-
-// Role-based dashboards
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
-});
-
-Route::middleware(['auth', 'role:petugas'])->prefix('petugas')->name('petugas.')->group(function () {
-    Route::get('dashboard', [PetugasDashboardController::class, 'index'])->name('dashboard');
-});
-
-Route::middleware(['auth', 'role:masyarakat'])->prefix('masyarakat')->name('masyarakat.')->group(function () {
-    Route::get('dashboard', [MasyarakatDashboardController::class, 'index'])->name('dashboard');
-});
