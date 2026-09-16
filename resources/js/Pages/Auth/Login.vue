@@ -45,7 +45,7 @@ function submit() {
                     <img
                         src="/images/urbaneye-logo.png"
                         alt="UrbanEye"
-                        class="h-10 w-auto"
+                        class="h-14 w-auto"
                     />
                 </Link>
 
@@ -257,9 +257,9 @@ function submit() {
                 </section>
 
 
-                <!-- ================================================= -->
+               
                 <!-- RIGHT -->
-                <!-- ================================================= -->
+                
                 <section
                     class="flex h-full items-center justify-center bg-white px-6 py-6 sm:px-8 lg:px-10"
                 >
