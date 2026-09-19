@@ -1,6 +1,8 @@
 <script setup>
 import { computed, ref } from 'vue'
+
 import { Link, usePage } from '@inertiajs/vue3'
+
 import {
     LayoutDashboard,
     ClipboardList,
@@ -26,6 +28,7 @@ const page = usePage()
 
 const showingUserMenu = ref(false)
 const showingMobileMenu = ref(false)
+const showingSidebar = ref(true)
 
 const user = computed(() => page.props.auth?.user)
 const role = computed(() => page.props.auth?.role)
@@ -181,6 +184,14 @@ const isChildActive = (children) => {
 const closeMobileMenu = () => {
     showingMobileMenu.value = false
 }
+
+const toggleSidebar = () => {
+    showingSidebar.value = !showingSidebar.value
+}
+
+const toggleMobileMenu = () => {
+    showingMobileMenu.value = !showingMobileMenu.value
+}
 </script>
 
 <template>
@@ -195,16 +206,27 @@ const closeMobileMenu = () => {
 
         <!-- Sidebar -->
         <aside
-            class="fixed inset-y-0 left-0 z-50 flex w-[260px] flex-col bg-[#0B1F2A] text-white transition-transform duration-200 lg:translate-x-0"
-            :class="
+            class="fixed inset-y-0 left-0 z-50 flex flex-col overflow-hidden bg-[#0B1F2A] text-white transition-all duration-300 lg:translate-x-0"
+            :class="[
                 showingMobileMenu
                     ? 'translate-x-0'
-                    : '-translate-x-full lg:translate-x-0'
-            "
+                    : '-translate-x-full lg:translate-x-0',
+
+                showingSidebar
+                    ? 'w-[260px]'
+                    : 'w-[80px]',
+            ]"
         >
 
             <!-- Logo -->
-            <div class="flex h-20 shrink-0 items-center border-b border-white/10 px-7">
+            <div
+                class="flex h-20 shrink-0 items-center border-b border-white/10 transition-all duration-300"
+                :class="
+                    showingSidebar
+                        ? 'px-7'
+                        : 'justify-center px-3'
+                "
+            >
                 <Link
                     :href="route('dashboard')"
                     class="flex items-center"
@@ -213,10 +235,16 @@ const closeMobileMenu = () => {
                     <img
                         src="/images/urbaneye-logo-navy.png"
                         alt="UrbanEye"
-                        class="h-[58px] w-auto object-contain"
+                        class="shrink-0 object-contain transition-all duration-300"
+                        :class="
+                            showingSidebar
+                                ? 'h-[58px] w-auto'
+                                : 'h-[42px] w-[42px]'
+                        "
                     />
                 </Link>
 
+                <!-- Mobile Close -->
                 <button
                     type="button"
                     class="ml-auto rounded-lg p-1 text-white lg:hidden"
@@ -229,10 +257,21 @@ const closeMobileMenu = () => {
             <!-- Profile Petugas & Masyarakat -->
             <div
                 v-if="role !== 'admin'"
-                class="shrink-0 px-5 py-6"
+                class="shrink-0 transition-all duration-300"
+                :class="
+                    showingSidebar
+                        ? 'px-5 py-6'
+                        : 'px-3 py-5'
+                "
             >
-                <div class="flex items-center gap-3">
-
+                <div
+                    class="flex items-center"
+                    :class="
+                        showingSidebar
+                            ? 'gap-3'
+                            : 'justify-center'
+                    "
+                >
                     <div
                         class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white"
                     >
@@ -242,7 +281,10 @@ const closeMobileMenu = () => {
                         />
                     </div>
 
-                    <div class="min-w-0">
+                    <div
+                        v-if="showingSidebar"
+                        class="min-w-0"
+                    >
                         <p class="truncate text-[15px] font-semibold">
                             Halo, {{ user?.name }}!
                         </p>
@@ -251,7 +293,6 @@ const closeMobileMenu = () => {
                             {{ role }}
                         </p>
                     </div>
-
                 </div>
             </div>
 
@@ -268,12 +309,16 @@ const closeMobileMenu = () => {
                         <Link
                             v-if="item.route"
                             :href="route(item.route)"
-                            class="group flex h-12 items-center gap-4 rounded-xl px-4 text-[15px] transition"
-                            :class="
+                            class="group flex h-12 items-center rounded-xl text-[15px] transition"
+                            :class="[
+                                showingSidebar
+                                    ? 'gap-4 px-4'
+                                    : 'justify-center px-0',
+
                                 isActive(item.route)
                                     ? 'bg-[#1B5E20] font-medium text-white'
-                                    : 'text-gray-200 hover:bg-white/10 hover:text-white'
-                            "
+                                    : 'text-gray-200 hover:bg-white/10 hover:text-white',
+                            ]"
                             @click="closeMobileMenu"
                         >
                             <component
@@ -283,7 +328,10 @@ const closeMobileMenu = () => {
                                 class="shrink-0"
                             />
 
-                            <span>
+                            <span
+                                v-if="showingSidebar"
+                                class="whitespace-nowrap"
+                            >
                                 {{ item.label }}
                             </span>
                         </Link>
@@ -291,13 +339,18 @@ const closeMobileMenu = () => {
                         <!-- Parent Menu -->
                         <div v-else>
 
+                            <!-- Parent -->
                             <div
-                                class="flex h-12 items-center gap-4 rounded-xl px-4 text-[15px]"
-                                :class="
+                                class="flex h-12 items-center rounded-xl text-[15px]"
+                                :class="[
+                                    showingSidebar
+                                        ? 'gap-4 px-4'
+                                        : 'justify-center px-0',
+
                                     isChildActive(item.children)
                                         ? 'text-white'
-                                        : 'text-gray-200'
-                                "
+                                        : 'text-gray-200',
+                                ]"
                             >
                                 <component
                                     :is="item.icon"
@@ -306,13 +359,19 @@ const closeMobileMenu = () => {
                                     class="shrink-0"
                                 />
 
-                                <span>
+                                <span
+                                    v-if="showingSidebar"
+                                    class="whitespace-nowrap"
+                                >
                                     {{ item.label }}
                                 </span>
                             </div>
 
-                            <div class="ml-8 space-y-1">
-
+                            <!-- Children -->
+                            <div
+                                v-if="showingSidebar"
+                                class="ml-8 space-y-1"
+                            >
                                 <Link
                                     v-for="child in item.children"
                                     :key="child.label"
@@ -335,8 +394,8 @@ const closeMobileMenu = () => {
                                         {{ child.label }}
                                     </span>
                                 </Link>
-
                             </div>
+
                         </div>
 
                     </template>
@@ -347,10 +406,21 @@ const closeMobileMenu = () => {
             <!-- Admin Profile Bottom -->
             <div
                 v-if="role === 'admin'"
-                class="shrink-0 border-t border-white/10 p-5"
+                class="shrink-0 border-t border-white/10 transition-all duration-300"
+                :class="
+                    showingSidebar
+                        ? 'p-5'
+                        : 'p-3'
+                "
             >
-                <div class="flex items-center gap-3">
-
+                <div
+                    class="flex items-center"
+                    :class="
+                        showingSidebar
+                            ? 'gap-3'
+                            : 'justify-center'
+                    "
+                >
                     <div
                         class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white"
                     >
@@ -360,8 +430,10 @@ const closeMobileMenu = () => {
                         />
                     </div>
 
-                    <div class="min-w-0">
-
+                    <div
+                        v-if="showingSidebar"
+                        class="min-w-0"
+                    >
                         <p class="truncate text-sm font-semibold">
                             {{ user?.name }}
                         </p>
@@ -369,38 +441,47 @@ const closeMobileMenu = () => {
                         <p class="mt-0.5 text-xs text-gray-300">
                             Super Admin
                         </p>
-
                     </div>
-
                 </div>
             </div>
 
         </aside>
 
         <!-- Main -->
-        <div class="min-h-screen lg:ml-[260px]">
+        <div
+            class="min-h-screen transition-all duration-300"
+            :class="
+                showingSidebar
+                    ? 'lg:ml-[260px]'
+                    : 'lg:ml-[80px]'
+            "
+        >
 
             <!-- Header -->
             <header
-                class="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-gray-200 bg-white px-5 shadow-sm sm:px-8"
+                class="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-gray-200 bg-white px-5 shadow-sm transition-all duration-300 sm:px-8"
             >
 
+                <!-- Left Header -->
                 <div class="flex items-center gap-4">
 
+                    <!-- Sidebar Toggle -->
                     <button
                         type="button"
-                        class="rounded-lg p-2 text-gray-700 hover:bg-gray-100 lg:hidden"
-                        @click="showingMobileMenu = true"
+                        class="rounded-lg p-2 text-gray-700 transition hover:bg-gray-100"
+                        @click="toggleSidebar"
                     >
                         <Menu :size="24" />
                     </button>
 
+                    <!-- Page Header -->
                     <div>
-                        <slot name="header" />
+                        <slot name="header"></slot>
                     </div>
 
                 </div>
 
+                <!-- Right Header -->
                 <div class="relative flex items-center gap-5">
 
                     <!-- Notification -->
@@ -466,6 +547,7 @@ const closeMobileMenu = () => {
                             class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
                         >
                             <LogOut :size="17" />
+
                             Keluar
                         </Link>
                     </div>
@@ -476,7 +558,7 @@ const closeMobileMenu = () => {
 
             <!-- Content -->
             <main class="p-5 sm:p-7 lg:p-8">
-                <slot />
+                <slot></slot>
             </main>
 
         </div>

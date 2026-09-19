@@ -1,317 +1,8 @@
-<script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import { Head, Link } from '@inertiajs/vue3'
-import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-
-import {
-    ClipboardList,
-    AlertTriangle,
-    Clock3,
-    CircleCheck,
-    UserCircle,
-    Bell,
-    ChevronDown,
-    MapPin,
-    Plus,
-    Trophy,
-    Leaf,
-    ArrowRight,
-    FileText,
-    Medal,
-    Award,
-} from 'lucide-vue-next'
-
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-
-
-const props = defineProps({
-    user: {
-        type: Object,
-        default: () => ({}),
-    },
-
-    stats: {
-        type: Object,
-        default: () => ({}),
-    },
-
-    tugas: {
-        type: Array,
-        default: () => [],
-    },
-
-    laporan_terbaru: {
-        type: Array,
-        default: () => [],
-    },
-
-    kategori: {
-        type: Array,
-        default: () => [],
-    },
-
-    aktivitas_petugas: {
-        type: Array,
-        default: () => [],
-    },
-
-    peta_laporan: {
-        type: Array,
-        default: () => [],
-    },
-
-    poin: {
-        type: Number,
-        default: 0,
-    },
-
-    badge: {
-        type: Number,
-        default: 0,
-    },
-
-    peringkat: {
-        type: [Number, String],
-        default: '-',
-    },
-
-    leaderboard: {
-        type: Array,
-        default: () => [],
-    },
-})
-
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN - PIE CHART
-|--------------------------------------------------------------------------
-*/
-
-const totalKategori = computed(() => {
-    return props.kategori.reduce(
-        (total, item) => total + Number(item.total),
-        0
-    )
-})
-
-const kategoriChart = computed(() => {
-    const colors = [
-        '#4CAF50',
-        '#3F51B5',
-        '#26C6DA',
-        '#FFB300',
-        '#673AB7',
-    ]
-
-    let current = 0
-
-    return props.kategori.map((item, index) => {
-        const total = Number(item.total)
-
-        const percentage =
-            totalKategori.value > 0
-                ? (total / totalKategori.value) * 100
-                : 0
-
-        const start = current
-        current += percentage
-
-        return {
-            name: item.category?.name ?? 'Tanpa Kategori',
-            total,
-            percentage,
-            start,
-            end: current,
-            color: colors[index % colors.length],
-        }
-    })
-})
-
-const pieStyle = computed(() => {
-    if (!kategoriChart.value.length) {
-        return {
-            background: '#E5E7EB',
-        }
-    }
-
-    const parts = kategoriChart.value.map((item) => {
-        return `${item.color} ${item.start}% ${item.end}%`
-    })
-
-    return {
-        background: `conic-gradient(${parts.join(', ')})`,
-    }
-})
-
-
-/*
-|--------------------------------------------------------------------------
-| STATUS
-|--------------------------------------------------------------------------
-*/
-
-const statusClass = (status) => {
-    return {
-        menunggu: 'bg-yellow-100 text-yellow-700',
-        diproses: 'bg-blue-100 text-blue-700',
-        selesai: 'bg-green-100 text-green-700',
-        ditolak: 'bg-red-100 text-red-700',
-    }[status] ?? 'bg-gray-100 text-gray-600'
-}
-
-
-/*
-|--------------------------------------------------------------------------
-| MASYARAKAT - MAP
-|--------------------------------------------------------------------------
-*/
-
-const mapElement = ref(null)
-const map = ref(null)
-const selectedCategory = ref('Semua Kategori')
-
-const categoryOptions = computed(() => {
-    const categories = props.peta_laporan
-        .map((report) => report.category?.name)
-        .filter(Boolean)
-
-    return ['Semua Kategori', ...new Set(categories)]
-})
-
-const filteredMapReports = computed(() => {
-    if (selectedCategory.value === 'Semua Kategori') {
-        return props.peta_laporan
-    }
-
-    return props.peta_laporan.filter(
-        (report) =>
-            report.category?.name === selectedCategory.value
-    )
-})
-
-const statusMarkerColor = (status) => {
-    return {
-        menunggu: '#F59E0B',
-        diproses: '#3B82F6',
-        selesai: '#16A34A',
-        ditolak: '#EF4444',
-    }[status] ?? '#6B7280'
-}
-
-const createMarkerIcon = (status) => {
-    const color = statusMarkerColor(status)
-
-    return L.divIcon({
-        className: '',
-        html: `
-            <div style="
-                width: 18px;
-                height: 18px;
-                background: ${color};
-                border: 3px solid white;
-                border-radius: 999px;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-            "></div>
-        `,
-        iconSize: [18, 18],
-        iconAnchor: [9, 9],
-    })
-}
-
-const loadMapMarkers = () => {
-    if (!map.value) {
-        return
-    }
-
-    map.value.eachLayer((layer) => {
-        if (layer instanceof L.Marker) {
-            map.value.removeLayer(layer)
-        }
-    })
-
-    filteredMapReports.value.forEach((report) => {
-        if (!report.latitude || !report.longitude) {
-            return
-        }
-
-        const marker = L.marker(
-            [
-                Number(report.latitude),
-                Number(report.longitude),
-            ],
-            {
-                icon: createMarkerIcon(report.status),
-            }
-        )
-
-        marker.bindPopup(`
-            <div style="min-width: 180px">
-                <strong>${report.title ?? 'Laporan'}</strong>
-                <br>
-                <span>${report.category?.name ?? 'Tanpa kategori'}</span>
-                <br>
-                <small>${report.address ?? ''}</small>
-            </div>
-        `)
-
-        marker.addTo(map.value)
-    })
-}
-
-const initializeMap = () => {
-    if (!mapElement.value || map.value) {
-        return
-    }
-
-    map.value = L.map(mapElement.value, {
-        zoomControl: false,
-    }).setView([-6.4025, 106.7942], 11)
-
-    L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        {
-            attribution: '&copy; OpenStreetMap contributors',
-        }
-    ).addTo(map.value)
-
-    L.control.zoom({
-        position: 'topright',
-    }).addTo(map.value)
-
-    loadMapMarkers()
-}
-
-onMounted(() => {
-    if (props.user?.role === 'masyarakat') {
-        initializeMap()
-    }
-})
-
-onBeforeUnmount(() => {
-    if (map.value) {
-        map.value.remove()
-        map.value = null
-    }
-})
-
-const changeCategory = () => {
-    loadMapMarkers()
-}
-</script>
-
-
 <template>
-
     <Head title="Dashboard" />
-
     <AuthenticatedLayout>
 
-
-        <!-- ========================================================= -->
         <!-- HEADER -->
-        <!-- ========================================================= -->
 
         <template #header>
 
@@ -328,9 +19,7 @@ const changeCategory = () => {
         </template>
 
 
-        <!-- ========================================================= -->
         <!-- ADMIN -->
-        <!-- ========================================================= -->
 
         <div
             v-if="user?.role === 'admin'"
@@ -700,9 +389,7 @@ const changeCategory = () => {
         </div>
 
 
-        <!-- ========================================================= -->
         <!-- PETUGAS - TETAP -->
-        <!-- ========================================================= -->
 
         <div
             v-else-if="user?.role === 'petugas'"
@@ -829,18 +516,14 @@ const changeCategory = () => {
         </div>
 
 
-        <!-- ========================================================= -->
         <!-- MASYARAKAT -->
-        <!-- ========================================================= -->
 
         <div
             v-else
             class="space-y-5"
         >
 
-            <!-- ===================================================== -->
             <!-- GREETING + BANNER -->
-            <!-- ===================================================== -->
 
             <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
 
@@ -856,35 +539,10 @@ const changeCategory = () => {
 
                 </div>
 
-
-                <div class="flex min-h-[80px] items-center gap-4 rounded-2xl bg-[#E8F5E9] px-5 py-4 lg:w-[465px]">
-
-                    <Leaf
-                        :size="48"
-                        class="shrink-0 text-green-600"
-                        stroke-width="1.5"
-                    />
-
-                    <div>
-
-                        <p class="font-semibold text-green-900">
-                            Setiap laporanmu berarti
-                        </p>
-
-                        <p class="mt-1 text-xs leading-5 text-gray-600">
-                            Bantu kami menjaga lingkungan Depok lebih baik untuk masa depan!
-                        </p>
-
-                    </div>
-
-                </div>
-
             </div>
 
 
-            <!-- ===================================================== -->
             <!-- 4 STATISTICS -->
-            <!-- ===================================================== -->
 
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
 
@@ -1026,9 +684,7 @@ const changeCategory = () => {
             </div>
 
 
-            <!-- ===================================================== -->
             <!-- MAP + LAPORAN TERBARU -->
-            <!-- ===================================================== -->
 
             <div class="grid grid-cols-1 gap-5 xl:grid-cols-[1.55fr_1fr]">
 
@@ -1213,9 +869,7 @@ const changeCategory = () => {
             </div>
 
 
-            <!-- ===================================================== -->
             <!-- BOTTOM -->
-            <!-- ===================================================== -->
 
             <div class="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_1.35fr]">
 
@@ -1318,15 +972,303 @@ const changeCategory = () => {
 
                 </div>
 
-
-               
-
                 </div>
-
             </div>
-
-  
-
     </AuthenticatedLayout>
-
 </template>
+
+<script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import { Head, Link } from '@inertiajs/vue3'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+
+import {
+    ClipboardList,
+    AlertTriangle,
+    Clock3,
+    CircleCheck,
+    UserCircle,
+    Bell,
+    ChevronDown,
+    MapPin,
+    Plus,
+    Trophy,
+    Leaf,
+    ArrowRight,
+    FileText,
+    Medal,
+    Award,
+} from 'lucide-vue-next'
+
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
+
+
+const props = defineProps({
+    user: {
+        type: Object,
+        default: () => ({}),
+    },
+
+    stats: {
+        type: Object,
+        default: () => ({}),
+    },
+
+    tugas: {
+        type: Array,
+        default: () => [],
+    },
+
+    laporan_terbaru: {
+        type: Array,
+        default: () => [],
+    },
+
+    kategori: {
+        type: Array,
+        default: () => [],
+    },
+
+    aktivitas_petugas: {
+        type: Array,
+        default: () => [],
+    },
+
+    peta_laporan: {
+        type: Array,
+        default: () => [],
+    },
+
+    poin: {
+        type: Number,
+        default: 0,
+    },
+
+    badge: {
+        type: Number,
+        default: 0,
+    },
+
+    peringkat: {
+        type: [Number, String],
+        default: '-',
+    },
+
+    leaderboard: {
+        type: Array,
+        default: () => [],
+    },
+})
+
+
+/* ADMIN - PIE CHART */
+
+const totalKategori = computed(() => {
+    return props.kategori.reduce(
+        (total, item) => total + Number(item.total),
+        0
+    )
+})
+
+const kategoriChart = computed(() => {
+    const colors = [
+        '#4CAF50',
+        '#3F51B5',
+        '#26C6DA',
+        '#FFB300',
+        '#673AB7',
+    ]
+
+    let current = 0
+
+    return props.kategori.map((item, index) => {
+        const total = Number(item.total)
+
+        const percentage =
+            totalKategori.value > 0
+                ? (total / totalKategori.value) * 100
+                : 0
+
+        const start = current
+        current += percentage
+
+        return {
+            name: item.category?.name ?? 'Tanpa Kategori',
+            total,
+            percentage,
+            start,
+            end: current,
+            color: colors[index % colors.length],
+        }
+    })
+})
+
+const pieStyle = computed(() => {
+    if (!kategoriChart.value.length) {
+        return {
+            background: '#E5E7EB',
+        }
+    }
+
+    const parts = kategoriChart.value.map((item) => {
+        return `${item.color} ${item.start}% ${item.end}%`
+    })
+
+    return {
+        background: `conic-gradient(${parts.join(', ')})`,
+    }
+})
+
+
+/* STATUS */
+
+const statusClass = (status) => {
+    return {
+        menunggu: 'bg-yellow-100 text-yellow-700',
+        diproses: 'bg-blue-100 text-blue-700',
+        selesai: 'bg-green-100 text-green-700',
+        ditolak: 'bg-red-100 text-red-700',
+    }[status] ?? 'bg-gray-100 text-gray-600'
+}
+
+
+/* MASYARAKAT - MAP */
+
+const mapElement = ref(null)
+const map = ref(null)
+const selectedCategory = ref('Semua Kategori')
+
+const categoryOptions = computed(() => {
+    const categories = props.peta_laporan
+        .map((report) => report.category?.name)
+        .filter(Boolean)
+
+    return ['Semua Kategori', ...new Set(categories)]
+})
+
+const filteredMapReports = computed(() => {
+    if (selectedCategory.value === 'Semua Kategori') {
+        return props.peta_laporan
+    }
+
+    return props.peta_laporan.filter(
+        (report) =>
+            report.category?.name === selectedCategory.value
+    )
+})
+
+const statusMarkerColor = (status) => {
+    return {
+        menunggu: '#F59E0B',
+        diproses: '#3B82F6',
+        selesai: '#16A34A',
+        ditolak: '#EF4444',
+    }[status] ?? '#6B7280'
+}
+
+const createMarkerIcon = (status) => {
+    const color = statusMarkerColor(status)
+
+    return L.divIcon({
+        className: '',
+        html: `
+            <div style="
+                width: 18px;
+                height: 18px;
+                background: ${color};
+                border: 3px solid white;
+                border-radius: 999px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            "></div>
+        `,
+        iconSize: [18, 18],
+        iconAnchor: [9, 9],
+    })
+}
+
+const loadMapMarkers = () => {
+    if (!map.value) {
+        return
+    }
+
+    map.value.eachLayer((layer) => {
+        if (layer instanceof L.Marker) {
+            map.value.removeLayer(layer)
+        }
+    })
+
+    filteredMapReports.value.forEach((report) => {
+        if (!report.latitude || !report.longitude) {
+            return
+        }
+
+        const marker = L.marker(
+            [
+                Number(report.latitude),
+                Number(report.longitude),
+            ],
+            {
+                icon: createMarkerIcon(report.status),
+            }
+        )
+
+        marker.bindPopup(`
+            <div style="min-width: 180px">
+                <strong>${report.title ?? 'Laporan'}</strong>
+                <br>
+                <span>${report.category?.name ?? 'Tanpa kategori'}</span>
+                <br>
+                <small>${report.address ?? ''}</small>
+            </div>
+        `)
+
+        marker.addTo(map.value)
+    })
+}
+
+const initializeMap = () => {
+    if (!mapElement.value || map.value) {
+        return
+    }
+
+    map.value = L.map(mapElement.value, {
+        zoomControl: false,
+    }).setView([-6.4025, 106.7942], 11)
+
+    L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        {
+            attribution: '&copy; OpenStreetMap contributors',
+        }
+    ).addTo(map.value)
+
+    L.control.zoom({
+        position: 'topright',
+    }).addTo(map.value)
+
+    loadMapMarkers()
+}
+
+onMounted(() => {
+    if (props.user?.role === 'masyarakat') {
+        if (!sessionStorage.getItem('urbaneye_greeting_shown')) {
+            showGreeting.value = true
+            sessionStorage.setItem('urbaneye_greeting_shown', 'true')
+        }
+
+        initializeMap()
+    }
+})
+
+onBeforeUnmount(() => {
+    if (map.value) {
+        map.value.remove()
+        map.value = null
+    }
+})
+
+const changeCategory = () => {
+    loadMapMarkers()
+}
+</script>
