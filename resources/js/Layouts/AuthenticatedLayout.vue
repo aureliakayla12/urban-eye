@@ -22,6 +22,7 @@ import {
     UserCircle,
     Menu,
     X,
+    Tag,
 } from 'lucide-vue-next'
 
 const page = usePage()
@@ -45,6 +46,11 @@ const menuItems = computed(() => {
                 label: 'Kelola Laporan',
                 route: 'admin.reports.index',
                 icon: ClipboardList,
+            },
+            {
+                label: 'Kategori Laporan',
+                route: 'admin.master.categories.index',
+                icon: Tag,
             },
             {
                 label: 'Kelola Pengguna',

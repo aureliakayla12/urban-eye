@@ -14,4 +14,9 @@ class Category extends Model
         'description',
         'icon',
     ];
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class);
+    }
 }
