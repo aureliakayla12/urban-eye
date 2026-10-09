@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\BadgeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ExportController;
 use App\Http\Controllers\Admin\MapController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\Admin\MasyarakatController;
 use App\Http\Controllers\Admin\PetugasController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\RewardController;
+use App\Http\Controllers\Admin\RewardRedemptionController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\StatusController;
@@ -59,15 +61,18 @@ require __DIR__.'/auth.php';
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
         ->name('dashboard');
+
     Route::get('/profile', [ProfileController::class, 'edit'])
         ->name('profile.edit');
+
     Route::patch('/profile', [ProfileController::class, 'update'])
         ->name('profile.update');
+
     Route::delete('/profile', [ProfileController::class, 'destroy'])
         ->name('profile.destroy');
 
 
-   /* ADMIN */
+    /* ADMIN */
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
 
@@ -108,6 +113,21 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('gamification')->group(function () {
             Route::get('/points', [RewardController::class, 'points'])->name('admin.gamification.points');
             Route::get('/leaderboard', [RewardController::class, 'leaderboard'])->name('admin.gamification.leaderboard');
+
+            // Penukaran Reward
+            Route::get('/redemptions', [RewardRedemptionController::class, 'index'])->name('admin.gamification.redemptions');
+            Route::put('/redemptions/{id}/approve', [RewardRedemptionController::class, 'approve'])->name('admin.gamification.redemptions.approve');
+            Route::put('/redemptions/{id}/reject', [RewardRedemptionController::class, 'reject'])->name('admin.gamification.redemptions.reject');
+            Route::put('/redemptions/{id}/taken', [RewardRedemptionController::class, 'taken'])->name('admin.gamification.redemptions.taken');
+
+            // Badge
+            Route::get('/badges', [BadgeController::class, 'index'])->name('admin.gamification.badges');
+            Route::get('/badges/create', [BadgeController::class, 'create'])->name('admin.gamification.badges.create');
+            Route::post('/badges', [BadgeController::class, 'store'])->name('admin.gamification.badges.store');
+            Route::get('/badges/{id}/edit', [BadgeController::class, 'edit'])->name('admin.gamification.badges.edit');
+            Route::put('/badges/{id}', [BadgeController::class, 'update'])->name('admin.gamification.badges.update');
+            Route::delete('/badges/{id}', [BadgeController::class, 'destroy'])->name('admin.gamification.badges.destroy');
+
             Route::get('/rewards', [RewardController::class, 'index'])->name('admin.gamification.rewards');
             Route::get('/rewards/create', [RewardController::class, 'create'])->name('admin.gamification.rewards.create');
             Route::post('/rewards', [RewardController::class, 'store'])->name('admin.gamification.rewards.store');

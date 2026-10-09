@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
+
 import {
     LayoutDashboard,
     ClipboardList,
@@ -9,6 +10,7 @@ import {
     ChartNoAxesCombined,
     Map,
     Trophy,
+    Award,
     Settings,
     FileText,
     History,
@@ -21,12 +23,15 @@ import {
     Menu,
     X,
     Tag,
+    ChevronDown,
+    ChevronRight,
 } from 'lucide-vue-next'
 
 const page = usePage()
 
 const showingUserMenu = ref(false)
 const showingMobileMenu = ref(false)
+const openSubmenus = ref({})
 
 const user = computed(() => page.props.auth?.user)
 const role = computed(() => page.props.auth?.role)
@@ -39,16 +44,19 @@ const menuItems = computed(() => {
                 route: 'dashboard',
                 icon: LayoutDashboard,
             },
+
             {
                 label: 'Kelola Laporan',
                 route: 'admin.reports.index',
                 icon: ClipboardList,
             },
+
             {
                 label: 'Kategori Laporan',
                 route: 'admin.master.categories.index',
                 icon: Tag,
             },
+
             {
                 label: 'Kelola Pengguna',
                 icon: Users,
@@ -65,26 +73,53 @@ const menuItems = computed(() => {
                     },
                 ],
             },
+
             {
                 label: 'Statistik & Grafik',
                 route: 'admin.statistics.index',
                 icon: ChartNoAxesCombined,
             },
+
             {
                 label: 'Peta Monitoring',
                 route: 'admin.map.index',
                 icon: Map,
             },
+
+            // Reward & Leaderboard
             {
                 label: 'Reward & Leaderboard',
-                route: 'admin.gamification.rewards',
                 icon: Trophy,
+                children: [
+                    {
+                        label: 'Reward',
+                        route: 'admin.gamification.rewards',
+                        icon: Gift,
+                    },
+                    {
+                        label: 'Penukaran Reward',
+                        route: 'admin.gamification.redemptions',
+                        icon: Gift,
+                    },
+                    {
+                        label: 'Badge',
+                        route: 'admin.gamification.badges',
+                        icon: Award,
+                    },
+                    {
+                        label: 'Leaderboard',
+                        route: 'admin.gamification.leaderboard',
+                        icon: Trophy,
+                    },
+                ],
             },
+
             {
                 label: 'Pengaturan Sistem',
                 route: 'admin.settings.index',
                 icon: Settings,
             },
+
             {
                 label: 'Laporan & Export',
                 route: 'admin.export.index',
@@ -100,31 +135,37 @@ const menuItems = computed(() => {
                 route: 'dashboard',
                 icon: LayoutDashboard,
             },
+
             {
                 label: 'Tugas Saya',
                 route: 'petugas.tasks.index',
                 icon: ClipboardList,
             },
+
             {
                 label: 'Peta Laporan',
                 route: 'petugas.map.index',
                 icon: Map,
             },
+
             {
                 label: 'Riwayat Penanganan',
                 route: 'petugas.history.index',
                 icon: History,
             },
+
             {
                 label: 'Statistik',
                 route: 'petugas.statistics.index',
                 icon: ChartNoAxesCombined,
             },
+
             {
                 label: 'Pengaturan',
                 route: 'petugas.settings.index',
                 icon: Settings,
             },
+
             {
                 label: 'Bantuan',
                 route: 'petugas.help.index',
@@ -139,31 +180,37 @@ const menuItems = computed(() => {
             route: 'dashboard',
             icon: LayoutDashboard,
         },
+
         {
             label: 'Buat Laporan',
             route: 'masyarakat.reports.create',
             icon: PlusCircle,
         },
+
         {
             label: 'Riwayat Laporan',
             route: 'masyarakat.reports.index',
             icon: History,
         },
+
         {
             label: 'Leaderboard',
             route: 'masyarakat.leaderboard.index',
             icon: Trophy,
         },
+
         {
             label: 'Reward Saya',
             route: 'masyarakat.rewards.index',
             icon: Gift,
         },
+
         {
             label: 'Pengaturan',
             route: 'profile.edit',
             icon: Settings,
         },
+
         {
             label: 'Bantuan',
             route: 'masyarakat.help.index',
@@ -182,6 +229,14 @@ const isActive = (routeName) => {
 
 const isChildActive = (children) => {
     return children?.some((child) => isActive(child.route))
+}
+
+const isSubmenuOpen = (item) => {
+    return openSubmenus.value[item.label] ?? isChildActive(item.children)
+}
+
+const toggleSubmenu = (item) => {
+    openSubmenus.value[item.label] = !isSubmenuOpen(item)
 }
 
 const closeMobileMenu = () => {
@@ -210,7 +265,9 @@ const closeMobileMenu = () => {
         >
 
             <!-- Logo -->
-            <div class="flex h-20 shrink-0 items-center border-b border-white/10 px-7">
+            <div
+                class="flex h-20 shrink-0 items-center border-b border-white/10 px-7"
+            >
                 <Link
                     :href="route('dashboard')"
                     class="flex items-center"
@@ -238,7 +295,6 @@ const closeMobileMenu = () => {
                 class="shrink-0 px-5 py-6"
             >
                 <div class="flex items-center gap-3">
-
                     <div
                         class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white"
                     >
@@ -257,7 +313,6 @@ const closeMobileMenu = () => {
                             {{ role }}
                         </p>
                     </div>
-
                 </div>
             </div>
 
@@ -293,17 +348,20 @@ const closeMobileMenu = () => {
                                 {{ item.label }}
                             </span>
                         </Link>
-
+                                                
                         <!-- Parent Menu -->
                         <div v-else>
-
-                            <div
-                                class="flex h-12 items-center gap-4 rounded-xl px-4 text-[15px]"
+                            <!-- Tombol Parent -->
+                            <button
+                                type="button"
+                                class="flex h-12 w-full items-center gap-4 rounded-xl px-4 text-left text-[15px] transition hover:bg-white/10 hover:text-white"
                                 :class="
                                     isChildActive(item.children)
                                         ? 'text-white'
                                         : 'text-gray-200'
                                 "
+                                :aria-expanded="isSubmenuOpen(item)"
+                                @click="toggleSubmenu(item)"
                             >
                                 <component
                                     :is="item.icon"
@@ -312,13 +370,22 @@ const closeMobileMenu = () => {
                                     class="shrink-0"
                                 />
 
-                                <span>
+                                <span class="flex-1">
                                     {{ item.label }}
                                 </span>
-                            </div>
 
-                            <div class="ml-8 space-y-1">
+                                <component
+                                    :is="isSubmenuOpen(item) ? ChevronDown : ChevronRight"
+                                    :size="18"
+                                    class="shrink-0 transition-transform duration-200"
+                                />
+                            </button>
 
+                            <!-- Children -->
+                            <div
+                                v-if="isSubmenuOpen(item)"
+                                class="ml-8 mt-1 space-y-1"
+                            >
                                 <Link
                                     v-for="child in item.children"
                                     :key="child.label"
@@ -326,7 +393,7 @@ const closeMobileMenu = () => {
                                     class="flex h-10 items-center gap-3 rounded-lg px-3 text-sm transition"
                                     :class="
                                         isActive(child.route)
-                                            ? 'bg-white/10 text-white'
+                                            ? 'bg-[#1B5E20] text-white'
                                             : 'text-gray-400 hover:bg-white/10 hover:text-white'
                                     "
                                     @click="closeMobileMenu"
@@ -341,7 +408,6 @@ const closeMobileMenu = () => {
                                         {{ child.label }}
                                     </span>
                                 </Link>
-
                             </div>
                         </div>
 
@@ -356,7 +422,6 @@ const closeMobileMenu = () => {
                 class="shrink-0 border-t border-white/10 p-5"
             >
                 <div class="flex items-center gap-3">
-
                     <div
                         class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white"
                     >
@@ -367,7 +432,6 @@ const closeMobileMenu = () => {
                     </div>
 
                     <div class="min-w-0">
-
                         <p class="truncate text-sm font-semibold">
                             {{ user?.name }}
                         </p>
@@ -375,12 +439,9 @@ const closeMobileMenu = () => {
                         <p class="mt-0.5 text-xs text-gray-300">
                             Super Admin
                         </p>
-
                     </div>
-
                 </div>
             </div>
-
         </aside>
 
         <!-- Main -->
@@ -390,7 +451,6 @@ const closeMobileMenu = () => {
             <header
                 class="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-gray-200 bg-white px-5 shadow-sm sm:px-8"
             >
-
                 <div class="flex items-center gap-4">
 
                     <button
@@ -477,7 +537,6 @@ const closeMobileMenu = () => {
                     </div>
 
                 </div>
-
             </header>
 
             <!-- Content -->
@@ -486,6 +545,5 @@ const closeMobileMenu = () => {
             </main>
 
         </div>
-
     </div>
 </template>

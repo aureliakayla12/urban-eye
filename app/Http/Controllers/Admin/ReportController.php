@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Report;
 use App\Models\Category;
 use App\Models\User;
+use App\Models\UserPoint;
+use App\Models\Badge;
+use App\Models\UserBadge;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -139,6 +142,7 @@ class ReportController extends Controller
             }
 
             $assignment = $report->assignments()->latest()->first();
+
             if ($assignment) {
                 $assignment->update([
                     'officer_id' => $officer->id,
@@ -193,6 +197,9 @@ class ReportController extends Controller
             ],
         ]);
 
+        // Simpan status verifikasi sebelum diubah
+        $previousVerificationStatus = $report->verification_status;
+
         $report->update([
             'title' => $validated['title'],
             'description' => $validated['description'],
@@ -202,9 +209,88 @@ class ReportController extends Controller
             'verification_status' => $validated['verification_status'],
         ]);
 
+        // Jika laporan baru berubah menjadi valid
+        if (
+            $validated['verification_status'] === 'valid'
+            && $previousVerificationStatus !== 'valid'
+        ) {
+            // Berikan 10 poin hanya satu kali untuk laporan tersebut
+            $alreadyReceivedPoints = UserPoint::where('report_id', $report->id)
+                ->where('type', 'tambah')
+                ->exists();
+
+            if (!$alreadyReceivedPoints) {
+                UserPoint::create([
+                    'user_id' => $report->user_id,
+                    'report_id' => $report->id,
+                    'points' => 10,
+                    'type' => 'tambah',
+                    'description' => 'Poin dari laporan yang telah diverifikasi valid.',
+                ]);
+            }
+
+            // Cek dan berikan badge yang sudah memenuhi syarat
+            $this->checkAndAwardBadges($report->user_id);
+        }
+
         return redirect()
             ->route('admin.reports.show', $report->id)
             ->with('success', 'Laporan berhasil diperbarui.');
+    }
+
+    /**
+     * Mengecek seluruh badge dan memberikan badge
+     * yang syaratnya sudah terpenuhi oleh user.
+     */
+    private function checkAndAwardBadges($userId)
+    {
+        // Hitung jumlah laporan valid milik user
+        $validReportsCount = Report::where('user_id', $userId)
+            ->where('verification_status', 'valid')
+            ->count();
+
+        // Hitung total poin berdasarkan ledger user_points
+        $totalPoints = UserPoint::where('user_id', $userId)
+            ->selectRaw("
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN type = 'tambah' THEN points
+                            WHEN type = 'kurang' THEN -points
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) as total
+            ")
+            ->value('total');
+
+        // Ambil semua badge yang tersedia
+        $badges = Badge::all();
+
+        foreach ($badges as $badge) {
+            $reportsRequirementMet =
+                $badge->required_reports <= 0
+                || $validReportsCount >= $badge->required_reports;
+
+            $pointsRequirementMet =
+                $badge->required_points <= 0
+                || $totalPoints >= $badge->required_points;
+
+            // Jika semua syarat terpenuhi
+            if ($reportsRequirementMet && $pointsRequirementMet) {
+                // Jangan berikan badge yang sama dua kali
+                UserBadge::firstOrCreate(
+                    [
+                        'user_id' => $userId,
+                        'badge_id' => $badge->id,
+                    ],
+                    [
+                        'earned_at' => now(),
+                    ]
+                );
+            }
+        }
     }
 
     public function destroy($id)
