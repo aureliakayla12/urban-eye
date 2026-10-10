@@ -23,6 +23,9 @@ import {
     Menu,
     X,
     Tag,
+    Award,
+    ChevronDown,
+    ChevronRight,
 } from 'lucide-vue-next'
 
 const page = usePage()
@@ -30,6 +33,7 @@ const page = usePage()
 const showingUserMenu = ref(false)
 const showingMobileMenu = ref(false)
 const showingSidebar = ref(true)
+const openSubmenus = ref({})
 
 const user = computed(() => page.props.auth?.user)
 const role = computed(() => page.props.auth?.role)
@@ -80,8 +84,29 @@ const menuItems = computed(() => {
             },
             {
                 label: 'Reward & Leaderboard',
-                route: 'admin.gamification.rewards',
                 icon: Trophy,
+                children: [
+                    {
+                        label: 'Reward',
+                        route: 'admin.gamification.rewards',
+                        icon: Gift,
+                    },
+                    {
+                        label: 'Penukaran Reward',
+                        route: 'admin.gamification.redemptions',
+                        icon: Gift,
+                    },
+                    {
+                        label: 'Badge',
+                        route: 'admin.gamification.badges',
+                        icon: Award,
+                    },
+                    {
+                        label: 'Leaderboard',
+                        route: 'admin.gamification.leaderboard',
+                        icon: Trophy,
+                    },
+                ],
             },
             {
                 label: 'Pengaturan Sistem',
@@ -185,6 +210,14 @@ const isActive = (routeName) => {
 
 const isChildActive = (children) => {
     return children?.some((child) => isActive(child.route))
+}
+
+const isSubmenuOpen = (item) => {
+    return openSubmenus.value[item.label] ?? isChildActive(item.children)
+}
+
+const toggleSubmenu = (item) => {
+    openSubmenus.value[item.label] = !isSubmenuOpen(item)
 }
 
 const closeMobileMenu = () => {
@@ -344,19 +377,19 @@ const toggleMobileMenu = () => {
 
                         <!-- Parent Menu -->
                         <div v-else>
-
-                            <!-- Parent -->
-                            <div
-                                class="flex h-12 items-center rounded-xl text-[15px]"
+                            <button
+                                type="button"
+                                class="flex h-12 w-full items-center rounded-xl text-left text-[15px] transition hover:bg-white/10"
                                 :class="[
                                     showingSidebar
                                         ? 'gap-4 px-4'
                                         : 'justify-center px-0',
-
                                     isChildActive(item.children)
                                         ? 'text-white'
                                         : 'text-gray-200',
                                 ]"
+                                :aria-expanded="isSubmenuOpen(item)"
+                                @click="toggleSubmenu(item)"
                             >
                                 <component
                                     :is="item.icon"
@@ -367,16 +400,23 @@ const toggleMobileMenu = () => {
 
                                 <span
                                     v-if="showingSidebar"
-                                    class="whitespace-nowrap"
+                                    class="flex-1 whitespace-nowrap"
                                 >
                                     {{ item.label }}
                                 </span>
-                            </div>
+
+                                <component
+                                    v-if="showingSidebar"
+                                    :is="isSubmenuOpen(item) ? ChevronDown : ChevronRight"
+                                    :size="18"
+                                    class="shrink-0"
+                                />
+                            </button>
 
                             <!-- Children -->
                             <div
-                                v-if="showingSidebar"
-                                class="ml-8 space-y-1"
+                                v-if="showingSidebar && isSubmenuOpen(item)"
+                                class="ml-8 mt-1 space-y-1"
                             >
                                 <Link
                                     v-for="child in item.children"
@@ -385,7 +425,7 @@ const toggleMobileMenu = () => {
                                     class="flex h-10 items-center gap-3 rounded-lg px-3 text-sm transition"
                                     :class="
                                         isActive(child.route)
-                                            ? 'bg-white/10 text-white'
+                                            ? 'bg-[#1B5E20] text-white'
                                             : 'text-gray-400 hover:bg-white/10 hover:text-white'
                                     "
                                     @click="closeMobileMenu"
@@ -396,9 +436,7 @@ const toggleMobileMenu = () => {
                                         stroke-width="1.8"
                                     />
 
-                                    <span>
-                                        {{ child.label }}
-                                    </span>
+                                    <span>{{ child.label }}</span>
                                 </Link>
                             </div>
 
