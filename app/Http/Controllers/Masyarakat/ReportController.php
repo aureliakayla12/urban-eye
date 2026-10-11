@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Masyarakat;
 
 use App\Ai\Agents\ReportClassifier;
+use App\Ai\Agents\ReportUrgencyAnalyzer;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Report;
@@ -238,6 +239,27 @@ class ReportController extends Controller
             'ai_response' => $response['reason'],
             'classified_at' => now(),
         ]);
+
+            /* ANALISIS URGENSI LAPORAN */
+
+            $urgencyResponse = (new ReportUrgencyAnalyzer)->prompt(
+                "Assess the urgency of this UrbanEye report.
+
+            Title: {$report->title}
+            Description: {$report->description}
+            Category: {$report->category?->name}
+            Address: {$report->address}
+            Latitude: {$report->latitude}
+            Longitude: {$report->longitude}",
+                attachments: [$image],
+                provider: Lab::Gemini,
+            );
+
+            $report->update([
+                'urgency_level' => $urgencyResponse['urgency_level'],
+                'urgency_reason' => $urgencyResponse['reason'],
+                'urgency_analyzed_at' => now(),
+            ]);
 
         /* STATUS HISTORY */
 

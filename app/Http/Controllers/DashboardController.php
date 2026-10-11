@@ -31,17 +31,19 @@ class DashboardController extends Controller
 
         if ($role === 'admin') {
             $data['stats'] = [
-                'total' => Report::count(),
+            'total' => Report::count(),
+            'mendesak' => Report::whereIn('urgency_level', [
+                'sangat_mendesak',
+                'mendesak',
+            ])->count(),
 
-                // Belum ada kolom priority di reports
-                'mendesak' => 0,
+            'diproses' => Report::where('status', 'diproses')
+                ->count(),
 
-                'diproses' => Report::where('status', 'diproses')
-                    ->count(),
-
-                'selesai' => Report::where('status', 'selesai')
-                    ->count(),
+            'selesai' => Report::where('status', 'selesai')
+                ->count(),
             ];
+
 
             $data['laporan_terbaru'] = Report::with('category')
                 ->latest()

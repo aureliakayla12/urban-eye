@@ -370,6 +370,69 @@ const formatTime = (date) => {
                                 </p>
                             </div>
 
+                            <!-- Analisis Urgensi AI -->
+                            <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                    Analisis Urgensi AI
+                                </p>
+
+                                <div class="mt-3">
+                                    <p class="text-xs font-medium text-gray-500">
+                                        Tingkat Urgensi
+                                    </p>
+
+                                    <span
+                                        v-if="report.urgency_level"
+                                        class="mt-2 inline-flex rounded-full px-3 py-1.5 text-xs font-semibold"
+                                        :class="{
+                                            'bg-red-100 text-red-700': report.urgency_level === 'sangat_mendesak',
+                                            'bg-orange-100 text-orange-700': report.urgency_level === 'mendesak',
+                                            'bg-yellow-100 text-yellow-700': report.urgency_level === 'sedang',
+                                            'bg-green-100 text-green-700': report.urgency_level === 'rendah',
+                                        }"
+                                    >
+                                        {{
+                                            {
+                                                sangat_mendesak: 'Sangat Mendesak',
+                                                mendesak: 'Mendesak',
+                                                sedang: 'Sedang',
+                                                rendah: 'Rendah',
+                                            }[report.urgency_level] || report.urgency_level
+                                        }}
+                                    </span>
+
+                                    <p
+                                        v-else
+                                        class="mt-2 text-sm text-gray-500"
+                                    >
+                                        Belum dianalisis oleh AI.
+                                    </p>
+                                </div>
+
+                                <div
+                                    v-if="report.urgency_reason"
+                                    class="mt-4 border-t border-amber-200 pt-3"
+                                >
+                                    <p class="text-xs font-medium text-gray-500">
+                                        Alasan Analisis
+                                    </p>
+
+                                    <p class="mt-2 text-sm leading-6 text-gray-700">
+                                        {{ report.urgency_reason }}
+                                    </p>
+                                </div>
+
+                                <p
+                                    v-if="report.urgency_analyzed_at"
+                                    class="mt-3 text-xs text-gray-500"
+                                >
+                                    Dianalisis pada:
+                                    {{ formatDate(report.urgency_analyzed_at) }}
+                                    ·
+                                    {{ formatTime(report.urgency_analyzed_at) }}
+                                </p>
+                            </div>
+
                             <!-- Pelapor -->
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
