@@ -24,6 +24,9 @@ class Report extends Model
         'ai_confidence',
         'ai_response',
         'classified_at',
+        'urgency_level',
+        'urgency_reason',
+        'urgency_analyzed_at',
         'verification_status',
         'status',
     ];
@@ -33,6 +36,7 @@ class Report extends Model
         'longitude' => 'float',
         'ai_confidence' => 'float',
         'classified_at' => 'datetime',
+        'urgency_analyzed_at' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
