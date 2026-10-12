@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, Link, useForm } from '@inertiajs/vue3'
 import { ArrowLeft, Gift } from 'lucide-vue-next'
+import { ref, onBeforeUnmount } from 'vue'
 
 const props = defineProps({
     reward: {
@@ -16,12 +17,44 @@ const form = useForm({
     description: props.reward.description ?? '',
     point_cost: props.reward.point_cost ?? '',
     stock: props.reward.stock ?? 0,
-    image: props.reward.image ?? '',
+    image: null,
     status: Boolean(props.reward.status),
 })
 
+const imagePreview = ref(null)
+
+const currentImageUrl = props.reward.image
+    ? `/storage/${props.reward.image}`
+    : null
+
+const handleImageChange = (event) => {
+    const file = event.target.files[0]
+
+    form.image = file ?? null
+
+    if (imagePreview.value) {
+        URL.revokeObjectURL(imagePreview.value)
+        imagePreview.value = null
+    }
+
+    if (file) {
+        imagePreview.value = URL.createObjectURL(file)
+    }
+}
+
+onBeforeUnmount(() => {
+    if (imagePreview.value) {
+        URL.revokeObjectURL(imagePreview.value)
+    }
+})
+
 const submit = () => {
-    form.put(route('admin.gamification.rewards.update', props.reward.id))
+    form
+        .transform((data) => ({
+            ...data,
+            _method: 'put',
+        }))
+        .post(route('admin.gamification.rewards.update', props.reward.id))
 }
 </script>
 
@@ -118,20 +151,20 @@ const submit = () => {
                                     Pilih jenis reward
                                 </option>
 
-                                <option value="voucher">
-                                    Voucher
-                                </option>
-
                                 <option value="pulsa">
-                                    Pulsa
+                                    Voucher Pulsa
                                 </option>
 
                                 <option value="bibit">
                                     Bibit Tanaman
                                 </option>
 
-                                <option value="lainnya">
-                                    Lainnya
+                                <option value="tumbler">
+                                    Tumbler UrbanEye
+                                </option>
+
+                                <option value="totebag">
+                                    Totebag UrbanEye
                                 </option>
                             </select>
 
@@ -223,25 +256,40 @@ const submit = () => {
 
                         </div>
 
-                        <!-- Gambar -->
+                        <!-- Upload Gambar -->
                         <div>
                             <label
                                 for="image"
                                 class="mb-2 block text-sm font-medium text-gray-700"
                             >
                                 Gambar Reward
-                                <span class="font-normal text-gray-400">
-                                    (opsional)
-                                </span>
+                                <span class="font-normal text-gray-400">(opsional)</span>
                             </label>
+
+                            <div v-if="imagePreview || currentImageUrl" class="mb-4">
+                                <p class="mb-2 text-sm font-medium text-gray-700">
+                                    {{ imagePreview ? 'Preview Gambar Baru' : 'Gambar Saat Ini' }}
+                                </p>
+
+                                <img
+                                    :src="imagePreview || currentImageUrl"
+                                    alt="Gambar reward"
+                                    class="h-40 w-40 rounded-lg border border-gray-200 object-cover"
+                                />
+                            </div>
 
                             <input
                                 id="image"
-                                v-model="form.image"
-                                type="text"
-                                placeholder="Nama/path gambar jika diperlukan"
-                                class="w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-green-500 focus:ring-green-500"
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                @change="handleImageChange"
+                                class="w-full rounded-lg border border-gray-300 text-sm shadow-sm file:mr-4 file:rounded-l-lg file:border-0 file:bg-green-50 file:px-4 file:py-2.5 file:font-medium file:text-green-700 hover:file:bg-green-100"
                             />
+
+                            <p class="mt-1 text-xs text-gray-500">
+                                Pilih gambar baru jika ingin mengganti gambar saat ini.
+                                JPG, PNG, atau WEBP, maksimal 2 MB.
+                            </p>
 
                             <p
                                 v-if="form.errors.image"

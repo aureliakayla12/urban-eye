@@ -26,10 +26,10 @@ const deleteReward = (id) => {
 
 const rewardTypeLabel = (type) => {
     const types = {
-        voucher: 'Voucher',
-        pulsa: 'Pulsa',
-        bibit: 'Bibit',
-        lainnya: 'Lainnya',
+        pulsa: 'Voucher Pulsa',
+        bibit: 'Bibit Tanaman',
+        tumbler: 'Tumbler UrbanEye',
+        totebag: 'Totebag UrbanEye',
     }
 
     return types[type] ?? type
@@ -143,10 +143,18 @@ const rewardTypeLabel = (type) => {
 
                                     <td class="px-5 py-4">
                                         <div class="flex items-center gap-3">
+                                            <img
+                                                v-if="reward.image"
+                                                :src="`/storage/${reward.image}`"
+                                                :alt="reward.name"
+                                                class="h-12 w-12 shrink-0 rounded-lg border border-gray-200 object-cover"
+                                            />
+
                                             <div
-                                                class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-600"
+                                                v-else
+                                                class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-600"
                                             >
-                                                <Gift class="h-4 w-4" />
+                                                <Gift class="h-5 w-5" />
                                             </div>
 
                                             <div>
