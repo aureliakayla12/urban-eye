@@ -9,6 +9,7 @@ use App\Models\UserPoint;
 use App\Models\RewardRedemption;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class RewardController extends Controller
@@ -31,13 +32,20 @@ class RewardController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'reward_type' => ['required', 'in:voucher,pulsa,bibit,lainnya'],
+            'reward_type' => ['required', 'in:pulsa,bibit,tumbler,totebag'],
             'description' => ['nullable', 'string'],
             'point_cost' => ['required', 'integer', 'min:1'],
             'stock' => ['required', 'integer', 'min:0'],
-            'image' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'status' => ['required', 'boolean'],
         ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')
+                ->store('rewards', 'public');
+        } else {
+            $validated['image'] = null;
+        }
 
         Reward::create($validated);
 
@@ -61,13 +69,24 @@ class RewardController extends Controller
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'reward_type' => ['required', 'in:voucher,pulsa,bibit,lainnya'],
+            'reward_type' => ['required', 'in:pulsa,bibit,tumbler,totebag'],
             'description' => ['nullable', 'string'],
             'point_cost' => ['required', 'integer', 'min:1'],
             'stock' => ['required', 'integer', 'min:0'],
-            'image' => ['nullable', 'string', 'max:255'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'status' => ['required', 'boolean'],
         ]);
+
+        unset($validated['image']);
+
+        if ($request->hasFile('image')) {
+            if ($reward->image) {
+                Storage::disk('public')->delete($reward->image);
+            }
+
+            $validated['image'] = $request->file('image')
+                ->store('rewards', 'public');
+        }
 
         $reward->update($validated);
 

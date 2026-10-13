@@ -2,6 +2,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, Link, useForm } from '@inertiajs/vue3'
 import { ArrowLeft, Gift } from 'lucide-vue-next'
+import { ref, onBeforeUnmount } from 'vue'
 
 const form = useForm({
     name: '',
@@ -9,8 +10,31 @@ const form = useForm({
     description: '',
     point_cost: '',
     stock: 0,
-    image: '',
+    image: null,
     status: true,
+})
+
+const imagePreview = ref(null)
+
+const handleImageChange = (event) => {
+    const file = event.target.files[0]
+
+    form.image = file ?? null
+
+    if (imagePreview.value) {
+        URL.revokeObjectURL(imagePreview.value)
+        imagePreview.value = null
+    }
+
+    if (file) {
+        imagePreview.value = URL.createObjectURL(file)
+    }
+}
+
+onBeforeUnmount(() => {
+    if (imagePreview.value) {
+        URL.revokeObjectURL(imagePreview.value)
+    }
 })
 
 const submit = () => {
@@ -111,20 +135,20 @@ const submit = () => {
                                     Pilih jenis reward
                                 </option>
 
-                                <option value="voucher">
-                                    Voucher
-                                </option>
-
                                 <option value="pulsa">
-                                    Pulsa
+                                    Voucher Pulsa
                                 </option>
 
                                 <option value="bibit">
                                     Bibit Tanaman
                                 </option>
 
-                                <option value="lainnya">
-                                    Lainnya
+                                <option value="tumbler">
+                                    Tumbler UrbanEye
+                                </option>
+
+                                <option value="totebag">
+                                    Totebag UrbanEye
                                 </option>
                             </select>
 
@@ -216,25 +240,39 @@ const submit = () => {
 
                         </div>
 
-                        <!-- Image -->
+                        <!-- Upload Gambar -->
                         <div>
                             <label
                                 for="image"
                                 class="mb-2 block text-sm font-medium text-gray-700"
                             >
                                 Gambar Reward
-                                <span class="font-normal text-gray-400">
-                                    (opsional)
-                                </span>
+                                <span class="font-normal text-gray-400">(opsional)</span>
                             </label>
 
                             <input
                                 id="image"
-                                v-model="form.image"
-                                type="text"
-                                placeholder="Nama/path gambar jika diperlukan"
-                                class="w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-green-500 focus:ring-green-500"
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                @change="handleImageChange"
+                                class="w-full rounded-lg border border-gray-300 text-sm shadow-sm file:mr-4 file:rounded-l-lg file:border-0 file:bg-green-50 file:px-4 file:py-2.5 file:font-medium file:text-green-700 hover:file:bg-green-100"
                             />
+
+                            <p class="mt-1 text-xs text-gray-500">
+                                Format JPG, PNG, atau WEBP. Maksimal 2 MB.
+                            </p>
+
+                            <div v-if="imagePreview" class="mt-4">
+                                <p class="mb-2 text-sm font-medium text-gray-700">
+                                    Preview Gambar
+                                </p>
+
+                                <img
+                                    :src="imagePreview"
+                                    alt="Preview gambar reward"
+                                    class="h-40 w-40 rounded-lg border border-gray-200 object-cover"
+                                />
+                            </div>
 
                             <p
                                 v-if="form.errors.image"
