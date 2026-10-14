@@ -12,8 +12,10 @@ class HistoryController extends Controller
     public function index()
     {
         $history = ReportAssignment::with([
+            'report',
             'report.category',
             'report.user',
+            'report.images',
         ])
             ->where('officer_id', Auth::id())
             ->latest('updated_at')

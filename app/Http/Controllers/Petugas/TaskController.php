@@ -16,8 +16,10 @@ class TaskController extends Controller
             'report',
             'report.category',
             'report.user',
+            'report.images',
         ])
             ->where('officer_id', Auth::id())
+            ->whereIn('status', ['ditugaskan', 'diproses'])
             ->latest('assigned_at')
             ->get();
 
@@ -25,7 +27,6 @@ class TaskController extends Controller
             'tasks' => $tasks,
         ]);
     }
-
     public function show($id)
     {
         $task = ReportAssignment::with([
