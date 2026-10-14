@@ -1215,366 +1215,261 @@ const changeCategory = () => {
             </div>
 
 
-            <!-- TUGAS PRIORITAS + AKTIVITAS HARI INI -->
+    
+<!-- TUGAS PRIORITAS + AKTIVITAS HARI INI -->
+<div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
 
-            <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <!-- TUGAS PRIORITAS -->
+    <div class="rounded-xl bg-white shadow-sm">
 
+        <!-- HEADER -->
+        <div class="flex items-center justify-between border-b border-gray-200 p-5">
+            <h3 class="font-semibold text-gray-800">
+                Tugas Prioritas
+            </h3>
 
-                <!-- TUGAS PRIORITAS -->
+            <Link
+                :href="route('petugas.tasks.index')"
+                class="text-sm font-medium text-green-500 underline"
+            >
+                Lihat semua
+            </Link>
+        </div>
 
-                <div class="rounded-xl bg-white shadow-sm">
+        <!-- DAFTAR TUGAS -->
+        <div class="space-y-6 p-5">
 
-                    <div class="flex items-center justify-between border-b border-gray-200 p-5">
+            <!-- TUGAS 1 -->
+            <div class="flex items-start gap-3">
+                <img
+                    src="/storage/reports/default.jpg"
+                    alt="Tumpukan sampah"
+                    class="h-10 w-10 shrink-0 rounded-lg object-cover"
+                />
 
-                        <h3 class="font-semibold text-gray-800">
-                            Tugas Prioritas
-                        </h3>
+                <div class="min-w-0 flex-1">
+                    <h4 class="font-medium text-gray-800">
+                        Tumpukan sampah di pinggir jalan
+                    </h4>
 
-
-                        <Link
-                            :href="route('petugas.tasks.index')"
-                            class="text-sm font-medium text-green-500 underline"
-                        >
-                            Lihat semua
-                        </Link>
-
+                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-500">
+                        <MapPin class="h-3.5 w-3.5 shrink-0" />
+                        <span>Jl. Margonda Raya, Depok</span>
                     </div>
 
-
-                    <div class="space-y-6 p-5">
-
-
-                        <!-- TUGAS 1 -->
-
-                        <div class="flex items-start gap-3">
-
-                            <img
-                                src="/storage/reports/default.jpg"
-                                alt="Tumpukan sampah"
-                                class="h-10 w-10 shrink-0 rounded-lg object-cover"
-                            />
-
-
-                            <div class="min-w-0 flex-1">
-
-                                <h4 class="font-medium text-gray-800">
-                                    Tumpukan sampah di pinggir jalan
-                                </h4>
-
-
-                                <div class="mt-1 flex items-center gap-1 text-xs text-gray-500">
-
-                                    <MapPin
-                                        class="h-3.5 w-3.5 shrink-0"
-                                    />
-
-                                    <span>
-                                        Jl. Margonda Raya, Depok
-                                    </span>
-
-                                </div>
-
-
-                                <div class="mt-1 flex items-center gap-1 text-xs text-gray-400">
-
-                                    <CalendarDays
-                                        class="h-3.5 w-3.5 shrink-0"
-                                    />
-
-                                    <span>
-                                        15 Jul 2026 | 09:30
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="flex shrink-0 flex-col items-end gap-2">
-
-                                <span class="rounded-full bg-red-100 px-3 py-1 text-[10px] font-medium text-red-600">
-                                    Mendesak
-                                </span>
-
-
-                                <Link
-                                    :href="route('petugas.tasks.show', tugas?.[0]?.id)"
-                                    class="rounded-md border border-green-500 px-3 py-1 text-[10px] font-medium text-green-600 hover:bg-green-50"
-                                >
-                                    Lihat Detail
-                                </Link>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- TUGAS 2 -->
-
-                        <div class="flex items-start gap-3">
-
-                            <img
-                                src="/storage/reports/jalanberlubang.jpg"
-                                alt="Jalan berlubang"
-                                class="h-10 w-10 shrink-0 rounded-lg object-cover"
-                            />
-
-
-                            <div class="min-w-0 flex-1">
-
-                                <h4 class="font-medium text-gray-800">
-                                    Jalan berlubang
-                                </h4>
-
-
-                                <div class="mt-1 flex items-center gap-1 text-xs text-gray-500">
-
-                                    <MapPin
-                                        class="h-3.5 w-3.5 shrink-0"
-                                    />
-
-                                    <span>
-                                        Jl. Bogor Raya, Depok
-                                    </span>
-
-                                </div>
-
-
-                                <div class="mt-1 flex items-center gap-1 text-xs text-gray-400">
-
-                                    <CalendarDays
-                                        class="h-3.5 w-3.5 shrink-0"
-                                    />
-
-                                    <span>
-                                        15 Jul 2026 | 09:15
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="flex shrink-0 flex-col items-end gap-2">
-
-                                <span class="rounded-full bg-orange-100 px-3 py-1 text-[10px] font-medium text-orange-600">
-                                    Sedang
-                                </span>
-
-
-                                <Link
-                                    :href="route('petugas.tasks.show', tugas?.[1]?.id)"
-                                    class="rounded-md border border-green-500 px-3 py-1 text-[10px] font-medium text-green-600 hover:bg-green-50"
-                                >
-                                    Lihat Detail
-                                </Link>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- TUGAS 3 -->
-
-                        <div class="flex items-start gap-3">
-
-                            <img
-                                src="/storage/reports/drainase.jpg"
-                                alt="Drainase"
-                                class="h-10 w-10 shrink-0 rounded-lg object-cover"
-                            />
-
-
-                            <div class="min-w-0 flex-1">
-
-                                <h4 class="font-medium text-gray-800">
-                                    Saluran drainase tersumbat
-                                </h4>
-
-
-                                <div class="mt-1 flex items-center gap-1 text-xs text-gray-500">
-
-                                    <MapPin
-                                        class="h-3.5 w-3.5 shrink-0"
-                                    />
-
-                                    <span>
-                                        Jl. Nusa Indah, Depok
-                                    </span>
-
-                                </div>
-
-
-                                <div class="mt-1 flex items-center gap-1 text-xs text-gray-400">
-
-                                    <CalendarDays
-                                        class="h-3.5 w-3.5 shrink-0"
-                                    />
-
-                                    <span>
-                                        14 Jul 2026 | 16:45
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-
-                            <div class="flex shrink-0 flex-col items-end gap-2">
-
-                                <span class="rounded-full bg-blue-100 px-3 py-1 text-[10px] font-medium text-blue-600">
-                                    Rendah
-                                </span>
-
-
-                                <Link
-                                    :href="route('petugas.tasks.show', tugas?.[2]?.id)"
-                                    class="rounded-md border border-green-500 px-3 py-1 text-[10px] font-medium text-green-600 hover:bg-green-50"
-                                >
-                                    Lihat Detail
-                                </Link>
-
-                            </div>
-
-                        </div>
-
-
+                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-400">
+                        <CalendarDays class="h-3.5 w-3.5 shrink-0" />
+                        <span>15 Jul 2026 | 09:30</span>
                     </div>
-
                 </div>
 
+                <div class="flex shrink-0 flex-col items-end gap-2">
+                    <span class="rounded-full bg-red-100 px-3 py-1 text-[10px] font-medium text-red-600">
+                        Mendesak
+                    </span>
 
-                <!-- AKTIVITAS HARI INI -->
+                    <Link
+                        v-if="tugas?.[0]?.id"
+                        :href="route('petugas.tasks.show', tugas[0].id)"
+                        class="rounded-md border border-green-500 px-3 py-1 text-[10px] font-medium text-green-600 hover:bg-green-50"
+                    >
+                        Lihat Detail
+                    </Link>
 
-                <div class="rounded-xl bg-white shadow-sm">
-
-                    <div class="flex items-center justify-between border-b border-gray-200 p-5">
-
-                        <h3 class="font-semibold text-gray-800">
-                            Aktivitas Hari Ini
-                        </h3>
-
-
-                        <Link
-                            :href="route('petugas.history.index')"
-                            class="text-sm font-medium text-green-500 underline"
-                        >
-                            Lihat semua
-                        </Link>
-
-                    </div>
-
-
-                    <div class="px-5 py-3">
-
-
-                        <div class="relative flex items-center gap-3 py-3">
-
-                            <div class="absolute bottom-[-1px] left-[10px] top-[31px] w-px bg-gray-200"></div>
-
-
-                            <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100">
-
-                                <CheckCircle2
-                                    class="h-3.5 w-3.5 text-green-600"
-                                />
-
-                            </div>
-
-
-                            <p class="flex-1 text-sm text-gray-600">
-                                Sampah di Jl. Melati Raya berhasil dibersihkan
-                            </p>
-
-
-                            <span class="shrink-0 text-xs text-gray-400">
-                                10:30
-                            </span>
-
-                        </div>
-
-
-                        <div class="relative flex items-center gap-3 py-3">
-
-                            <div class="absolute bottom-[-1px] left-[10px] top-[31px] w-px bg-gray-200"></div>
-
-
-                            <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100">
-
-                                <CheckCircle2
-                                    class="h-3.5 w-3.5 text-green-600"
-                                />
-
-                            </div>
-
-
-                            <p class="flex-1 text-sm text-gray-600">
-                                Drainase di Jl. Nusa Indah selesai diperbaiki
-                            </p>
-
-
-                            <span class="shrink-0 text-xs text-gray-400">
-                                09:45
-                            </span>
-
-                        </div>
-
-
-                        <div class="relative flex items-center gap-3 py-3">
-
-                            <div class="absolute bottom-[-1px] left-[10px] top-[31px] w-px bg-gray-200"></div>
-
-
-                            <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-100">
-
-                                <Clock3
-                                    class="h-3.5 w-3.5 text-orange-500"
-                                />
-
-                            </div>
-
-
-                            <p class="flex-1 text-sm text-gray-600">
-                                Sedang menangani jalan berlubang di Jl. Bogor
-                            </p>
-
-
-                            <span class="shrink-0 text-xs text-gray-400">
-                                08:50
-                            </span>
-
-                        </div>
-
-
-                        <div class="relative flex items-center gap-3 py-3">
-
-                            <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100">
-
-                                <Info
-                                    class="h-3.5 w-3.5 text-blue-500"
-                                />
-
-                            </div>
-
-
-                            <p class="flex-1 text-sm text-gray-600">
-                                Laporan baru diterima: lampu jalan mati di Jl. Melati
-                            </p>
-
-
-                            <span class="shrink-0 text-xs text-gray-400">
-                                08:20
-                            </span>
-
-                        </div>
-
-
-                    </div>
-
+                    <span
+                        v-else
+                        class="text-[10px] text-gray-400"
+                    >
+                        Belum ada tugas
+                    </span>
                 </div>
-
             </div>
 
+            <!-- TUGAS 2 -->
+            <div class="flex items-start gap-3">
+                <img
+                    src="/storage/reports/jalanberlubang.jpg"
+                    alt="Jalan berlubang"
+                    class="h-10 w-10 shrink-0 rounded-lg object-cover"
+                />
+
+                <div class="min-w-0 flex-1">
+                    <h4 class="font-medium text-gray-800">
+                        Jalan berlubang
+                    </h4>
+
+                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-500">
+                        <MapPin class="h-3.5 w-3.5 shrink-0" />
+                        <span>Jl. Bogor Raya, Depok</span>
+                    </div>
+
+                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-400">
+                        <CalendarDays class="h-3.5 w-3.5 shrink-0" />
+                        <span>15 Jul 2026 | 09:15</span>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 flex-col items-end gap-2">
+                    <span class="rounded-full bg-orange-100 px-3 py-1 text-[10px] font-medium text-orange-600">
+                        Sedang
+                    </span>
+
+                    <Link
+                        v-if="tugas?.[1]?.id"
+                        :href="route('petugas.tasks.show', tugas[1].id)"
+                        class="rounded-md border border-green-500 px-3 py-1 text-[10px] font-medium text-green-600 hover:bg-green-50"
+                    >
+                        Lihat Detail
+                    </Link>
+
+                    <span
+                        v-else
+                        class="text-[10px] text-gray-400"
+                    >
+                        Belum ada tugas
+                    </span>
+                </div>
+            </div>
+
+            <!-- TUGAS 3 -->
+            <div class="flex items-start gap-3">
+                <img
+                    src="/storage/reports/drainase.jpg"
+                    alt="Drainase"
+                    class="h-10 w-10 shrink-0 rounded-lg object-cover"
+                />
+
+                <div class="min-w-0 flex-1">
+                    <h4 class="font-medium text-gray-800">
+                        Saluran drainase tersumbat
+                    </h4>
+
+                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-500">
+                        <MapPin class="h-3.5 w-3.5 shrink-0" />
+                        <span>Jl. Nusa Indah, Depok</span>
+                    </div>
+
+                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-400">
+                        <CalendarDays class="h-3.5 w-3.5 shrink-0" />
+                        <span>14 Jul 2026 | 16:45</span>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 flex-col items-end gap-2">
+                    <span class="rounded-full bg-blue-100 px-3 py-1 text-[10px] font-medium text-blue-600">
+                        Rendah
+                    </span>
+
+                    <Link
+                        v-if="tugas?.[2]?.id"
+                        :href="route('petugas.tasks.show', tugas[2].id)"
+                        class="rounded-md border border-green-500 px-3 py-1 text-[10px] font-medium text-green-600 hover:bg-green-50"
+                    >
+                        Lihat Detail
+                    </Link>
+
+                    <span
+                        v-else
+                        class="text-[10px] text-gray-400"
+                    >
+                        Belum ada tugas
+                    </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- AKTIVITAS HARI INI -->
+    <div class="rounded-xl bg-white shadow-sm">
+
+        <!-- HEADER -->
+        <div class="flex items-center justify-between border-b border-gray-200 p-5">
+            <h3 class="font-semibold text-gray-800">
+                Aktivitas Hari Ini
+            </h3>
+
+            <Link
+                :href="route('petugas.history.index')"
+                class="text-sm font-medium text-green-500 underline"
+            >
+                Lihat semua
+            </Link>
+        </div>
+
+        <!-- DAFTAR AKTIVITAS -->
+        <div class="px-5 py-3">
+
+            <!-- AKTIVITAS 1 -->
+            <div class="relative flex items-center gap-3 py-3">
+                <div class="absolute bottom-[-1px] left-[10px] top-[31px] w-px bg-gray-200"></div>
+
+                <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100">
+                    <CheckCircle2 class="h-3.5 w-3.5 text-green-600" />
+                </div>
+
+                <p class="flex-1 text-sm text-gray-600">
+                    Sampah di Jl. Melati Raya berhasil dibersihkan
+                </p>
+
+                <span class="shrink-0 text-xs text-gray-400">
+                    10:30
+                </span>
+            </div>
+
+            <!-- AKTIVITAS 2 -->
+            <div class="relative flex items-center gap-3 py-3">
+                <div class="absolute bottom-[-1px] left-[10px] top-[31px] w-px bg-gray-200"></div>
+
+                <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100">
+                    <CheckCircle2 class="h-3.5 w-3.5 text-green-600" />
+                </div>
+
+                <p class="flex-1 text-sm text-gray-600">
+                    Drainase di Jl. Nusa Indah selesai diperbaiki
+                </p>
+
+                <span class="shrink-0 text-xs text-gray-400">
+                    09:45
+                </span>
+            </div>
+
+            <!-- AKTIVITAS 3 -->
+            <div class="relative flex items-center gap-3 py-3">
+                <div class="absolute bottom-[-1px] left-[10px] top-[31px] w-px bg-gray-200"></div>
+
+                <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-100">
+                    <Clock3 class="h-3.5 w-3.5 text-orange-500" />
+                </div>
+
+                <p class="flex-1 text-sm text-gray-600">
+                    Sedang menangani jalan berlubang di Jl. Bogor
+                </p>
+
+                <span class="shrink-0 text-xs text-gray-400">
+                    08:50
+                </span>
+            </div>
+
+            <!-- AKTIVITAS 4 -->
+            <div class="relative flex items-center gap-3 py-3">
+                <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100">
+                    <Info class="h-3.5 w-3.5 text-blue-500" />
+                </div>
+
+                <p class="flex-1 text-sm text-gray-600">
+                    Laporan baru diterima: lampu jalan mati di Jl. Melati
+                </p>
+
+                <span class="shrink-0 text-xs text-gray-400">
+                    08:20
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+</div>
 
             <!-- ========================================================= -->
             <!-- PETA LAPORAN -->

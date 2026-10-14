@@ -1,6 +1,6 @@
 <script setup>
 import PetugasLayout from '@/Layouts/PetugasLayout.vue'
-import { Head, Link, router } from '@inertiajs/vue3'
+import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import {
     ArrowLeft,
@@ -18,7 +18,17 @@ const props = defineProps({
     },
 })
 
-const status = computed(() => props.task?.status ?? 'ditugaskan')
+// Mendeteksi halaman asal
+const page = usePage()
+
+const fromHistory = computed(() => {
+    return page.url.includes('from=history')
+})
+
+// Status pengerjaan tugas
+const status = computed(() => {
+    return props.task?.status ?? 'ditugaskan'
+})
 
 const statusText = computed(() => {
     return {
@@ -28,14 +38,85 @@ const statusText = computed(() => {
     }[status.value] ?? status.value
 })
 
-const statusClass = computed(() => {
-    return {
-        ditugaskan: 'bg-yellow-100 text-yellow-700',
-        diproses: 'bg-blue-100 text-blue-700',
-        selesai: 'bg-green-100 text-green-700',
-    }[status.value] ?? 'bg-gray-100 text-gray-600'
+// Prioritas laporan untuk badge di samping judul
+// Utamakan nilai prioritas dari data jika tersedia.
+const priority = computed(() => {
+    const reportPriority =
+        props.task?.report?.priority ?? props.task?.priority
+
+    if (reportPriority && String(reportPriority).trim()) {
+        const normalized = String(reportPriority).trim().toLowerCase()
+
+        if (
+            ['mendesak', 'urgent', 'high', 'tinggi'].includes(normalized)
+        ) {
+            return 'mendesak'
+        }
+
+        if (
+            ['sedang', 'medium', 'moderate'].includes(normalized)
+        ) {
+            return 'sedang'
+        }
+
+        if (['rendah', 'low'].includes(normalized)) {
+            return 'rendah'
+        }
+    }
+
+    // Pemetaan sementara mengikuti contoh Tugas Prioritas di Dashboard.
+    // Hapus pemetaan judul ini setelah prioritas disimpan di database.
+    const title = (props.task?.report?.title ?? '').toLowerCase()
+
+    if (title.includes('sampah')) return 'mendesak'
+    if (title.includes('jalan berlubang')) return 'sedang'
+    if (title.includes('drainase')) return 'rendah'
+
+    return 'belum ditentukan'
 })
 
+const priorityText = computed(() => {
+    return {
+        mendesak: 'Mendesak',
+        sedang: 'Sedang',
+        rendah: 'Rendah',
+    }[priority.value] ?? 'Prioritas belum ditentukan'
+})
+
+const priorityClass = computed(() => {
+    return {
+        mendesak: 'bg-red-100 text-red-600',
+        sedang: 'bg-orange-100 text-orange-600',
+        rendah: 'bg-blue-100 text-blue-600',
+    }[priority.value] ?? 'bg-gray-100 text-gray-600'
+})
+
+// Foto laporan
+const reportImageUrl = computed(() => {
+    const photo = props.task?.report?.photo
+
+    if (typeof photo !== 'string' || !photo.trim()) {
+        return null
+    }
+
+    const image = photo.trim()
+
+    if (/^https?:\/\//i.test(image)) {
+        return image
+    }
+
+    if (image.startsWith('/')) {
+        return image
+    }
+
+    const cleanedPath = image
+        .replace(/^public\//, '')
+        .replace(/^storage\//, '')
+
+    return `/storage/${cleanedPath}`
+})
+
+// Terima tugas
 const terimaTugas = () => {
     router.put(
         `/petugas/tasks/${props.task.id}`,
@@ -44,10 +125,11 @@ const terimaTugas = () => {
         },
         {
             preserveScroll: true,
-        }
+        },
     )
 }
 
+// Selesaikan tugas
 const selesaikanTugas = () => {
     router.put(
         `/petugas/tasks/${props.task.id}`,
@@ -56,7 +138,7 @@ const selesaikanTugas = () => {
         },
         {
             preserveScroll: true,
-        }
+        },
     )
 }
 </script>
@@ -65,16 +147,24 @@ const selesaikanTugas = () => {
     <Head title="Detail Laporan" />
 
     <PetugasLayout>
-        <div class="p-6 lg:p-8">
-
+        <div class="p-5 lg:p-8">
             <!-- HEADER -->
             <div class="mb-6">
                 <Link
-                    href="/petugas/tasks"
-                    class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-green-600"
+                    :href="
+                        fromHistory
+                            ? route('petugas.history.index')
+                            : route('petugas.tasks.index')
+                    "
+                    class="inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-green-600"
                 >
                     <ArrowLeft class="h-4 w-4" />
-                    Kembali ke Tugas Saya
+
+                    {{
+                        fromHistory
+                            ? 'Kembali ke Riwayat Penanganan'
+                            : 'Kembali ke Tugas Saya'
+                    }}
                 </Link>
 
                 <h1 class="mt-4 text-2xl font-semibold text-gray-800">
@@ -84,17 +174,17 @@ const selesaikanTugas = () => {
 
             <!-- CONTENT -->
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-
-                <!-- KIRI -->
-                <div class="lg:col-span-2 space-y-6">
-
-                    <!-- FOTO -->
+                <!-- BAGIAN KIRI -->
+                <div class="space-y-6 lg:col-span-2">
+                    <!-- FOTO LAPORAN -->
                     <div class="overflow-hidden rounded-xl bg-white shadow-sm">
-                        <div class="h-[320px] w-full bg-gray-100">
+                        <div
+                            class="flex h-[320px] w-full items-center justify-center bg-gray-100"
+                        >
                             <img
-                                v-if="task?.report?.photo"
-                                :src="`/storage/${task.report.photo}`"
-                                :alt="task?.report?.title"
+                                v-if="reportImageUrl"
+                                :src="reportImageUrl"
+                                :alt="task?.report?.title ?? 'Foto laporan'"
                                 class="h-full w-full object-cover"
                             />
 
@@ -109,95 +199,129 @@ const selesaikanTugas = () => {
 
                     <!-- DETAIL LAPORAN -->
                     <div class="rounded-xl bg-white p-6 shadow-sm">
-
-                        <div class="flex items-start justify-between gap-4">
-                            <div>
-                                <h2 class="text-xl font-semibold text-gray-800">
-                                    {{ task?.report?.title }}
+                        <div
+                            class="flex items-start justify-between gap-4"
+                        >
+                            <div class="min-w-0">
+                                <h2
+                                    class="text-xl font-semibold text-gray-800"
+                                >
+                                    {{ task?.report?.title ?? 'Tanpa judul' }}
                                 </h2>
 
-                                <div class="mt-2 flex items-center gap-2 text-sm text-gray-500">
-                                    <MapPin class="h-4 w-4" />
+                                <div
+                                    class="mt-2 flex items-start gap-2 text-sm text-gray-500"
+                                >
+                                    <MapPin
+                                        class="mt-0.5 h-4 w-4 shrink-0"
+                                    />
+
                                     <span>
-                                        {{ task?.report?.address ?? 'Lokasi belum tersedia' }}
+                                        {{
+                                            task?.report?.address ??
+                                            'Lokasi belum tersedia'
+                                        }}
                                     </span>
                                 </div>
                             </div>
 
+                            <!-- BADGE PRIORITAS -->
                             <span
                                 class="shrink-0 rounded-full px-3 py-1 text-xs font-medium"
-                                :class="statusClass"
+                                :class="priorityClass"
                             >
-                                {{ statusText }}
+                                {{ priorityText }}
                             </span>
                         </div>
 
                         <div class="my-5 border-t border-gray-100"></div>
 
+                        <!-- DESKRIPSI -->
                         <div>
-                            <h3 class="text-sm font-semibold text-gray-800">
+                            <h3
+                                class="text-sm font-semibold text-gray-800"
+                            >
                                 Deskripsi
                             </h3>
 
-                            <p class="mt-2 text-sm leading-6 text-gray-600">
-                                {{ task?.report?.description ?? 'Tidak ada deskripsi.' }}
+                            <p
+                                class="mt-2 text-sm leading-6 text-gray-600"
+                            >
+                                {{
+                                    task?.report?.description ??
+                                    'Tidak ada deskripsi.'
+                                }}
                             </p>
                         </div>
 
-                        <div class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-
+                        <!-- INFORMASI LAPORAN -->
+                        <div
+                            class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2"
+                        >
+                            <!-- TANGGAL -->
                             <div class="rounded-lg bg-gray-50 p-4">
-                                <div class="flex items-center gap-2 text-gray-500">
+                                <div
+                                    class="flex items-center gap-2 text-gray-500"
+                                >
                                     <CalendarDays class="h-4 w-4" />
+
                                     <span class="text-xs">
                                         Tanggal Laporan
                                     </span>
                                 </div>
 
-                                <p class="mt-2 text-sm font-medium text-gray-800">
+                                <p
+                                    class="mt-2 break-words text-sm font-medium text-gray-800"
+                                >
                                     {{ task?.report?.created_at ?? '-' }}
                                 </p>
                             </div>
 
+                            <!-- PELAPOR -->
                             <div class="rounded-lg bg-gray-50 p-4">
-                                <div class="flex items-center gap-2 text-gray-500">
+                                <div
+                                    class="flex items-center gap-2 text-gray-500"
+                                >
                                     <User class="h-4 w-4" />
+
                                     <span class="text-xs">
                                         Pelapor
                                     </span>
                                 </div>
 
-                                <p class="mt-2 text-sm font-medium text-gray-800">
+                                <p
+                                    class="mt-2 text-sm font-medium text-gray-800"
+                                >
                                     {{ task?.report?.user?.name ?? '-' }}
                                 </p>
                             </div>
-
                         </div>
                     </div>
-
                 </div>
 
-                <!-- KANAN -->
+                <!-- BAGIAN KANAN -->
                 <div class="space-y-6">
-
-                    <!-- STATUS -->
+                    <!-- STATUS TUGAS -->
                     <div class="rounded-xl bg-white p-6 shadow-sm">
                         <h3 class="font-semibold text-gray-800">
                             Status Tugas
                         </h3>
 
                         <div class="mt-5 space-y-4">
-
                             <!-- DITUGASKAN -->
                             <div class="flex items-center gap-3">
                                 <div
                                     class="flex h-9 w-9 items-center justify-center rounded-full bg-yellow-100"
                                 >
-                                    <Clock3 class="h-4 w-4 text-yellow-600" />
+                                    <Clock3
+                                        class="h-4 w-4 text-yellow-600"
+                                    />
                                 </div>
 
                                 <div>
-                                    <p class="text-sm font-medium text-gray-800">
+                                    <p
+                                        class="text-sm font-medium text-gray-800"
+                                    >
                                         Ditugaskan
                                     </p>
 
@@ -212,11 +336,15 @@ const selesaikanTugas = () => {
                                 <div
                                     class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100"
                                 >
-                                    <Clock3 class="h-4 w-4 text-blue-600" />
+                                    <Clock3
+                                        class="h-4 w-4 text-blue-600"
+                                    />
                                 </div>
 
                                 <div>
-                                    <p class="text-sm font-medium text-gray-800">
+                                    <p
+                                        class="text-sm font-medium text-gray-800"
+                                    >
                                         Diproses
                                     </p>
 
@@ -231,11 +359,15 @@ const selesaikanTugas = () => {
                                 <div
                                     class="flex h-9 w-9 items-center justify-center rounded-full bg-green-100"
                                 >
-                                    <CheckCircle2 class="h-4 w-4 text-green-600" />
+                                    <CheckCircle2
+                                        class="h-4 w-4 text-green-600"
+                                    />
                                 </div>
 
                                 <div>
-                                    <p class="text-sm font-medium text-gray-800">
+                                    <p
+                                        class="text-sm font-medium text-gray-800"
+                                    >
                                         Selesai
                                     </p>
 
@@ -244,11 +376,10 @@ const selesaikanTugas = () => {
                                     </p>
                                 </div>
                             </div>
-
                         </div>
                     </div>
 
-                    <!-- AKSI -->
+                    <!-- AKSI TUGAS -->
                     <div class="rounded-xl bg-white p-6 shadow-sm">
                         <h3 class="font-semibold text-gray-800">
                             Aksi Tugas
@@ -264,7 +395,7 @@ const selesaikanTugas = () => {
                             Terima Tugas
                         </button>
 
-                        <!-- SELESAIKAN -->
+                        <!-- SELESAIKAN TUGAS -->
                         <button
                             v-else-if="status === 'diproses'"
                             type="button"
@@ -280,11 +411,20 @@ const selesaikanTugas = () => {
                             class="mt-5 flex items-center justify-center gap-2 rounded-lg bg-green-100 px-4 py-3 text-sm font-medium text-green-700"
                         >
                             <CheckCircle2 class="h-4 w-4" />
+
                             Tugas Sudah Selesai
+                        </div>
+
+                        <!-- STATUS LAIN -->
+                        <div
+                            v-else
+                            class="mt-5 rounded-lg bg-gray-100 px-4 py-3 text-center text-sm font-medium text-gray-600"
+                        >
+                            Status: {{ statusText }}
                         </div>
                     </div>
 
-                    <!-- CATATAN -->
+                    <!-- CATATAN PENANGANAN -->
                     <div
                         v-if="task?.note"
                         class="rounded-xl bg-white p-6 shadow-sm"
@@ -297,9 +437,7 @@ const selesaikanTugas = () => {
                             {{ task.note }}
                         </p>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </PetugasLayout>
