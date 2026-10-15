@@ -102,7 +102,7 @@ defineProps({
 
                             <tbody class="divide-y">
                                 <tr
-                                    v-for="(user, index) in leaderboard"
+                                    v-for="user in leaderboard"
                                     :key="user.id"
                                     class="transition hover:bg-gray-50"
                                 >
@@ -112,28 +112,24 @@ defineProps({
                                             <div
                                                 class="flex h-9 w-9 items-center justify-center rounded-full"
                                                 :class="{
-                                                    'bg-yellow-100':
-                                                        index === 0,
-                                                    'bg-gray-200':
-                                                        index === 1,
-                                                    'bg-orange-100':
-                                                        index === 2,
-                                                    'bg-gray-100':
-                                                        index > 2,
+                                                    'bg-yellow-100': user.rank === 1,
+                                                    'bg-gray-200': user.rank === 2,
+                                                    'bg-orange-100': user.rank === 3,
+                                                    'bg-gray-100': user.rank > 3,
                                                 }"
                                             >
-                                                <Crown
-                                                    v-if="index === 0"
+                                               <Crown
+                                                    v-if="user.rank === 1"
                                                     class="h-5 w-5 text-yellow-600"
                                                 />
 
                                                 <Medal
-                                                    v-else-if="index === 1"
+                                                    v-else-if="user.rank === 2"
                                                     class="h-5 w-5 text-gray-500"
                                                 />
 
                                                 <Medal
-                                                    v-else-if="index === 2"
+                                                    v-else-if="user.rank === 3"
                                                     class="h-5 w-5 text-orange-500"
                                                 />
 
@@ -141,14 +137,14 @@ defineProps({
                                                     v-else
                                                     class="text-sm font-semibold text-gray-600"
                                                 >
-                                                    {{ index + 1 }}
+                                                    {{ user.rank }}
                                                 </span>
                                             </div>
 
                                             <span
                                                 class="font-semibold text-gray-700"
                                             >
-                                                #{{ index + 1 }}
+                                                #{{ user.rank }}
                                             </span>
                                         </div>
                                     </td>

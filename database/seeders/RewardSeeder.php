@@ -10,7 +10,7 @@ class RewardSeeder extends Seeder
     public function run(): void
     {
         Reward::create([
-            'name' => 'Voucher Plsa',
+            'name' => 'Voucher Pulsa',
             'reward_type' => 'pulsa',
             'description' => 'Voucher pulsa sebagai apresiasi bagi masyarakat yang berpartisipasi menjaga kebersihan dan lingkungan sekitar.',
             'point_cost' => 100,

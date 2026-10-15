@@ -37,6 +37,9 @@ const openSubmenus = ref({})
 
 const user = computed(() => page.props.auth?.user)
 const role = computed(() => page.props.auth?.role)
+const unreadNotificationCount = computed(() =>
+    Number(page.props.unreadNotificationCount ?? 0)
+)
 
 const menuItems = computed(() => {
     if (role.value === 'admin') {
@@ -189,7 +192,7 @@ const menuItems = computed(() => {
         },
         {
             label: 'Pengaturan',
-            route: 'profile.edit',
+            route: 'masyarakat.settings.index',
             icon: Settings,
         },
         {
@@ -277,7 +280,7 @@ const toggleMobileMenu = () => {
                         class="shrink-0 object-contain transition-all duration-300"
                         :class="
                             showingSidebar
-                                ? 'h-[58px] w-auto'
+                                ? 'h-[98px] w-auto'
                                 : 'h-[42px] w-[42px]'
                         "
                     />
@@ -528,10 +531,13 @@ const toggleMobileMenu = () => {
                 <!-- Right Header -->
                 <div class="relative flex items-center gap-5">
 
-                    <!-- Notification -->
-                    <button
-                        type="button"
-                        class="relative text-gray-900"
+                    <!-- Notification untuk Masyarakat -->
+                    <Link
+                        v-if="role === 'masyarakat'"
+                        :href="route('masyarakat.notifications.index')"
+                        class="relative inline-flex items-center justify-center rounded-lg p-2 text-gray-700 transition hover:bg-gray-100"
+                        aria-label="Notifikasi"
+                        title="Notifikasi"
                     >
                         <Bell
                             :size="21"
@@ -539,8 +545,29 @@ const toggleMobileMenu = () => {
                         />
 
                         <span
-                            class="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-red-500"
-                        ></span>
+                            v-if="unreadNotificationCount > 0"
+                            class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white"
+                        >
+                            {{
+                                unreadNotificationCount > 99
+                                    ? '99+'
+                                    : unreadNotificationCount
+                            }}
+                        </span>
+                    </Link>
+
+                    <!-- Ikon untuk role lain; fitur notifikasinya dikerjakan terpisah -->
+                    <button
+                        v-else
+                        type="button"
+                        class="relative inline-flex items-center justify-center rounded-lg p-2 text-gray-700 transition hover:bg-gray-100"
+                        aria-label="Notifikasi"
+                        title="Notifikasi"
+                    >
+                        <Bell
+                            :size="21"
+                            stroke-width="1.9"
+                        />
                     </button>
 
                     <!-- Header User -->

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
+use App\Models\Notification;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -36,6 +37,13 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'role' => $request->user()?->getRoleNames()->first(),
             ],
+
+            'unreadNotificationCount' => fn () =>
+                $request->user() && $request->user()->hasRole('masyarakat')
+                    ? Notification::where('user_id', $request->user()->id)
+                        ->where('is_read', false)
+                        ->count()
+                    : 0,
         ];
     }
 }

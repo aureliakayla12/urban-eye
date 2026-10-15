@@ -197,7 +197,6 @@ class ReportController extends Controller
             ],
         ]);
 
-        // Simpan status verifikasi sebelum diubah
         $previousVerificationStatus = $report->verification_status;
 
         $report->update([
@@ -209,33 +208,161 @@ class ReportController extends Controller
             'verification_status' => $validated['verification_status'],
         ]);
 
-        // Jika laporan baru berubah menjadi valid
-        if (
-            $validated['verification_status'] === 'valid'
-            && $previousVerificationStatus !== 'valid'
-        ) {
-            // Berikan 10 poin hanya satu kali untuk laporan tersebut
-            $alreadyReceivedPoints = UserPoint::where('report_id', $report->id)
-                ->where('type', 'tambah')
-                ->exists();
+       
+        // Hitung saldo poin khusus untuk laporan ini.
+        // Poin tambah bernilai positif, sedangkan poin kurang bernilai negatif.
+        $reportPoints = (int) UserPoint::where('report_id', $report->id)
+            ->where(function ($query) {
+                $query->whereNull('description')
+                    ->orWhereNotIn('description', [
+                        'Penalti poin karena laporan terbukti hoaks.',
+                        'Pengembalian penalti karena status laporan tidak lagi hoaks.',
+                    ]);
+            })
+            ->selectRaw("
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN type = 'tambah' THEN points
+                            WHEN type = 'kurang' THEN -points
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) as balance
+            ")
+            ->value('balance');
 
-            if (!$alreadyReceivedPoints) {
+       
+        // Tentukan saldo poin yang seharusnya berdasarkan status terbaru.
+        // Laporan valid bernilai 10 poin; status lainnya bernilai 0.
+        $targetReportPoints =
+            $validated['verification_status'] === 'valid' ? 10 : 0;
+
+        // Hitung selisih antara saldo seharusnya dan saldo saat ini.
+        $pointAdjustment = $targetReportPoints - $reportPoints;
+
+        // Jika poin perlu ditambahkan.
+        if ($pointAdjustment > 0) {
+            UserPoint::create([
+                'user_id' => $report->user_id,
+                'report_id' => $report->id,
+                'points' => $pointAdjustment,
+                'type' => 'tambah',
+                'description' => 'Poin dari laporan yang telah diverifikasi valid.',
+            ]);
+        }
+
+        // Jika poin perlu dikurangi atau disesuaikan.
+        elseif ($pointAdjustment < 0) {
+            if ($validated['verification_status'] === 'hoax') {
+                $description =
+                    'Pengurangan poin karena laporan ditetapkan sebagai hoaks.';
+            } elseif ($validated['verification_status'] === 'valid') {
+                $description =
+                    'Penyesuaian saldo poin laporan menjadi 10 poin.';
+            } else {
+                $description =
+                    'Poin ditarik karena laporan tidak lagi berstatus valid.';
+            }
+
+            UserPoint::create([
+                'user_id' => $report->user_id,
+                'report_id' => $report->id,
+                'points' => abs($pointAdjustment),
+                'type' => 'kurang',
+                'description' => $description,
+            ]);
+        }
+
+        // Penalti tambahan untuk laporan yang baru ditetapkan sebagai hoaks.
+        $penaltyDescription = 'Penalti poin karena laporan terbukti hoaks.';
+        $penaltyReversalDescription =
+            'Pengembalian penalti karena status laporan tidak lagi hoaks.';
+
+        // Hitung saldo penalti khusus untuk laporan ini.
+        $penaltyBalance = (int) UserPoint::where('report_id', $report->id)
+            ->where('user_id', $report->user_id)
+            ->whereIn('description', [
+                $penaltyDescription,
+                $penaltyReversalDescription,
+            ])
+            ->selectRaw("
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN type = 'tambah' THEN points
+                            WHEN type = 'kurang' THEN -points
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) as balance
+            ")
+            ->value('balance');
+
+        // Jika baru berubah menjadi hoax, terapkan penalti maksimal 10 poin.
+        if (
+            $validated['verification_status'] === 'hoax'
+            && $previousVerificationStatus !== 'hoax'
+            && $penaltyBalance >= 0
+        ) {
+            $currentTotalPoints = (int) UserPoint::where(
+                'user_id',
+                $report->user_id
+            )
+                ->selectRaw("
+                    COALESCE(
+                        SUM(
+                            CASE
+                                WHEN type = 'tambah' THEN points
+                                WHEN type = 'kurang' THEN -points
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) as total
+                ")
+                ->value('total');
+
+            // Poin tidak boleh menjadi negatif akibat penalti ini.
+            $penaltyPoints = min(10, max(0, $currentTotalPoints));
+
+            if ($penaltyPoints > 0) {
                 UserPoint::create([
                     'user_id' => $report->user_id,
                     'report_id' => $report->id,
-                    'points' => 10,
-                    'type' => 'tambah',
-                    'description' => 'Poin dari laporan yang telah diverifikasi valid.',
+                    'points' => $penaltyPoints,
+                    'type' => 'kurang',
+                    'description' => $penaltyDescription,
                 ]);
             }
+        }
 
-            // Cek dan berikan badge yang sudah memenuhi syarat
+        // Jika status hoax dibatalkan, kembalikan penalti yang pernah diterapkan.
+        elseif (
+            $previousVerificationStatus === 'hoax'
+            && $validated['verification_status'] !== 'hoax'
+            && $penaltyBalance < 0
+        ) {
+            UserPoint::create([
+                'user_id' => $report->user_id,
+                'report_id' => $report->id,
+                'points' => abs($penaltyBalance),
+                'type' => 'tambah',
+                'description' => $penaltyReversalDescription,
+            ]);
+        }
+
+        // Periksa badge setelah laporan valid dan saldo poinnya disesuaikan.
+        if ($validated['verification_status'] === 'valid') {
             $this->checkAndAwardBadges($report->user_id);
         }
 
         return redirect()
             ->route('admin.reports.show', $report->id)
             ->with('success', 'Laporan berhasil diperbarui.');
+
     }
 
     /**

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\StatusController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Masyarakat\NotificationController as MasyarakatNotificationController;
 use App\Http\Controllers\Masyarakat\HelpController as MasyarakatHelpController;
 use App\Http\Controllers\Masyarakat\LeaderboardController;
 use App\Http\Controllers\Masyarakat\ReportController as MasyarakatReportController;
@@ -52,11 +53,7 @@ Route::get('/auth/google/callback', [GoogleController::class, 'callback'])
 require __DIR__.'/auth.php';
 
 
-/*
-|--------------------------------------------------------------------------
-| Authenticated Routes
-|--------------------------------------------------------------------------
-*/
+/* Authenticated Routes */
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])
@@ -211,13 +208,22 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/{report}', [MasyarakatReportController::class, 'show'])->name('masyarakat.reports.show');
         });
 
+        // Notifikasi
+        Route::get('/notifications', [MasyarakatNotificationController::class, 'index',])->name('masyarakat.notifications.index');
+        Route::patch('/notifications/{id}/read', [MasyarakatNotificationController::class, 'markRead',])->name('masyarakat.notifications.read');
+        Route::patch('/notifications/read-all', [MasyarakatNotificationController::class,'markAllRead',])->name('masyarakat.notifications.read-all');
+
 
         // Leaderboard
         Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('masyarakat.leaderboard.index');
 
-
         // Reward Saya
-        Route::get('/rewards', [MasyarakatRewardController::class, 'index'])->name('masyarakat.rewards.index');
+        Route::get('/rewards', [MasyarakatRewardController::class, 'index'])
+            ->name('masyarakat.rewards.index');
+
+        Route::post('/rewards/{reward}/redeem', [MasyarakatRewardController::class, 'redeem'])
+            ->name('masyarakat.rewards.redeem');
+
 
 
         // Pengaturan

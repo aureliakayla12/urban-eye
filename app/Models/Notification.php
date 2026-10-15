@@ -11,6 +11,7 @@ class Notification extends Model
 
     protected $fillable = [
         'user_id',
+        'report_id',
         'title',
         'message',
         'is_read',
@@ -25,5 +26,10 @@ class Notification extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function report(): BelongsTo
+    {
+        return $this->belongsTo(Report::class);
     }
 }
