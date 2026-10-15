@@ -10,6 +10,8 @@ use App\Models\Report;
 use Illuminate\Http\Request;
 use Laravel\Ai\Enums\Lab;
 use Laravel\Ai\Files\Image;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ReportController extends Controller
 {
@@ -221,45 +223,95 @@ class ReportController extends Controller
             ]);
         }
 
-        /* KLASIFIKASI FOTO DENGAN GEMINI */
+        
+        /* SIAPKAN STATUS ANALISIS AI */
+
+        $aiAnalysisFailed = false;
 
         $image = Image::fromPath(
             storage_path('app/public/' . $firstPhotoPath)
         );
 
-        $response = (new ReportClassifier)->prompt(
-            'Classify this image according to the UrbanEye categories.',
-            attachments: [$image],
-            provider: Lab::Gemini,
-        );
+        
+        /* KLASIFIKASI FOTO DENGAN GEMINI */
 
-        $report->update([
-            'ai_category' => $response['category'],
-            'ai_confidence' => $response['confidence'],
-            'ai_response' => $response['reason'],
-            'classified_at' => now(),
-        ]);
+        $response = null;
 
-            /* ANALISIS URGENSI LAPORAN */
+        try {
+            $response = (new ReportClassifier)->prompt(
+                'Classify this image according to the UrbanEye categories.',
+                attachments: [$image],
+                provider: [
+                    Lab::Gemini->value => 'gemini-3.6-flash',
+                ],
+            );
+        } catch (Throwable $primaryError) {
+            Log::warning('UrbanEye primary classification model failed.', [
+                'report_id' => $report->id,
+                'error' => $primaryError->getMessage(),
+            ]);
 
+            // Coba model Gemini cadangan.
+            try {
+                $response = (new ReportClassifier)->prompt(
+                    'Classify this image according to the UrbanEye categories.',
+                    attachments: [$image],
+                    provider: [
+                        Lab::Gemini->value => 'gemini-3.6-flash',
+                    ],
+                );
+            } catch (Throwable $fallbackError) {
+                $aiAnalysisFailed = true;
+
+                Log::warning('UrbanEye classification fallback failed.', [
+                    'report_id' => $report->id,
+                    'primary_error' => $primaryError->getMessage(),
+                    'fallback_error' => $fallbackError->getMessage(),
+                ]);
+            }
+        }
+
+        if ($response !== null) {
+            $report->update([
+                'ai_category' => $response['category'] ?? null,
+                'ai_confidence' => $response['confidence'] ?? null,
+                'ai_response' => $response['reason'] ?? null,
+                'classified_at' => now(),
+            ]);
+        }
+
+        /* ANALISIS URGENSI LAPORAN */
+
+        try {
             $urgencyResponse = (new ReportUrgencyAnalyzer)->prompt(
                 "Assess the urgency of this UrbanEye report.
 
-            Title: {$report->title}
-            Description: {$report->description}
-            Category: {$report->category?->name}
-            Address: {$report->address}
-            Latitude: {$report->latitude}
-            Longitude: {$report->longitude}",
+                Title: {$report->title}
+                Description: {$report->description}
+                Category: {$report->category?->name}
+                Address: {$report->address}
+                Latitude: {$report->latitude}
+                Longitude: {$report->longitude}",
                 attachments: [$image],
-                provider: Lab::Gemini,
+                provider: [
+                    Lab::Gemini->value => 'gemini-3.6-flash',
+                ],
             );
 
             $report->update([
-                'urgency_level' => $urgencyResponse['urgency_level'],
-                'urgency_reason' => $urgencyResponse['reason'],
+                'urgency_level' => $urgencyResponse['urgency_level'] ?? null,
+                'urgency_reason' => $urgencyResponse['reason'] ?? null,
                 'urgency_analyzed_at' => now(),
             ]);
+        } catch (Throwable $e) {
+            $aiAnalysisFailed = true;
+
+            Log::warning('UrbanEye AI urgency analysis failed.', [
+                'report_id' => $report->id,
+                'exception' => get_class($e),
+                'error' => $e->getMessage(),
+            ]);
+        }
 
         /* STATUS HISTORY */
 
@@ -271,10 +323,12 @@ class ReportController extends Controller
         ]);
 
         return redirect()
-            ->route('masyarakat.reports.index')
-            ->with(
-                'success',
-                'Laporan berhasil dikirim.'
-            );
+        ->route('masyarakat.reports.index')
+        ->with(
+            'success',
+            $aiAnalysisFailed
+                ? 'Laporan berhasil dikirim, tetapi sebagian analisis AI belum berhasil. Laporan tetap menunggu pemeriksaan Admin.'
+                : 'Laporan berhasil dikirim.'
+        );
     }
 }

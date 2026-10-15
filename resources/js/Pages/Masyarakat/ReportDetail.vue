@@ -19,15 +19,28 @@
         <div class="min-h-screen bg-[#F5F5F5]">
             <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
 
-                <!-- Kembali -->
-                <div class="mb-8">
+                 <!-- Kembali -->
                     <Link
                         :href="route('masyarakat.reports.index')"
-                        class="inline-flex items-center gap-2 text-sm font-medium text-gray-600 transition hover:text-[#1B5E20]"
+                        class="inline-flex w-fit items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
                     >
-                        ← Kembali ke Laporan Saya
+                        <svg
+                            class="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 19l-7-7 7-7"
+                            />
+                        </svg>
+
+                        Kembali ke Laporan
                     </Link>
-                </div>
+
 
                 <!-- Header laporan -->
                 <Card>
