@@ -2,7 +2,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { Head, Link, usePage } from '@inertiajs/vue3'
-import PetugasLayout from '@/Layouts/PetugasLayout.vue'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 
 import {
     BookOpen,
@@ -76,21 +76,22 @@ const faqs = [
 </script>
 
 <template>
-    <Head title="Bantuan Petugas" />
+    <Head title="Pengaturan Petugas" />
 
-    <PetugasLayout>
-        <div class="space-y-6 p-5 sm:p-8">
-
-            <!-- JUDUL HALAMAN -->
+    <AuthenticatedLayout>
+        <template #header>
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">
-                    Pusat Bantuan
+                <h1 class="text-xl font-bold tracking-tight text-[#101827] sm:text-2xl">
+                    Pengaturan Petugas
                 </h1>
 
-                <p class="mt-2 text-sm text-gray-500">
-                    Panduan penggunaan UrbanEye untuk membantu pekerjaan Anda.
+                <p class="mt-0.5 text-xs text-gray-500 sm:text-sm">
+                    Kelola informasi profil dan keamanan akun Anda.
                 </p>
             </div>
+        </template>
+
+        <div class="space-y-6 p-6 lg:p-8">
 
             <!-- BANNER BANTUAN -->
             <div
@@ -425,5 +426,5 @@ const faqs = [
             </section>
 
         </div>
-    </PetugasLayout>
+    </AuthenticatedLayout>
 </template>

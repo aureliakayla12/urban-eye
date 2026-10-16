@@ -1,5 +1,5 @@
 <script setup>
-import PetugasLayout from '@/Layouts/PetugasLayout.vue'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head } from '@inertiajs/vue3'
 import { onBeforeUnmount, onMounted, ref, computed } from 'vue'
 
@@ -197,7 +197,7 @@ onBeforeUnmount(() => {
 <template>
     <Head title="Peta Laporan" />
 
-    <PetugasLayout>
+    <AuthenticatedLayout>
         <!-- HEADER -->
         <template #header>
             <div>
@@ -384,5 +384,5 @@ onBeforeUnmount(() => {
 
             </div>
         </div>
-    </PetugasLayout>
+    </AuthenticatedLayout>
 </template>

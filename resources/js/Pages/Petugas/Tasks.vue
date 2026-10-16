@@ -1,7 +1,7 @@
 
 <script setup>
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { computed, ref, watch } from 'vue'
-import PetugasLayout from '@/Layouts/PetugasLayout.vue'
 import { Head, Link } from '@inertiajs/vue3'
 
 import {
@@ -211,19 +211,20 @@ const goToPage = (page) => {
 <template>
     <Head title="Tugas Saya" />
 
-    <PetugasLayout>
-        <div class="space-y-5 p-5 sm:p-6 lg:p-8">
+    <AuthenticatedLayout>
+    <template #header>
+        <div>
+            <h1 class="text-xl font-bold tracking-tight text-[#101827] sm:text-2xl">
+                Tugas Saya
+            </h1>
 
-            <!-- HEADER -->
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800">
-                    Tugas Saya
-                </h1>
+            <p class="mt-0.5 text-xs text-gray-500 sm:text-sm">
+                Daftar tugas laporan yang ditugaskan kepada Anda.
+            </p>
+        </div>
+    </template>
 
-                <p class="mt-1 text-sm text-gray-500">
-                    Daftar tugas laporan yang ditugaskan kepada Anda.
-                </p>
-            </div>
+    <div class="space-y-5 p-5 sm:p-6 lg:p-8">
 
             <!-- PENCARIAN DAN TAMPILKAN DATA -->
             <div
@@ -451,5 +452,5 @@ const goToPage = (page) => {
             </div>
 
         </div>
-    </PetugasLayout>
+    </AuthenticatedLayout>
 </template>

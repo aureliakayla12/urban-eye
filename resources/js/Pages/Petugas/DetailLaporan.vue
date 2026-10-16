@@ -1,5 +1,5 @@
 <script setup>
-import PetugasLayout from '@/Layouts/PetugasLayout.vue'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import {
@@ -146,7 +146,19 @@ const selesaikanTugas = () => {
 <template>
     <Head title="Detail Laporan" />
 
-    <PetugasLayout>
+    <AuthenticatedLayout>
+        <template #header>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-[#101827] sm:text-2xl">
+                    Detail Laporan
+                </h1>
+
+                <p class="mt-0.5 text-xs text-gray-500 sm:text-sm">
+                    Informasi laporan dan status penanganan tugas.
+                </p>
+            </div>
+        </template>
+
         <div class="p-5 lg:p-8">
             <!-- HEADER -->
             <div class="mb-6">
@@ -166,10 +178,6 @@ const selesaikanTugas = () => {
                             : 'Kembali ke Tugas Saya'
                     }}
                 </Link>
-
-                <h1 class="mt-4 text-2xl font-semibold text-gray-800">
-                    Detail Laporan
-                </h1>
             </div>
 
             <!-- CONTENT -->
@@ -440,5 +448,5 @@ const selesaikanTugas = () => {
                 </div>
             </div>
         </div>
-    </PetugasLayout>
+    </AuthenticatedLayout>
 </template>

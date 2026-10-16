@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\UserPoint;
 use App\Models\Badge;
 use App\Models\UserBadge;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -142,6 +143,7 @@ class ReportController extends Controller
             }
 
             $assignment = $report->assignments()->latest()->first();
+            $previousOfficerId = $assignment?->officer_id;
 
             if ($assignment) {
                 $assignment->update([
@@ -156,6 +158,27 @@ class ReportController extends Controller
                     'assigned_by' => auth()->id(),
                     'assigned_at' => now(),
                     'status' => 'ditugaskan',
+                ]);
+            }
+
+            // Kirim notifikasi jika petugas baru ditugaskan atau petugas berubah.
+            if ((int) $previousOfficerId !== (int) $officer->id) {
+                // Notifikasi kepada Petugas yang ditugaskan.
+                Notification::create([
+                    'user_id' => $officer->id,
+                    'report_id' => $report->id,
+                    'title' => 'Tugas Laporan Baru',
+                    'message' => "Kamu ditugaskan untuk menangani laporan \"{$report->title}\".",
+                    'is_read' => false,
+                ]);
+
+                // Beri tahu Masyarakat siapa yang menangani laporannya.
+                Notification::create([
+                    'user_id' => $report->user_id,
+                    'report_id' => $report->id,
+                    'title' => 'Petugas Ditugaskan',
+                    'message' => "Laporan kamu telah ditugaskan kepada {$officer->name}.",
+                    'is_read' => false,
                 ]);
             }
 
@@ -198,6 +221,7 @@ class ReportController extends Controller
         ]);
 
         $previousVerificationStatus = $report->verification_status;
+        $previousStatus = $report->status;
 
         $report->update([
             'title' => $validated['title'],
@@ -250,6 +274,15 @@ class ReportController extends Controller
                 'points' => $pointAdjustment,
                 'type' => 'tambah',
                 'description' => 'Poin dari laporan yang telah diverifikasi valid.',
+            ]);
+
+            // Notifikasi kepada Masyarakat saat mendapatkan poin.
+            Notification::create([
+                'user_id' => $report->user_id,
+                'report_id' => $report->id,
+                'title' => 'Poin Bertambah!',
+                'message' => "Kamu mendapatkan {$pointAdjustment} poin karena laporan \"{$report->title}\" telah diverifikasi valid.",
+                'is_read' => false,
             ]);
         }
 
@@ -359,6 +392,58 @@ class ReportController extends Controller
             $this->checkAndAwardBadges($report->user_id);
         }
 
+        // Notifikasi kepada Masyarakat jika status verifikasi berubah.
+        if ($previousVerificationStatus !== $validated['verification_status']) {
+            $verificationMessages = [
+                'pending' => [
+                    'Verifikasi Laporan Diperbarui',
+                    "Laporan \"{$report->title}\" sedang menunggu verifikasi Admin.",
+                ],
+                'valid' => [
+                    'Laporan Terverifikasi',
+                    "Laporan \"{$report->title}\" telah diverifikasi dan dinyatakan valid oleh Admin.",
+                ],
+                'hoax' => [
+                    'Laporan Tidak Valid',
+                    "Laporan \"{$report->title}\" dinyatakan tidak valid (hoaks) oleh Admin.",
+                ],
+            ];
+
+            [$title, $message] = $verificationMessages[
+                $validated['verification_status']
+            ];
+
+            Notification::create([
+                'user_id' => $report->user_id,
+                'report_id' => $report->id,
+                'title' => $title,
+                'message' => $message,
+                'is_read' => false,
+            ]);
+        }
+
+        // Notifikasi kepada Masyarakat jika status laporan berubah.
+        if ($previousStatus !== $validated['status']) {
+            $statusLabels = [
+                'menunggu' => 'menunggu',
+                'diproses' => 'sedang diproses',
+                'selesai' => 'selesai',
+                'ditolak' => 'ditolak',
+            ];
+
+            $oldStatusLabel = $statusLabels[$previousStatus] ?? $previousStatus;
+            $newStatusLabel = $statusLabels[$validated['status']]
+                ?? $validated['status'];
+
+            Notification::create([
+                'user_id' => $report->user_id,
+                'report_id' => $report->id,
+                'title' => 'Status Laporan Diperbarui',
+                'message' => "Status laporan \"{$report->title}\" berubah dari {$oldStatusLabel} menjadi {$newStatusLabel}.",
+                'is_read' => false,
+            ]);
+        }
+
         return redirect()
             ->route('admin.reports.show', $report->id)
             ->with('success', 'Laporan berhasil diperbarui.');
@@ -406,8 +491,8 @@ class ReportController extends Controller
 
             // Jika semua syarat terpenuhi
             if ($reportsRequirementMet && $pointsRequirementMet) {
-                // Jangan berikan badge yang sama dua kali
-                UserBadge::firstOrCreate(
+                // Berikan badge hanya jika belum pernah dimiliki.
+                $userBadge = UserBadge::firstOrCreate(
                     [
                         'user_id' => $userId,
                         'badge_id' => $badge->id,
@@ -416,6 +501,16 @@ class ReportController extends Controller
                         'earned_at' => now(),
                     ]
                 );
+
+                // Kirim notifikasi hanya ketika badge benar-benar baru diperoleh.
+                if ($userBadge->wasRecentlyCreated) {
+                    Notification::create([
+                        'user_id' => $userId,
+                        'title' => 'Badge Baru Diperoleh!',
+                        'message' => "Selamat! Kamu berhasil mendapatkan badge \"{$badge->name}\".",
+                        'is_read' => false,
+                    ]);
+                }
             }
         }
     }

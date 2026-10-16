@@ -14,6 +14,8 @@ use App\Http\Controllers\Admin\StatisticsController;
 use App\Http\Controllers\Admin\StatusController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
+use App\Http\Controllers\Petugas\NotificationController as PetugasNotificationController;
 use App\Http\Controllers\Masyarakat\NotificationController as MasyarakatNotificationController;
 use App\Http\Controllers\Masyarakat\HelpController as MasyarakatHelpController;
 use App\Http\Controllers\Masyarakat\LeaderboardController;
@@ -81,6 +83,11 @@ Route::middleware(['auth'])->group(function () {
             Route::put('/{id}', [ReportController::class, 'update'])->name('admin.reports.update');
             Route::delete('/{id}', [ReportController::class, 'destroy'])->name('admin.reports.destroy');
         });
+
+        // Notifikasi Admin
+        Route::get('/notifications', [AdminNotificationController::class, 'index'])->name('admin.notifications.index');
+        Route::patch('/notifications/read-all', [AdminNotificationController::class, 'markAllRead']) ->name('admin.notifications.read-all');
+        Route::patch('/notifications/{id}/read', [AdminNotificationController::class, 'markRead']) ->name('admin.notifications.read');
 
 
         // Kelola Pengguna - Masyarakat
@@ -175,6 +182,11 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/{id}', [TaskController::class, 'show'])->name('petugas.tasks.show');
             Route::put('/{id}', [TaskController::class, 'update'])->name('petugas.tasks.update');
         });
+
+        // Notifikasi Petugas
+        Route::get('/notifications', [PetugasNotificationController::class, 'index'])->name('petugas.notifications.index');
+        Route::patch('/notifications/read-all', [PetugasNotificationController::class, 'markAllRead'])->name('petugas.notifications.read-all');
+        Route::patch('/notifications/{id}/read', [PetugasNotificationController::class, 'markRead'])->name('petugas.notifications.read');
 
 
         // Peta Laporan

@@ -39,11 +39,11 @@ class HandleInertiaRequests extends Middleware
             ],
 
             'unreadNotificationCount' => fn () =>
-                $request->user() && $request->user()->hasRole('masyarakat')
-                    ? Notification::where('user_id', $request->user()->id)
-                        ->where('is_read', false)
-                        ->count()
-                    : 0,
-        ];
+            $request->user()
+                ? Notification::where('user_id', $request->user()->id)
+                    ->where('is_read', false)
+                    ->count()
+                : 0,
+                ];
     }
 }

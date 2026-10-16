@@ -1,8 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue'
-
 import { Link, usePage } from '@inertiajs/vue3'
-
 import {
     LayoutDashboard,
     ClipboardList,
@@ -531,45 +529,33 @@ const toggleMobileMenu = () => {
                 <!-- Right Header -->
                 <div class="relative flex items-center gap-5">
 
-                    <!-- Notification untuk Masyarakat -->
-                    <Link
-                        v-if="role === 'masyarakat'"
-                        :href="route('masyarakat.notifications.index')"
+                <!-- Notifikasi untuk Admin, Petugas, dan Masyarakat -->
+                   <Link
+                        v-if="role === 'admin' || role === 'masyarakat' || role === 'petugas'"
+                        :href="
+                            route(
+                                role === 'admin'
+                                    ? 'admin.notifications.index'
+                                    : role === 'petugas'
+                                        ? 'petugas.notifications.index'
+                                        : 'masyarakat.notifications.index'
+                            )
+                        "
                         class="relative inline-flex items-center justify-center rounded-lg p-2 text-gray-700 transition hover:bg-gray-100"
                         aria-label="Notifikasi"
                         title="Notifikasi"
                     >
-                        <Bell
-                            :size="21"
-                            stroke-width="1.9"
-                        />
+                        <Bell :size="21" stroke-width="1.9" />
 
                         <span
                             v-if="unreadNotificationCount > 0"
                             class="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold leading-none text-white ring-2 ring-white"
                         >
-                            {{
-                                unreadNotificationCount > 99
-                                    ? '99+'
-                                    : unreadNotificationCount
-                            }}
+                            {{ unreadNotificationCount > 99 ? '99+' : unreadNotificationCount }}
                         </span>
                     </Link>
 
-                    <!-- Ikon untuk role lain; fitur notifikasinya dikerjakan terpisah -->
-                    <button
-                        v-else
-                        type="button"
-                        class="relative inline-flex items-center justify-center rounded-lg p-2 text-gray-700 transition hover:bg-gray-100"
-                        aria-label="Notifikasi"
-                        title="Notifikasi"
-                    >
-                        <Bell
-                            :size="21"
-                            stroke-width="1.9"
-                        />
-                    </button>
-
+                    
                     <!-- Header User -->
                     <button
                         type="button"

@@ -9,6 +9,8 @@ use App\Models\Category;
 use App\Models\District;
 use App\Models\Village;
 use App\Models\Report;
+use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Ai\Enums\Lab;
 use Laravel\Ai\Files\Image;
@@ -277,10 +279,14 @@ class ReportController extends Controller
 
         try {
             $response = (new ReportClassifier)->prompt(
-                'Classify this image according to the UrbanEye categories.',
+                'Klasifikasikan foto ini berdasarkan salah satu kategori UrbanEye:
+                Sampah, Drainase, Lampu Jalan, Fasilitas Umum, atau Jalan Rusak.
+
+                Berikan hasil klasifikasi dan alasan dalam Bahasa Indonesia.
+                Nama kategori harus sama persis dengan salah satu kategori tersebut.',
                 attachments: [$image],
                 provider: [
-                    Lab::Gemini->value => 'gemini-3.6-flash',
+                    Lab::Gemini->value => config('ai.providers.gemini.model'),
                 ],
             );
         } catch (Throwable $primaryError) {
@@ -292,10 +298,14 @@ class ReportController extends Controller
             // Coba model Gemini cadangan.
             try {
                 $response = (new ReportClassifier)->prompt(
-                    'Classify this image according to the UrbanEye categories.',
+                    'Klasifikasikan foto ini berdasarkan salah satu kategori UrbanEye:
+                    Sampah, Drainase, Lampu Jalan, Fasilitas Umum, atau Jalan Rusak.
+
+                    Berikan hasil klasifikasi dan alasan dalam Bahasa Indonesia.
+                    Nama kategori harus sama persis dengan salah satu kategori tersebut.',
                     attachments: [$image],
                     provider: [
-                        Lab::Gemini->value => 'gemini-3.6-flash',
+                        Lab::Gemini->value => config('ai.providers.gemini.model'),
                     ],
                 );
             } catch (Throwable $fallbackError) {
@@ -332,7 +342,7 @@ class ReportController extends Controller
                 Longitude: {$report->longitude}",
                 attachments: [$image],
                 provider: [
-                    Lab::Gemini->value => 'gemini-3.6-flash',
+                    Lab::Gemini->value => config('ai.providers.gemini.model'),
                 ],
             );
 
@@ -359,6 +369,19 @@ class ReportController extends Controller
             'new_status' => 'menunggu',
             'note' => 'Laporan dibuat oleh masyarakat.',
         ]);
+
+        // Kirim notifikasi kepada semua Admin ketika ada laporan baru.
+        $admins = User::role('admin')->get();
+
+        foreach ($admins as $admin) {
+            Notification::create([
+                'user_id' => $admin->id,
+                'report_id' => $report->id,
+                'title' => 'Laporan Baru',
+                'message' => 'Ada laporan baru yang perlu diperiksa.',
+                'is_read' => false,
+            ]);
+        }
 
         return redirect()
         ->route('masyarakat.reports.index')
