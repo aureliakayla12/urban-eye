@@ -6,6 +6,8 @@ use App\Ai\Agents\ReportClassifier;
 use App\Ai\Agents\ReportUrgencyAnalyzer;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use App\Models\District;
+use App\Models\Village;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Laravel\Ai\Enums\Lab;
@@ -176,6 +178,42 @@ class ReportController extends Controller
             ],
         ]);
 
+        // Cari kecamatan dan kelurahan dari alamat laporan.
+        $addressParts = array_map(
+            'trim',
+            explode(',', $validated['address'])
+        );
+
+        $districtId = null;
+        $villageId = null;
+
+        foreach ($addressParts as $part) {
+            $village = Village::whereRaw(
+                'LOWER(name) = ?',
+                [mb_strtolower($part)]
+            )->first();
+
+            if ($village) {
+                $villageId = $village->id;
+                $districtId = $village->district_id;
+                break;
+            }
+        }
+
+        if (!$districtId) {
+            foreach ($addressParts as $part) {
+                $district = District::whereRaw(
+                    'LOWER(name) = ?',
+                    [mb_strtolower($part)]
+                )->first();
+
+                if ($district) {
+                    $districtId = $district->id;
+                    break;
+                }
+            }
+        }
+
         $photos = $request->file('photos');
 
         /* FOTO PERTAMA */
@@ -189,8 +227,8 @@ class ReportController extends Controller
             'user_id' => $request->user()->id,
             'category_id' => $validated['category_id'],
 
-            'district_id' => null,
-            'village_id' => null,
+            'district_id' => $districtId,
+            'village_id' => $villageId,
 
             'title' => $validated['title'],
             'description' => $validated['description'],
