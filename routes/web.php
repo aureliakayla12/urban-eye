@@ -159,10 +159,12 @@ Route::middleware(['auth'])->group(function () {
 
         // Pengaturan Sistem
         Route::get('/settings', [SettingsController::class, 'index'])->name('admin.settings.index');
-
+        Route::put('/settings', [SettingsController::class, 'update'])->name('admin.settings.update');
+        Route::put('/settings/password', [SettingsController::class, 'updatePassword'])->name('admin.settings.password');
 
         // Laporan & Export
         Route::get('/export', [ExportController::class, 'index'])->name('admin.export.index');
+        Route::get('/export/download/{format}', [ExportController::class, 'download'])->name('admin.export.download');
     });
 
 
