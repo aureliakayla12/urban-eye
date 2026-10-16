@@ -112,7 +112,6 @@ class RewardController extends Controller
         return Inertia::render('Admin/Gamification/Points');
     }
 
-   
     /**
      * Halaman leaderboard.
      */
@@ -149,32 +148,36 @@ class RewardController extends Controller
             ->orderBy('users.name')
             ->get()
             ->filter(fn ($user) => (int) $user->total_points > 0)
+            ->take(10)
             ->values();
 
-        // Hitung peringkat dengan metode dense ranking.
+        // Hitung peringkat dengan metode competition ranking.
         $rank = 0;
         $previousPoints = null;
+        $previousRank = 0;
 
         $leaderboard = $leaderboard->map(
-            function ($user) use (&$rank, &$previousPoints) {
+            function ($user, $index) use (
+                &$rank,
+                &$previousPoints,
+                &$previousRank
+            ) {
                 $points = (int) $user->total_points;
 
-                if (
-                    $previousPoints === null ||
-                    $points !== $previousPoints
-                ) {
-                    $rank++;
-                    $previousPoints = $points;
+                if ($previousPoints === null) {
+                    $rank = 1;
+                } elseif ($points !== $previousPoints) {
+                    $rank = $index + 1;
                 }
 
                 $user->rank = $rank;
 
+                $previousPoints = $points;
+                $previousRank = $rank;
+
                 return $user;
             }
-        )
-            // Tampilkan semua pengguna yang masuk peringkat 1–10.
-            ->filter(fn ($user) => $user->rank <= 10)
-            ->values();
+        );
 
         return Inertia::render('Admin/Gamification/Leaderboard', [
             'leaderboard' => $leaderboard,

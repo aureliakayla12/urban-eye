@@ -354,20 +354,74 @@ const formatTime = (date) => {
                                     </span>
                                 </div>
                             </div>
-
+                            
                             <!-- Kategori -->
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
-                                    Kategori
+                                    Kategori Laporan
                                 </p>
 
                                 <p class="mt-1 text-sm text-gray-700">
-                                    {{
-                                        report.category?.name ||
-                                        report.ai_category ||
-                                        '-'
-                                    }}
+                                    {{ report.category?.name || '-' }}
                                 </p>
+                            </div>
+
+                            <!-- Hasil Klasifikasi AI -->
+                            <div class="rounded-xl border border-purple-200 bg-purple-50 p-4">
+                                <p class="text-xs font-semibold uppercase tracking-wide text-purple-700">
+                                    Hasil Klasifikasi AI
+                                </p>
+
+                                <div class="mt-3">
+                                    <p class="text-xs font-medium text-gray-500">
+                                        Kategori hasil AI
+                                    </p>
+
+                                    <p class="mt-1 text-sm font-semibold text-gray-800">
+                                        {{ report.ai_category || 'Belum tersedia' }}
+                                    </p>
+                                </div>
+
+                                <div
+                                    v-if="report.ai_confidence !== null && report.ai_confidence !== undefined"
+                                    class="mt-3"
+                                >
+                                    <p class="text-xs font-medium text-gray-500">
+                                        Tingkat keyakinan AI
+                                    </p>
+
+                                    <p class="mt-1 text-sm font-semibold text-gray-800">
+                                        {{ report.ai_confidence }}
+                                    </p>
+                                </div>
+
+                                <div
+                                    v-if="report.classified_at"
+                                    class="mt-3 border-t border-purple-200 pt-3"
+                                >
+                                    <p class="text-xs font-medium text-gray-500">
+                                        Waktu klasifikasi
+                                    </p>
+
+                                    <p class="mt-1 text-sm text-gray-700">
+                                        {{ formatDate(report.classified_at) }}
+                                        ·
+                                        {{ formatTime(report.classified_at) }}
+                                    </p>
+                                </div>
+
+                                <div
+                                    v-if="report.ai_response"
+                                    class="mt-3 border-t border-purple-200 pt-3"
+                                >
+                                    <p class="text-xs font-medium text-gray-500">
+                                        Respons AI
+                                    </p>
+
+                                    <p class="mt-1 whitespace-pre-line text-sm leading-6 text-gray-700">
+                                        {{ report.ai_response }}
+                                    </p>
+                                </div>
                             </div>
 
                             <!-- Analisis Urgensi AI -->
