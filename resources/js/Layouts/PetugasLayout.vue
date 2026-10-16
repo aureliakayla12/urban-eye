@@ -1,4 +1,3 @@
-
 <script setup>
 import { Link, Form } from '@inertiajs/vue3'
 import { ref } from 'vue'
@@ -37,7 +36,6 @@ const closeMobileMenu = () => {
 
 <template>
     <div class="min-h-screen bg-[#F4F6F8]">
-
         <!-- MOBILE OVERLAY -->
         <div
             v-if="showingMobileMenu"
@@ -135,7 +133,6 @@ const closeMobileMenu = () => {
             <!-- MENU SIDEBAR -->
             <nav class="flex-1 overflow-y-auto px-4 pb-5">
                 <div class="space-y-1.5">
-
                     <!-- DASHBOARD -->
                     <Link
                         href="/dashboard"
@@ -173,7 +170,9 @@ const closeMobileMenu = () => {
                             showingSidebar
                                 ? 'gap-4 px-4'
                                 : 'justify-center px-0',
-                            $page.url.startsWith('/petugas/tasks')
+
+                            $page.url.startsWith('/petugas/tasks') &&
+                            !$page.url.includes('from=history')
                                 ? 'bg-[#1B5E20] font-medium text-white'
                                 : 'text-gray-200 hover:bg-white/10 hover:text-white',
                         ]"
@@ -202,6 +201,7 @@ const closeMobileMenu = () => {
                             showingSidebar
                                 ? 'gap-4 px-4'
                                 : 'justify-center px-0',
+
                             $page.url.startsWith('/petugas/map')
                                 ? 'bg-[#1B5E20] font-medium text-white'
                                 : 'text-gray-200 hover:bg-white/10 hover:text-white',
@@ -210,10 +210,10 @@ const closeMobileMenu = () => {
                         @click="closeMobileMenu"
                     >
                         <Map
-                        :size="22"
-                        stroke-width="1.8"
-                        class="shrink-0"
-                    />
+                            :size="22"
+                            stroke-width="1.8"
+                            class="shrink-0"
+                        />
 
                         <span
                             v-if="showingSidebar"
@@ -222,7 +222,6 @@ const closeMobileMenu = () => {
                             Peta Laporan
                         </span>
                     </Link>
-                                        
 
                     <!-- RIWAYAT PENANGANAN -->
                     <Link
@@ -232,7 +231,14 @@ const closeMobileMenu = () => {
                             showingSidebar
                                 ? 'gap-4 px-4'
                                 : 'justify-center px-0',
-                            $page.url.startsWith('/petugas/history')
+
+                            (
+                                $page.url.startsWith('/petugas/history') ||
+                                (
+                                    $page.url.startsWith('/petugas/tasks') &&
+                                    $page.url.includes('from=history')
+                                )
+                            )
                                 ? 'bg-[#1B5E20] font-medium text-white'
                                 : 'text-gray-200 hover:bg-white/10 hover:text-white',
                         ]"
@@ -261,6 +267,7 @@ const closeMobileMenu = () => {
                             showingSidebar
                                 ? 'gap-4 px-4'
                                 : 'justify-center px-0',
+
                             $page.url.startsWith('/petugas/statistics')
                                 ? 'bg-[#1B5E20] font-medium text-white'
                                 : 'text-gray-200 hover:bg-white/10 hover:text-white',
@@ -290,6 +297,7 @@ const closeMobileMenu = () => {
                             showingSidebar
                                 ? 'gap-4 px-4'
                                 : 'justify-center px-0',
+
                             $page.url.startsWith('/petugas/settings')
                                 ? 'bg-[#1B5E20] font-medium text-white'
                                 : 'text-gray-200 hover:bg-white/10 hover:text-white',
@@ -319,6 +327,7 @@ const closeMobileMenu = () => {
                             showingSidebar
                                 ? 'gap-4 px-4'
                                 : 'justify-center px-0',
+
                             $page.url.startsWith('/petugas/help')
                                 ? 'bg-[#1B5E20] font-medium text-white'
                                 : 'text-gray-200 hover:bg-white/10 hover:text-white',
@@ -339,7 +348,6 @@ const closeMobileMenu = () => {
                             Bantuan
                         </span>
                     </Link>
-
                 </div>
             </nav>
         </aside>
@@ -386,7 +394,6 @@ const closeMobileMenu = () => {
 
                 <!-- KANAN -->
                 <div class="relative flex items-center gap-5">
-
                     <!-- NOTIFIKASI -->
                     <button
                         type="button"
