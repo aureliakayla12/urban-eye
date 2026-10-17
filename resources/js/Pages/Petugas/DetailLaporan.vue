@@ -1,7 +1,9 @@
+
 <script setup>
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import PetugasLayout from '@/Layouts/PetugasLayout.vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
+
 import {
     ArrowLeft,
     MapPin,
@@ -25,7 +27,7 @@ const fromHistory = computed(() => {
     return page.url.includes('from=history')
 })
 
-// Status pengerjaan tugas
+// Status tugas
 const status = computed(() => {
     return props.task?.status ?? 'ditugaskan'
 })
@@ -38,8 +40,7 @@ const statusText = computed(() => {
     }[status.value] ?? status.value
 })
 
-// Prioritas laporan untuk badge di samping judul
-// Utamakan nilai prioritas dari data jika tersedia.
+// Prioritas laporan
 const priority = computed(() => {
     const reportPriority =
         props.task?.report?.priority ?? props.task?.priority
@@ -64,8 +65,7 @@ const priority = computed(() => {
         }
     }
 
-    // Pemetaan sementara mengikuti contoh Tugas Prioritas di Dashboard.
-    // Hapus pemetaan judul ini setelah prioritas disimpan di database.
+    // Pemetaan sementara sampai prioritas tersedia di database.
     const title = (props.task?.report?.title ?? '').toLowerCase()
 
     if (title.includes('sampah')) return 'mendesak'
@@ -93,7 +93,10 @@ const priorityClass = computed(() => {
 
 // Foto laporan
 const reportImageUrl = computed(() => {
-    const photo = props.task?.report?.photo
+    const photo =
+        props.task?.report?.photo ??
+        props.task?.report?.images?.[0]?.image_path ??
+        props.task?.report?.images?.[0]?.path
 
     if (typeof photo !== 'string' || !photo.trim()) {
         return null
@@ -116,6 +119,22 @@ const reportImageUrl = computed(() => {
     return `/storage/${cleanedPath}`
 })
 
+// CATATAN PENANGANAN
+const catatanPenanganan = ref(props.task?.note ?? '')
+const isSaving = ref(false)
+
+const noteError = computed(() => {
+    return page.props.errors?.note ?? null
+})
+
+// Sinkronkan catatan saat data tugas diperbarui oleh server.
+watch(
+    () => props.task?.note,
+    (note) => {
+        catatanPenanganan.value = note ?? ''
+    },
+)
+
 // Terima tugas
 const terimaTugas = () => {
     router.put(
@@ -129,12 +148,33 @@ const terimaTugas = () => {
     )
 }
 
-// Selesaikan tugas
+// Simpan catatan tanpa menyelesaikan tugas.
+const simpanCatatan = () => {
+    router.put(
+        `/petugas/tasks/${props.task.id}`,
+        {
+            status: status.value,
+            note: catatanPenanganan.value,
+        },
+        {
+            preserveScroll: true,
+            onStart: () => {
+                isSaving.value = true
+            },
+            onFinish: () => {
+                isSaving.value = false
+            },
+        },
+    )
+}
+
+// Selesaikan tugas sekaligus simpan catatan.
 const selesaikanTugas = () => {
     router.put(
         `/petugas/tasks/${props.task.id}`,
         {
             status: 'selesai',
+            note: catatanPenanganan.value,
         },
         {
             preserveScroll: true,
@@ -146,19 +186,7 @@ const selesaikanTugas = () => {
 <template>
     <Head title="Detail Laporan" />
 
-    <AuthenticatedLayout>
-        <template #header>
-            <div>
-                <h1 class="text-xl font-bold tracking-tight text-[#101827] sm:text-2xl">
-                    Detail Laporan
-                </h1>
-
-                <p class="mt-0.5 text-xs text-gray-500 sm:text-sm">
-                    Informasi laporan dan status penanganan tugas.
-                </p>
-            </div>
-        </template>
-
+    <PetugasLayout>
         <div class="p-5 lg:p-8">
             <!-- HEADER -->
             <div class="mb-6">
@@ -178,9 +206,13 @@ const selesaikanTugas = () => {
                             : 'Kembali ke Tugas Saya'
                     }}
                 </Link>
+
+                <h1 class="mt-4 text-2xl font-semibold text-gray-800">
+                    Detail Laporan
+                </h1>
             </div>
 
-            <!-- CONTENT -->
+            <!-- KONTEN -->
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <!-- BAGIAN KIRI -->
                 <div class="space-y-6 lg:col-span-2">
@@ -385,6 +417,16 @@ const selesaikanTugas = () => {
                                 </div>
                             </div>
                         </div>
+
+                        <div class="mt-5 border-t border-gray-100 pt-4">
+                            <p class="text-sm text-gray-500">
+                                Status saat ini
+                            </p>
+
+                            <p class="mt-1 font-semibold text-gray-800">
+                                {{ statusText }}
+                            </p>
+                        </div>
                     </div>
 
                     <!-- AKSI TUGAS -->
@@ -423,7 +465,6 @@ const selesaikanTugas = () => {
                             Tugas Sudah Selesai
                         </div>
 
-                        <!-- STATUS LAIN -->
                         <div
                             v-else
                             class="mt-5 rounded-lg bg-gray-100 px-4 py-3 text-center text-sm font-medium text-gray-600"
@@ -432,21 +473,78 @@ const selesaikanTugas = () => {
                         </div>
                     </div>
 
-                    <!-- CATATAN PENANGANAN -->
+                    <!-- FORM CATATAN PENANGANAN -->
                     <div
-                        v-if="task?.note"
+                        v-if="status === 'diproses' && !fromHistory"
                         class="rounded-xl bg-white p-6 shadow-sm"
                     >
                         <h3 class="font-semibold text-gray-800">
                             Catatan Penanganan
                         </h3>
 
-                        <p class="mt-3 text-sm leading-6 text-gray-600">
+                        <p class="mt-2 text-sm leading-5 text-gray-500">
+                            Tuliskan hasil penanganan laporan sebelum
+                            menyelesaikan tugas.
+                        </p>
+
+                        <textarea
+                            v-model="catatanPenanganan"
+                            rows="4"
+                            :disabled="isSaving"
+                            placeholder="Contoh: Sampah sudah dibersihkan..."
+                            class="mt-4 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-green-500 focus:ring-green-500 disabled:bg-gray-100"
+                        ></textarea>
+
+                        <p
+                            v-if="noteError"
+                            class="mt-2 text-sm text-red-600"
+                        >
+                            {{ noteError }}
+                        </p>
+
+                        <button
+                            type="button"
+                            @click="simpanCatatan"
+                            :disabled="isSaving"
+                            class="mt-3 w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                        >
+                            {{
+                                isSaving
+                                    ? 'Menyimpan...'
+                                    : 'Simpan Catatan'
+                            }}
+                        </button>
+                    </div>
+
+                    <!-- CATATAN TERSIMPAN -->
+                    <div
+                        v-else-if="
+                            task?.note ||
+                            status === 'selesai' ||
+                            fromHistory
+                        "
+                        class="rounded-xl bg-white p-6 shadow-sm"
+                    >
+                        <h3 class="font-semibold text-gray-800">
+                            Catatan Penanganan
+                        </h3>
+
+                        <p
+                            v-if="task?.note"
+                            class="mt-3 whitespace-pre-line text-sm leading-6 text-gray-600"
+                        >
                             {{ task.note }}
+                        </p>
+
+                        <p
+                            v-else
+                            class="mt-3 text-sm text-gray-400"
+                        >
+                            Belum ada catatan penanganan.
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </PetugasLayout>
 </template>
