@@ -1,8 +1,7 @@
 <script setup>
 import { computed, ref, watch } from 'vue'
-import PetugasLayout from '@/Layouts/PetugasLayout.vue'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, Link } from '@inertiajs/vue3'
-
 import {
     MapPin,
     CalendarDays,
@@ -202,7 +201,7 @@ const goToPage = (page) => {
 <template>
     <Head title="Riwayat Penanganan" />
 
-    <PetugasLayout>
+    <AuthenticatedLayout>
         <template #header>
             <div>
                 <h1 class="text-xl font-bold tracking-tight text-[#101827] sm:text-2xl">
@@ -475,5 +474,5 @@ const goToPage = (page) => {
                 </div>
             </div>
         </div>
-    </PetugasLayout>
+    </AuthenticatedLayout>
 </template>

@@ -1,6 +1,6 @@
 
 <script setup>
-import PetugasLayout from '@/Layouts/PetugasLayout.vue'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head, Link, router, usePage } from '@inertiajs/vue3'
 import { computed, ref, watch } from 'vue'
 
@@ -186,7 +186,7 @@ const selesaikanTugas = () => {
 <template>
     <Head title="Detail Laporan" />
 
-    <PetugasLayout>
+    <AuthenticatedLayout>
         <div class="p-5 lg:p-8">
             <!-- HEADER -->
             <div class="mb-6">
@@ -546,5 +546,5 @@ const selesaikanTugas = () => {
                 </div>
             </div>
         </div>
-    </PetugasLayout>
+    </AuthenticatedLayout>
 </template>
