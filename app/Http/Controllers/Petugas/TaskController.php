@@ -54,7 +54,7 @@ class TaskController extends Controller
     
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'status' => 'required|in:ditugaskan,diproses,selesai',
             'note' => 'nullable|string',
         ]);

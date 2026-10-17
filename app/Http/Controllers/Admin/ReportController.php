@@ -127,9 +127,14 @@ class ReportController extends Controller
         // Assign petugas
         if ($request->filled('officer_id')) {
             if ($report->verification_status !== 'valid') {
-                return back()->withErrors([
-                    'officer_id' => 'Laporan harus diverifikasi valid sebelum ditugaskan kepada petugas.',
-                ]);
+                return back()
+                    ->withErrors([
+                        'officer_id' => 'Laporan harus diverifikasi valid sebelum ditugaskan kepada petugas.',
+                    ])
+                    ->with(
+                        'error',
+                        'Petugas belum dapat ditugaskan karena laporan belum diverifikasi valid.'
+                    );
             }
 
             $officer = User::role('petugas')
@@ -137,9 +142,11 @@ class ReportController extends Controller
                 ->first();
 
             if (!$officer) {
-                return back()->withErrors([
-                    'officer_id' => 'Petugas yang dipilih tidak valid.',
-                ]);
+                return back()
+                    ->withErrors([
+                        'officer_id' => 'Petugas yang dipilih tidak valid.',
+                    ])
+                    ->with('error', 'Petugas yang dipilih tidak valid.');
             }
 
             $assignment = $report->assignments()->latest()->first();

@@ -44,6 +44,11 @@ class HandleInertiaRequests extends Middleware
                     ->where('is_read', false)
                     ->count()
                 : 0,
+                'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'info' => fn () => $request->session()->get('info'),
+                ],
                 ];
     }
 }
