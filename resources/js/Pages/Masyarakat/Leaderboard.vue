@@ -97,8 +97,10 @@ function medalClass(rank) {
 
                             <div class="flex flex-wrap items-end justify-between gap-4 border-t border-white/15 pt-5">
                                 <div>
-                                    <p class="text-sm text-white/65">Total Poin</p>
-                                    <p class="mt-1 text-2xl font-extrabold sm:text-3xl">{{ Number(currentUser.points || 0).toLocaleString('id-ID') }} poin</p>
+                                   <p class="text-sm text-white/65">Laporan Valid</p>
+                                    <p class="mt-1 text-2xl font-extrabold sm:text-3xl">
+                                        {{ Number(currentUser.validReportsCount ?? currentUser.valid_reports_count ?? 0).toLocaleString('id-ID') }} laporan
+                                    </p>
                                 </div>
                                 <Link
                                     v-if="!hasReports"
@@ -115,7 +117,9 @@ function medalClass(rank) {
                     <article class="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
                         <div class="mb-4">
                             <h3 class="text-lg font-extrabold text-[#102A43]">3 Kontributor Teratas</h3>
-                            <p class="mt-1 text-sm text-slate-500">Pengguna dengan poin tertinggi dari laporan terverifikasi.</p>
+                            <p class="mt-1 text-sm text-slate-500">
+                                Pengguna dengan jumlah laporan valid terbanyak.
+                            </p>
                         </div>
 
                         <div v-if="topThree.length" class="divide-y divide-slate-100">
@@ -131,7 +135,9 @@ function medalClass(rank) {
                                     <p class="truncate text-sm font-bold text-slate-800">{{ item.name }}</p>
                                     <p class="text-xs text-slate-400">Peringkat #{{ item.rank ?? index + 1 }}</p>
                                 </div>
-                                <p class="shrink-0 text-sm font-extrabold text-emerald-700">{{ Number(item.points || 0).toLocaleString('id-ID') }} poin</p>
+                                <p class="shrink-0 text-sm font-extrabold text-emerald-700">
+                                    {{ Number(item.validReportsCount ?? item.valid_reports_count ?? 0).toLocaleString('id-ID') }} laporan
+                                </p>
                             </div>
                         </div>
                         <div v-else class="flex min-h-[170px] flex-col items-center justify-center rounded-xl bg-slate-50 px-5 text-center">
@@ -147,12 +153,15 @@ function medalClass(rank) {
                     <article class="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
                         <div class="mb-5">
                             <h3 class="text-lg font-extrabold text-[#102A43]">Peringkat Kontributor</h3>
-                            <p class="mt-1 text-sm text-slate-500">Daftar pengguna yang telah membuat laporan dan mendapatkan poin.</p>
+                            <p class="mt-1 text-sm text-slate-500">Daftar pengguna yang telah membuat laporan dan mendapatkan badge baru.</p>
                         </div>
 
                         <div v-if="leaderboard.length" class="overflow-x-auto">
                             <div class="mb-2 hidden min-w-[580px] grid-cols-[56px_minmax(170px,1fr)_120px_190px] gap-3 rounded-lg bg-slate-50 px-4 py-3 text-xs font-bold text-slate-500 md:grid">
-                                <span>#</span><span>Pengguna</span><span>Total Poin</span><span>Badge</span>
+                                <span>#</span>
+                                <span>Pengguna</span>
+                                <span>Laporan Valid</span>
+                                <span>Badge</span>
                             </div>
                             <div class="min-w-[580px] divide-y divide-slate-100">
                                 <div
@@ -175,14 +184,23 @@ function medalClass(rank) {
                                             </p>
                                         </div>
                                     </div>
-                                    <p class="text-sm font-extrabold text-emerald-700">{{ Number(item.points || 0).toLocaleString('id-ID') }} poin</p>
-                                    <div>
-                                        <span v-if="item.badges?.length" class="inline-flex max-w-full items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">
-                                            <Leaf :size="14" class="shrink-0" />
-                                            <span class="truncate">{{ item.badges[0].name }}</span>
-                                        </span>
-                                        <span v-else class="text-sm text-slate-400">-</span>
-                                    </div>
+                                   <p class="text-sm font-extrabold text-emerald-700">
+                                        {{ Number(item.validReportsCount ?? item.valid_reports_count ?? 0).toLocaleString('id-ID') }}
+                                    </p>
+                                    
+                                <div>
+                                    <span
+                                        v-if="item.badges?.length"
+                                        class="inline-flex max-w-full items-center gap-1.5 rounded-lg bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800"
+                                    >
+                                        <Leaf :size="14" class="shrink-0" />
+                                        <span class="truncate">{{ item.badges[item.badges.length - 1].name }}</span>
+                                    </span>
+
+                                    <span v-else class="text-sm text-slate-400">
+                                        -
+                                    </span>
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -219,7 +237,7 @@ function medalClass(rank) {
                                 <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-sm font-extrabold text-emerald-700">3</div>
                                 <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-emerald-100 bg-white text-emerald-700"><Star :size="21" /></div>
                                 <div>
-                                    <p class="text-sm font-extrabold text-slate-800">Kumpulkan poin dan naik peringkat</p>
+                                    <p class="text-sm font-extrabold text-slate-800">Kumpulkan Laporan Valid dan naik peringkat</p>
                                     <p class="mt-1 text-sm leading-5 text-slate-500">Semakin banyak kontribusi valid, semakin tinggi posisimu di leaderboard.</p>
                                 </div>
                             </div>

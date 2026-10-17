@@ -7,9 +7,8 @@ use App\Models\Report;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\UserPoint;
-use App\Models\Badge;
-use App\Models\UserBadge;
 use App\Models\Notification;
+use App\Services\BadgeAwardService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -120,8 +119,11 @@ class ReportController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
-    {
+        public function update(
+            Request $request,
+            BadgeAwardService $badgeAwardService,
+            $id
+        ) {
         $report = Report::findOrFail($id);
 
         // Assign petugas
@@ -459,10 +461,8 @@ class ReportController extends Controller
             ]);
         }
 
-        // Periksa badge setelah laporan valid dan saldo poinnya disesuaikan.
-        if ($validated['verification_status'] === 'valid') {
-            $this->checkAndAwardBadges($report->user_id);
-        }
+        // Evaluasi badge setelah saldo poin dan penalti diperbarui.
+        $badgeAwardService->checkAndAward($report->user_id);
 
         // Notifikasi kepada Masyarakat jika status verifikasi berubah.
         if ($previousVerificationStatus !== $validated['verification_status']) {
@@ -522,70 +522,6 @@ class ReportController extends Controller
 
     }
 
-    /**
-     * Mengecek seluruh badge dan memberikan badge
-     * yang syaratnya sudah terpenuhi oleh user.
-     */
-    private function checkAndAwardBadges($userId)
-    {
-        // Hitung jumlah laporan valid milik user
-        $validReportsCount = Report::where('user_id', $userId)
-            ->where('verification_status', 'valid')
-            ->count();
-
-        // Hitung total poin berdasarkan ledger user_points
-        $totalPoints = UserPoint::where('user_id', $userId)
-            ->selectRaw("
-                COALESCE(
-                    SUM(
-                        CASE
-                            WHEN type = 'tambah' THEN points
-                            WHEN type = 'kurang' THEN -points
-                            ELSE 0
-                        END
-                    ),
-                    0
-                ) as total
-            ")
-            ->value('total');
-
-        // Ambil semua badge yang tersedia
-        $badges = Badge::all();
-
-        foreach ($badges as $badge) {
-            $reportsRequirementMet =
-                $badge->required_reports <= 0
-                || $validReportsCount >= $badge->required_reports;
-
-            $pointsRequirementMet =
-                $badge->required_points <= 0
-                || $totalPoints >= $badge->required_points;
-
-            // Jika semua syarat terpenuhi
-            if ($reportsRequirementMet && $pointsRequirementMet) {
-                // Berikan badge hanya jika belum pernah dimiliki.
-                $userBadge = UserBadge::firstOrCreate(
-                    [
-                        'user_id' => $userId,
-                        'badge_id' => $badge->id,
-                    ],
-                    [
-                        'earned_at' => now(),
-                    ]
-                );
-
-                // Kirim notifikasi hanya ketika badge benar-benar baru diperoleh.
-                if ($userBadge->wasRecentlyCreated) {
-                    Notification::create([
-                        'user_id' => $userId,
-                        'title' => 'Badge Baru Diperoleh!',
-                        'message' => "Selamat! Kamu berhasil mendapatkan badge \"{$badge->name}\".",
-                        'is_read' => false,
-                    ]);
-                }
-            }
-        }
-    }
 
     public function destroy($id)
     {

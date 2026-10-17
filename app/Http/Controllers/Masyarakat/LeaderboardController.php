@@ -15,24 +15,29 @@ class LeaderboardController extends Controller
     {
         $user = auth()->user();
 
-        // Hitung saldo poin dari riwayat transaksi poin.
+        // Hitung saldo poin berdasarkan riwayat transaksi poin.
         $pointTotals = UserPoint::query()
-            ->select(
-                'user_id',
-                DB::raw("
-                    SUM(
-                        CASE
-                            WHEN type = 'tambah' THEN points
-                            WHEN type = 'kurang' THEN -points
-                            ELSE 0
-                        END
-                    ) as total_points
-                ")
-            )
+            ->select('user_id')
+            ->selectRaw("
+                SUM(
+                    CASE
+                        WHEN type = 'tambah' THEN points
+                        WHEN type = 'kurang' THEN -points
+                        ELSE 0
+                    END
+                ) as total_points
+            ")
             ->groupBy('user_id');
 
-        // Hanya masyarakat yang pernah membuat setidaknya satu laporan
-        // yang boleh memiliki peringkat dan muncul di leaderboard.
+        // Hitung jumlah laporan valid setiap pengguna.
+        $validReportTotals = DB::table('reports')
+            ->select('user_id')
+            ->selectRaw('COUNT(*) as valid_reports_count')
+            ->where('verification_status', 'valid')
+            ->groupBy('user_id');
+
+        // Hanya masyarakat yang sudah membuat laporan
+        // yang masuk ke daftar leaderboard.
         $rankedUsers = User::role('masyarakat')
             ->whereExists(function ($query) {
                 $query->select(DB::raw(1))
@@ -46,22 +51,33 @@ class LeaderboardController extends Controller
                 '=',
                 'point_totals.user_id'
             )
+            ->leftJoinSub(
+                $validReportTotals,
+                'valid_report_totals',
+                'users.id',
+                '=',
+                'valid_report_totals.user_id'
+            )
             ->select(
                 'users.id',
                 'users.name',
-                DB::raw('COALESCE(point_totals.total_points, 0) as points')
+                DB::raw('COALESCE(point_totals.total_points, 0) as points'),
+                DB::raw('COALESCE(valid_report_totals.valid_reports_count, 0) as valid_reports_count')
             )
+            // Peringkat ditentukan berdasarkan laporan valid terbanyak.
+            ->orderByDesc('valid_reports_count')
+            // Jika jumlah laporan valid sama, poin menjadi pemecah seri.
             ->orderByDesc('points')
             ->orderBy('users.id')
             ->get();
 
-        // Ambil badge yang sudah diperoleh oleh pengguna yang memenuhi syarat ranking.
+        // Ambil badge yang sudah dimiliki pengguna.
         $userBadges = UserBadge::with('badge')
             ->whereIn('user_id', $rankedUsers->pluck('id'))
             ->get()
             ->groupBy('user_id');
 
-        // Beri nomor peringkat secara berurutan berdasarkan total poin.
+        // Susun data leaderboard dan nomor peringkat.
         $rankedUsers = $rankedUsers
             ->values()
             ->map(function ($item, $index) use ($userBadges) {
@@ -84,21 +100,44 @@ class LeaderboardController extends Controller
                     'id' => (int) $item->id,
                     'name' => $item->name,
                     'points' => (int) $item->points,
+                    'validReportsCount' => (int) $item->valid_reports_count,
                     'rank' => $index + 1,
                     'badges' => $badges,
                 ];
             });
 
-        // Peringkat pengguna login mengikuti daftar leaderboard yang sama.
-        $currentUser = $rankedUsers->firstWhere('id', (int) $user->id);
+        // Data pengguna yang sedang login.
+        $currentUser = $rankedUsers->firstWhere(
+            'id',
+            (int) $user->id
+        );
+
         $reportCount = DB::table('reports')
             ->where('user_id', $user->id)
             ->count();
 
-        $currentUserPoints = (int) (UserPoint::query()
+        $validReportsCount = DB::table('reports')
             ->where('user_id', $user->id)
-            ->selectRaw("COALESCE(SUM(CASE WHEN type = 'tambah' THEN points WHEN type = 'kurang' THEN -points ELSE 0 END), 0) as total_points")
-            ->value('total_points') ?? 0);
+            ->where('verification_status', 'valid')
+            ->count();
+
+        $currentUserPoints = (int) (
+            UserPoint::query()
+                ->where('user_id', $user->id)
+                ->selectRaw("
+                    COALESCE(
+                        SUM(
+                            CASE
+                                WHEN type = 'tambah' THEN points
+                                WHEN type = 'kurang' THEN -points
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) as total_points
+                ")
+                ->value('total_points') ?? 0
+        );
 
         $currentUserData = [
             'id' => (int) $user->id,
@@ -107,6 +146,8 @@ class LeaderboardController extends Controller
             'rank' => $currentUser['rank'] ?? null,
             'hasReports' => $reportCount > 0,
             'reportCount' => (int) $reportCount,
+            'validReportsCount' => (int) $validReportsCount,
+            'badges' => $currentUser['badges'] ?? [],
         ];
 
         return Inertia::render('Masyarakat/Leaderboard', [

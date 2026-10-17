@@ -43,6 +43,7 @@ class RewardController extends Controller
         // PERINGKAT
         // Hanya masyarakat yang sudah membuat minimal satu laporan.
 
+       
         $pointTotals = UserPoint::query()
             ->select('user_id')
             ->selectRaw("
@@ -54,6 +55,12 @@ class RewardController extends Controller
                     END
                 ) as total_points
             ")
+            ->groupBy('user_id');
+
+        $validReportTotals = DB::table('reports')
+            ->select('user_id')
+            ->selectRaw('COUNT(*) as valid_reports_count')
+            ->where('verification_status', 'valid')
             ->groupBy('user_id');
 
         $rankedUsers = User::role('masyarakat')
@@ -69,22 +76,29 @@ class RewardController extends Controller
                 '=',
                 'point_totals.user_id'
             )
+            ->leftJoinSub(
+                $validReportTotals,
+                'valid_report_totals',
+                'users.id',
+                '=',
+                'valid_report_totals.user_id'
+            )
             ->select(
                 'users.id',
-                DB::raw('COALESCE(point_totals.total_points, 0) as total_points')
+                DB::raw('COALESCE(point_totals.total_points, 0) as total_points'),
+                DB::raw('COALESCE(valid_report_totals.valid_reports_count, 0) as valid_reports_count')
             )
+            ->orderByDesc('valid_reports_count')
             ->orderByDesc('total_points')
             ->orderBy('users.id')
             ->get();
 
-        $rankIndex = $rankedUsers->search(function ($item) use ($user) {
-            return (int) $item->id === (int) $user->id;
+        $rankIndex = $rankedUsers->search(function ($rankedUser) use ($user) {
+            return (int) $rankedUser->id === (int) $user->id;
         });
 
-        // null artinya pengguna belum pernah membuat laporan, jadi belum punya peringkat.
         $rank = $rankIndex !== false ? $rankIndex + 1 : null;
         $totalParticipants = $rankedUsers->count();
-
 
 
         // BADGE

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Badge;
+use App\Services\BadgeAwardService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -23,8 +24,10 @@ class BadgeController extends Controller
         return Inertia::render('Admin/Gamification/Badges/Create');
     }
 
-    public function store(Request $request)
-    {
+    public function store(
+        Request $request,
+        BadgeAwardService $badgeAwardService
+    ) {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
@@ -35,10 +38,14 @@ class BadgeController extends Controller
 
         Badge::create($validated);
 
+        // Evaluasi pengguna terhadap badge yang baru dibuat.
+        $badgeAwardService->checkAndAwardAll();
+
         return redirect()
             ->route('admin.gamification.badges')
             ->with('success', 'Badge berhasil ditambahkan.');
     }
+
 
     public function edit($id)
     {
@@ -48,9 +55,12 @@ class BadgeController extends Controller
             'badge' => $badge,
         ]);
     }
-
-    public function update(Request $request, $id)
-    {
+   
+    public function update(
+        Request $request,
+        $id,
+        BadgeAwardService $badgeAwardService
+    ) {
         $badge = Badge::findOrFail($id);
 
         $validated = $request->validate([
@@ -62,6 +72,9 @@ class BadgeController extends Controller
         ]);
 
         $badge->update($validated);
+
+        // Evaluasi ulang setelah persyaratan badge berubah.
+        $badgeAwardService->checkAndAwardAll();
 
         return redirect()
             ->route('admin.gamification.badges')
