@@ -1,7 +1,6 @@
-
 <script setup>
 import { computed, ref, watch } from 'vue'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
+import PetugasLayout from '@/Layouts/PetugasLayout.vue'
 import { Head, Link } from '@inertiajs/vue3'
 
 import {
@@ -87,7 +86,6 @@ const getImageUrl = (item) => {
         report.report_images?.[0] ??
         null
 
-    // Kolom foto pada model ReportImage bernama "image"
     const image =
         firstImage?.image ??
         firstImage?.image_url ??
@@ -137,23 +135,6 @@ const formatDate = (value) => {
     }).format(date)
 }
 
-// FORMAT JAM
-const formatTime = (value) => {
-    if (!value) return ''
-
-    const date = new Date(value)
-
-    if (Number.isNaN(date.getTime())) {
-        return ''
-    }
-
-    return new Intl.DateTimeFormat('id-ID', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hourCycle: 'h23',
-    }).format(date)
-}
-
 // PENCARIAN OTOMATIS
 const filteredHistory = computed(() => {
     const keyword = search.value.trim().toLowerCase()
@@ -171,6 +152,7 @@ const filteredHistory = computed(() => {
             report?.address,
             item.status,
             report?.status,
+            item.note,
         ]
             .filter(Boolean)
             .join(' ')
@@ -220,21 +202,20 @@ const goToPage = (page) => {
 <template>
     <Head title="Riwayat Penanganan" />
 
-    <AuthenticatedLayout>
-    <template #header>
-        <div>
-            <h1 class="text-xl font-bold tracking-tight text-[#101827] sm:text-2xl">
-                Riwayat Penanganan
-            </h1>
+    <PetugasLayout>
+        <template #header>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight text-[#101827] sm:text-2xl">
+                    Riwayat Penanganan
+                </h1>
 
-            <p class="mt-0.5 text-xs text-gray-500 sm:text-sm">
-                Daftar tugas yang pernah Anda tangani.
-            </p>
-        </div>
-    </template>
+                <p class="mt-0.5 text-xs text-gray-500 sm:text-sm">
+                    Daftar tugas yang pernah Anda tangani.
+                </p>
+            </div>
+        </template>
 
-    <div class="space-y-5 p-5 sm:p-6 lg:p-8">
-
+        <div class="space-y-5">
             <!-- JUMLAH RIWAYAT -->
             <div class="flex items-center gap-3">
                 <div class="flex h-11 w-11 items-center justify-center rounded-lg bg-green-100">
@@ -256,7 +237,7 @@ const goToPage = (page) => {
             <div
                 class="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
             >
-                <!-- SEARCHING -->
+                <!-- PENCARIAN -->
                 <div class="relative w-full sm:max-w-md">
                     <Search
                         class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
@@ -265,7 +246,7 @@ const goToPage = (page) => {
                     <input
                         v-model="search"
                         type="search"
-                        placeholder="Cari judul, deskripsi, atau alamat..."
+                        placeholder="Cari judul, deskripsi, alamat, atau catatan..."
                         class="w-full rounded-lg border border-gray-300 py-2.5 pl-9 pr-3 text-sm text-gray-700 outline-none transition focus:border-green-600 focus:ring-1 focus:ring-green-600"
                     />
                 </div>
@@ -293,8 +274,7 @@ const goToPage = (page) => {
             <!-- TABEL RIWAYAT -->
             <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                 <div class="overflow-x-auto">
-                    <table class="w-full min-w-[850px] border-collapse text-left">
-
+                    <table class="w-full min-w-[1100px] border-collapse text-left">
                         <!-- HEADER TABEL -->
                         <thead class="border-b border-gray-200 bg-gray-50">
                             <tr>
@@ -308,6 +288,10 @@ const goToPage = (page) => {
 
                                 <th class="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500">
                                     Tanggal Penanganan
+                                </th>
+
+                                <th class="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                                    Catatan Penanganan
                                 </th>
 
                                 <th class="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500">
@@ -345,14 +329,14 @@ const goToPage = (page) => {
                                 </td>
 
                                 <!-- JUDUL DAN LOKASI -->
-                                <td class="max-w-[330px] px-5 py-3">
-                                    <p class="truncate text-sm font-semibold text-gray-800">
+                                <td class="max-w-[280px] px-5 py-3">
+                                    <p class="break-words text-sm font-semibold text-gray-800">
                                         {{ item.report?.title ?? 'Laporan' }}
                                     </p>
 
                                     <p
                                         v-if="item.report?.description"
-                                        class="mt-1 truncate text-xs text-gray-400"
+                                        class="mt-1 line-clamp-2 text-xs text-gray-400"
                                     >
                                         {{ item.report.description }}
                                     </p>
@@ -360,7 +344,7 @@ const goToPage = (page) => {
                                     <p class="mt-1 flex items-center gap-1 text-xs text-gray-400">
                                         <MapPin class="h-3 w-3 shrink-0" />
 
-                                        <span class="truncate">
+                                        <span class="break-words">
                                             {{ item.report?.address ?? 'Lokasi belum tersedia' }}
                                         </span>
                                     </p>
@@ -373,6 +357,23 @@ const goToPage = (page) => {
 
                                         {{ formatDate(item.updated_at) }}
                                     </div>
+                                </td>
+
+                                <!-- CATATAN PENANGANAN -->
+                                <td class="max-w-[320px] px-5 py-3">
+                                    <p
+                                        v-if="item.note && item.note.trim()"
+                                        class="whitespace-pre-line break-words text-sm leading-6 text-gray-600"
+                                    >
+                                        {{ item.note }}
+                                    </p>
+
+                                    <span
+                                        v-else
+                                        class="text-sm italic text-gray-400"
+                                    >
+                                        Belum ada catatan
+                                    </span>
                                 </td>
 
                                 <!-- STATUS -->
@@ -398,7 +399,7 @@ const goToPage = (page) => {
 
                             <!-- JIKA KOSONG -->
                             <tr v-if="paginatedHistory.length === 0">
-                                <td colspan="5" class="px-5 py-12 text-center">
+                                <td colspan="6" class="px-5 py-12 text-center">
                                     <Search class="mx-auto mb-3 h-10 w-10 text-gray-300" />
 
                                     <h3 class="font-semibold text-gray-700">
@@ -433,7 +434,6 @@ const goToPage = (page) => {
                     </p>
 
                     <div class="flex items-center justify-end gap-2">
-
                         <!-- HALAMAN SEBELUMNYA -->
                         <button
                             type="button"
@@ -471,11 +471,9 @@ const goToPage = (page) => {
                         >
                             <ChevronRight class="h-4 w-4" />
                         </button>
-
                     </div>
                 </div>
             </div>
-
         </div>
-    </AuthenticatedLayout>
+    </PetugasLayout>
 </template>
