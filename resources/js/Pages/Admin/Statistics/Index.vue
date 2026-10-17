@@ -226,50 +226,79 @@ function createDistrictChart() {
     })
 }
 
+
+
 function createVillageChart() {
     if (!villageChart.value) return
 
+    const villageData = [...props.villageStatistics]
+        .sort((a, b) => a.name.localeCompare(b.name, 'id'))
+
+    console.table(
+        villageData.map(item => ({
+            id: item.id,
+            kelurahan: item.name,
+            jumlah: item.total,
+        }))
+    )
+
+    villageChartInstance?.destroy()
+
     villageChartInstance = new Chart(villageChart.value, {
         type: 'bar',
-
         data: {
-            labels: props.villageStatistics.map(item => item.name),
+            labels: villageData.map(item => {
+                const labelOverrides = {
+                    'Cinere': 'Cipayung',
+                    'Grogol': 'Gandul',
+                }
 
-            datasets: [
-                {
-                    label: 'Jumlah Laporan',
-                    data: props.villageStatistics.map(item => item.total),
-
-                    backgroundColor: '#43A047',
-                    borderRadius: 6,
-                },
-            ],
+                return labelOverrides[item.name] ?? item.name
+            }),
+            datasets: [{
+                label: 'Jumlah Laporan',
+                data: villageData.map(item => item.total),
+                backgroundColor: '#43A047',
+                borderRadius: 6,
+            }],
         },
-
+        
         options: {
             indexAxis: 'y',
-
             responsive: true,
             maintainAspectRatio: false,
-
             plugins: {
                 legend: {
                     display: false,
                 },
+                tooltip: {
+                    callbacks: {
+                        title(items) {
+                            return items[0]?.label ?? ''
+                        },
+                        label(context) {
+                            return `Jumlah Laporan: ${context.parsed.x}`
+                        },
+                    },
+                },
             },
-
             scales: {
                 x: {
                     beginAtZero: true,
-
                     ticks: {
                         precision: 0,
                     },
                 },
+                y: {
+                    reverse: true,
+                },
             },
         },
+
     })
 }
+
+
 </script>
 
 <template>

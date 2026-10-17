@@ -73,7 +73,15 @@ class StatisticsController extends Controller
                 ];
             });
 
-        $villageStatistics = Village::withCount('reports')
+        $villageStatistics = Village::query()
+            ->withCount([
+                'reports' => function ($query) {
+                    $query->whereColumn(
+                        'reports.district_id',
+                        'villages.district_id'
+                    );
+                },
+            ])
             ->whereHas('district')
             ->orderBy('name')
             ->get()
@@ -83,7 +91,9 @@ class StatisticsController extends Controller
                     'name' => $village->name,
                     'total' => $village->reports_count,
                 ];
-            });
+            })
+            ->values();
+
 
         return Inertia::render('Admin/Statistics/Index', [
             'summary' => [

@@ -22,5 +22,9 @@ class DatabaseSeeder extends Seeder
             BadgeSeeder::class,
             RewardSeeder::class,
         ]);
+
+        $this->call([
+            DepokRegionSeeder::class,
+        ]);
     }
 }
