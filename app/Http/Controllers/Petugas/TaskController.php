@@ -81,15 +81,48 @@ class TaskController extends Controller
 
         $task->update($data);
 
-        // Sinkronisasi status laporan dan kirim notifikasi.
+
+        // Sinkronisasi status laporan, catat riwayat, dan kirim notifikasi.
         $report = $task->report;
 
         if ($report) {
+            $previousReportStatus = $report->status;
+
+            $newReportStatus = $request->status === 'ditugaskan'
+                ? 'menunggu'
+                : $request->status;
+
             $report->update([
-                'status' => $request->status === 'ditugaskan'
-                    ? 'menunggu'
-                    : $request->status,
+                'status' => $newReportStatus,
             ]);
+
+            
+            // Catat riwayat setiap kali status tugas berubah.
+            // Riwayat tetap dibuat meskipun status laporan tidak berubah.
+            if ($previousStatus !== $request->status) {
+                $officerName = Auth::user()->name;
+
+                if ($request->status === 'diproses') {
+                    $note = "Tugas sedang dikerjakan oleh {$officerName}.";
+                } elseif ($request->status === 'selesai') {
+                    $note = "Penanganan selesai oleh {$officerName}.";
+                } else {
+                    $note = "Status tugas diperbarui oleh {$officerName}.";
+                }
+
+                if ($request->filled('note')) {
+                    $note .= ' Catatan petugas: ' . $request->input('note');
+                }
+
+                $report->statusHistories()->create([
+                    'changed_by' => Auth::id(),
+                    'old_status' => $previousReportStatus,
+                    'new_status' => $newReportStatus,
+                    'note' => $note,
+                    'changed_at' => now(),
+                ]);
+            }
+
 
             // Kirim notifikasi hanya jika status tugas benar-benar berubah.
             if ($previousStatus !== $request->status) {

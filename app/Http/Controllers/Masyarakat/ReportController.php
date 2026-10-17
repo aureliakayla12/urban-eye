@@ -123,7 +123,10 @@ public function create()
             'district',
             'village',
             'images',
-            'statusHistories',
+            'statusHistories' => function ($query) {
+                $query->orderBy('changed_at', 'asc')
+                    ->orderBy('id', 'asc');
+            },
         ]);
 
         return inertia('Masyarakat/ReportDetail', [
@@ -359,6 +362,7 @@ public function create()
             'old_status' => 'menunggu',
             'new_status' => 'menunggu',
             'note' => 'Laporan dibuat oleh masyarakat.',
+            'changed_at' => now(),
         ]);
 
         // Kirim notifikasi kepada semua Admin ketika ada laporan baru.

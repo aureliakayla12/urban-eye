@@ -88,27 +88,47 @@
                             </div>
                         </div>
 
-                        <div
-                            class="mt-5 overflow-hidden rounded-xl bg-[#F5F5F5]"
-                        >
-                            <div
-                                class="flex min-h-[300px] items-center justify-center"
-                            >
-                                <img
-                                    v-if="report.photo"
-                                    :src="`/storage/${report.photo}`"
-                                    alt="Foto laporan"
-                                    class="max-h-[420px] w-full object-contain"
-                                />
+                        <div class="mt-5">
+    <div
+        v-if="reportPhotos.length"
+        class="grid grid-cols-1 gap-3 sm:grid-cols-2"
+    >
+        <a
+            v-for="(photo, index) in reportPhotos"
+            :key="photo.id"
+            :href="photo.src"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="group flex min-h-[240px] items-center justify-center
+                   overflow-hidden rounded-xl border border-gray-200
+                   bg-[#F5F5F5]"
+        >
+            <img
+                :src="photo.src"
+                :alt="`Foto laporan ${index + 1}`"
+                class="h-full max-h-[360px] w-full object-cover
+                       transition duration-200 group-hover:scale-[1.02]"
+            />
+        </a>
+    </div>
 
-                                <span
-                                    v-else
-                                    class="text-sm text-gray-500"
-                                >
-                                    Tidak ada foto
-                                </span>
-                            </div>
-                        </div>
+    <div
+        v-else
+        class="flex min-h-[300px] items-center justify-center
+               rounded-xl bg-[#F5F5F5]"
+    >
+        <span class="text-sm text-gray-500">
+            Tidak ada foto
+        </span>
+    </div>
+
+    <p
+        v-if="reportPhotos.length > 1"
+        class="mt-3 text-xs text-gray-500"
+    >
+        {{ reportPhotos.length }} foto laporan
+    </p>
+</div>
                     </Card>
 
                     <!-- AI -->
@@ -242,7 +262,7 @@
                     <!-- Map -->
                     <div
                         ref="mapContainer"
-                        class="mt-5 h-[360px] w-full overflow-hidden rounded-xl border border-gray-200"
+                        class="relative z-0 isolate mt-5 h-[360px] w-full overflow-hidden rounded-xl border border-gray-200"
                     ></div>
 
                     <!-- Detail lokasi -->
@@ -340,14 +360,26 @@
                                 <div
                                     class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"
                                 >
-                                    <p
-                                        class="text-sm font-semibold text-black"
-                                    >
-                                        {{ statusLabel(history.new_status) }}
-                                    </p>
+                                    <div>
+                                        <p class="text-sm font-semibold text-black">
+                                            {{ historyTitle(history) }}
+                                        </p>
+
+                                        <p
+                                            v-if="
+                                                history.old_status &&
+                                                history.old_status !== history.new_status
+                                            "
+                                            class="mt-1 text-xs text-gray-500"
+                                        >
+                                            {{ statusLabel(history.old_status) }}
+                                            →
+                                            {{ statusLabel(history.new_status) }}
+                                        </p>
+                                    </div>
 
                                     <span class="text-xs text-gray-400">
-                                        {{ formatDateTime(history.changed_at) }}
+                                        {{ formatDateTime(history.changed_at || history.created_at) }}
                                     </span>
                                 </div>
 
@@ -379,8 +411,8 @@
 </template>
 
 <script setup>
-import { Head, Link } from '@inertiajs/vue3'
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { Head, Link, router } from '@inertiajs/vue3'
+import { computed, onMounted, onBeforeUnmount, ref, } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -395,55 +427,99 @@ const props = defineProps({
     },
 })
 
+const reportPhotos = computed(() => {
+    const images = props.report.images ?? []
+
+    // Gunakan seluruh foto dari tabel report_images.
+    if (images.length > 0) {
+        return images.map((item) => ({
+            id: item.id,
+            src: `/storage/${item.image}`,
+        }))
+    }
+
+    // Kompatibilitas dengan laporan lama yang hanya memiliki
+    // satu foto di kolom reports.photo.
+    return props.report.photo
+        ? [{
+            id: 'primary-photo',
+            src: `/storage/${props.report.photo}`,
+        }]
+        : []
+})
+
 const mapContainer = ref(null)
 
 let map = null
 let marker = null
+let refreshTimer = null
 
 onMounted(() => {
-    const latitude = Number(props.report.latitude)
-    const longitude = Number(props.report.longitude)
+    const hasCoordinates =
+        props.report.latitude !== null &&
+        props.report.latitude !== undefined &&
+        props.report.latitude !== '' &&
+        props.report.longitude !== null &&
+        props.report.longitude !== undefined &&
+        props.report.longitude !== '';
+
+    const latitude = Number(props.report.latitude);
+    const longitude = Number(props.report.longitude);
 
     if (
-        !mapContainer.value ||
-        !Number.isFinite(latitude) ||
-        !Number.isFinite(longitude)
+        mapContainer.value &&
+        hasCoordinates &&
+        Number.isFinite(latitude) &&
+        Number.isFinite(longitude) &&
+        latitude >= -90 &&
+        latitude <= 90 &&
+        longitude >= -180 &&
+        longitude <= 180
     ) {
-        return
-    }
+        map = L.map(mapContainer.value, {
+            zoomControl: true,
+            scrollWheelZoom: false,
+        }).setView([latitude, longitude], 16);
 
-    map = L.map(mapContainer.value, {
-        zoomControl: true,
-        scrollWheelZoom: false,
-    }).setView([latitude, longitude], 16)
+        L.tileLayer(
+            'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            {
+                attribution: '&copy; OpenStreetMap contributors',
+            },
+        ).addTo(map);
 
-    L.tileLayer(
-        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-        {
-            attribution: '&copy; OpenStreetMap contributors',
-        }
-    ).addTo(map)
-
-    marker = L.marker([latitude, longitude])
-        .addTo(map)
-        .bindPopup(
-            `
+        marker = L.marker([latitude, longitude])
+            .addTo(map)
+            .bindPopup(`
                 <div style="min-width: 180px;">
                     <strong>${escapeHtml(props.report.title)}</strong>
                     <br>
                     <span>${escapeHtml(props.report.address ?? '')}</span>
                 </div>
-            `
-        )
+            `);
 
-    marker.openPopup()
+        marker.openPopup();
 
-    setTimeout(() => {
-        map?.invalidateSize()
-    }, 200)
-})
+        setTimeout(() => {
+            map?.invalidateSize();
+        }, 200);
+    }
+
+    refreshTimer = setInterval(() => {
+        router.reload({
+            only: ['report'],
+            preserveScroll: true,
+            preserveState: true,
+        });
+    }, 10000);
+});
 
 onBeforeUnmount(() => {
+    if (refreshTimer) {
+        clearInterval(refreshTimer)
+        refreshTimer = null
+    }
+
     if (map) {
         map.remove()
         map = null
@@ -460,6 +536,52 @@ function escapeHtml(value) {
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;')
 }
+
+
+
+function historyTitle(history) {
+    const note = history.note?.toLowerCase() ?? '';
+
+    // Laporan pertama kali dibuat.
+    if (note.includes('laporan dibuat')) {
+        return 'Laporan Dibuat';
+    }
+
+    // Petugas ditugaskan oleh Admin.
+    if (
+        note.includes('petugas ditugaskan') ||
+        note.includes('petugas ditugaskan:')
+    ) {
+        return 'Petugas Ditugaskan';
+    }
+
+    // Petugas mulai menangani laporan.
+    if (note.includes('tugas sedang dikerjakan')) {
+        return 'Tugas Sedang Dikerjakan';
+    }
+
+    // Petugas menyelesaikan penanganan.
+    if (note.includes('penanganan selesai')) {
+        return 'Penanganan Selesai';
+    }
+
+    // Perubahan verifikasi oleh Admin.
+    if (note.includes('verifikasi diubah')) {
+        return 'Verifikasi Diperbarui';
+    }
+
+    // Perubahan status umum oleh Admin.
+    if (history.old_status !== history.new_status) {
+        if (history.new_status === 'ditolak') {
+            return 'Laporan Ditolak';
+        }
+
+        return 'Status Laporan Diperbarui';
+    }
+
+    return `Status: ${statusLabel(history.new_status)}`;
+}
+
 
 function statusLabel(status) {
     const labels = {
@@ -481,12 +603,22 @@ function formatDate(date) {
 }
 
 function formatDateTime(date) {
-    return new Date(date).toLocaleString('id-ID', {
+    if (!date) {
+        return 'Waktu tidak tersedia';
+    }
+
+    const parsedDate = new Date(date);
+
+    if (Number.isNaN(parsedDate.getTime())) {
+        return 'Waktu tidak tersedia';
+    }
+
+    return parsedDate.toLocaleString('id-ID', {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
-    })
+    });
 }
 </script>

@@ -168,8 +168,18 @@ class ReportController extends Controller
                 ]);
             }
 
-            // Kirim notifikasi jika petugas baru ditugaskan atau petugas berubah.
+            
+            // Catat riwayat dan kirim notifikasi jika petugas baru
+            // ditugaskan atau petugas yang menangani berubah.
             if ((int) $previousOfficerId !== (int) $officer->id) {
+                $report->statusHistories()->create([
+                    'changed_by' => auth()->id(),
+                    'old_status' => $report->status,
+                    'new_status' => $report->status,
+                    'note' => "Petugas ditugaskan kepada {$officer->name}.",
+                    'changed_at' => now(),
+                ]);
+
                 // Notifikasi kepada Petugas yang ditugaskan.
                 Notification::create([
                     'user_id' => $officer->id,
@@ -188,6 +198,7 @@ class ReportController extends Controller
                     'is_read' => false,
                 ]);
             }
+
 
             return redirect()
                 ->route('admin.reports.show', $report->id)
@@ -238,6 +249,60 @@ class ReportController extends Controller
             'status' => $validated['status'],
             'verification_status' => $validated['verification_status'],
         ]);
+
+        // Catat perubahan status dan verifikasi ke riwayat laporan.
+        $statusChanged = $previousStatus !== $report->status;
+
+        $verificationChanged =
+            $previousVerificationStatus !== $report->verification_status;
+
+        if ($statusChanged || $verificationChanged) {
+            $notes = [];
+
+            if ($verificationChanged) {
+                $verificationLabels = [
+                    'pending' => 'Menunggu verifikasi',
+                    'valid' => 'Terverifikasi valid',
+                    'hoax' => 'Dinyatakan tidak valid (hoaks)',
+                ];
+
+                $oldVerificationLabel =
+                    $verificationLabels[$previousVerificationStatus]
+                    ?? $previousVerificationStatus;
+
+                $newVerificationLabel =
+                    $verificationLabels[$report->verification_status]
+                    ?? $report->verification_status;
+
+                $notes[] = "Verifikasi diubah dari {$oldVerificationLabel} menjadi {$newVerificationLabel} oleh Admin.";
+            }
+
+            if ($statusChanged) {
+                $statusLabels = [
+                    'menunggu' => 'Menunggu',
+                    'diproses' => 'Sedang diproses',
+                    'selesai' => 'Selesai',
+                    'ditolak' => 'Ditolak',
+                ];
+
+                $oldStatusLabel =
+                    $statusLabels[$previousStatus] ?? $previousStatus;
+
+                $newStatusLabel =
+                    $statusLabels[$report->status] ?? $report->status;
+
+                $notes[] = "Status laporan diubah dari {$oldStatusLabel} menjadi {$newStatusLabel} oleh Admin.";
+            }
+
+            $report->statusHistories()->create([
+                'changed_by' => auth()->id(),
+                'old_status' => $previousStatus,
+                'new_status' => $report->status,
+                'note' => implode(' ', $notes),
+                'changed_at' => now(),
+            ]);
+
+        }
 
        
         // Hitung saldo poin khusus untuk laporan ini.
