@@ -872,8 +872,7 @@ const changeCategory = () => {
             </div>
 
         </div>
-
-
+        
         <!-- ========================================================= -->
         <!-- PETUGAS -->
         <!-- ========================================================= -->
@@ -882,467 +881,239 @@ const changeCategory = () => {
             v-else-if="user?.role === 'petugas'"
             class="space-y-6"
         >
-
-
             <!-- SELAMAT DATANG -->
-
             <div class="rounded-xl bg-white p-6 shadow-sm">
-
                 <h1 class="text-[18px] font-semibold text-gray-800">
-
                     Selamat datang, {{ user?.name }}!
-
                 </h1>
 
-
                 <p class="mt-2 text-sm text-gray-500">
-
                     Berikut ringkasan pekerjaan Anda hari ini.
-
                 </p>
-
             </div>
 
-
             <!-- 4 STATISTIK -->
-
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-
-
                 <!-- TUGAS HARI INI -->
-
                 <div class="rounded-xl bg-white p-5 shadow-sm">
-
                     <div class="flex items-center gap-4">
-
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-100">
-
-                            <ClipboardList
-                                class="h-6 w-6 text-green-600"
-                            />
-
+                            <ClipboardList class="h-6 w-6 text-green-600" />
                         </div>
 
-
                         <div>
-
-                            <p class="text-sm text-gray-500">
-                                Tugas Hari Ini
-                            </p>
-
-
+                            <p class="text-sm text-gray-500">Tugas Hari Ini</p>
                             <p class="mt-1 text-3xl font-bold text-green-600">
-                                {{ stats?.tugas_hari_ini ?? 12 }}
+                                {{ stats?.tugas_hari_ini ?? 0 }}
                             </p>
-
-
                             <p class="mt-1 text-xs text-gray-400">
                                 Total tugas yang harus ditangani
                             </p>
-
                         </div>
-
                     </div>
-
                 </div>
 
-
                 <!-- SEDANG DIKERJAKAN -->
-
                 <div class="rounded-xl bg-white p-5 shadow-sm">
-
                     <div class="flex items-center gap-4">
-
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-yellow-100">
-
-                            <Hourglass
-                                class="h-6 w-6 text-yellow-500"
-                            />
-
+                            <Hourglass class="h-6 w-6 text-yellow-500" />
                         </div>
 
-
                         <div>
-
-                            <p class="text-sm text-gray-500">
-                                Sedang Dikerjakan
-                            </p>
-
-
+                            <p class="text-sm text-gray-500">Sedang Dikerjakan</p>
                             <p class="mt-1 text-3xl font-bold text-yellow-500">
-                                {{ stats?.diproses ?? 4 }}
+                                {{ stats?.diproses ?? 0 }}
                             </p>
-
-
                             <p class="mt-1 text-xs text-gray-400">
                                 Total tugas dalam proses penanganan
                             </p>
-
                         </div>
-
                     </div>
-
                 </div>
 
-
                 <!-- SUDAH SELESAI -->
-
                 <div class="rounded-xl bg-white p-5 shadow-sm">
-
                     <div class="flex items-center gap-4">
-
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-blue-100">
-
-                            <CheckCircle2
-                                class="h-6 w-6 text-blue-600"
-                            />
-
+                            <CheckCircle2 class="h-6 w-6 text-blue-600" />
                         </div>
 
-
                         <div>
-
-                            <p class="text-sm text-gray-500">
-                                Sudah Selesai
-                            </p>
-
-
+                            <p class="text-sm text-gray-500">Sudah Selesai</p>
                             <p class="mt-1 text-3xl font-bold text-blue-500">
-                                {{ stats?.sudah_selesai ?? 28 }}
+                                {{ stats?.sudah_selesai ?? 0 }}
                             </p>
-
-
                             <p class="mt-1 text-xs text-gray-400">
                                 Total tugas yang telah diselesaikan
                             </p>
-
                         </div>
-
                     </div>
-
                 </div>
 
-
                 <!-- MENUNGGU VERIFIKASI -->
-
                 <div class="rounded-xl bg-white p-5 shadow-sm">
-
                     <div class="flex items-center gap-4">
-
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-red-100">
-
-                            <AlertCircle
-                                class="h-6 w-6 text-red-600"
-                            />
-
+                            <AlertCircle class="h-6 w-6 text-red-600" />
                         </div>
 
-
                         <div>
-
-                            <p class="text-sm text-gray-500">
-                                Menunggu Verifikasi
-                            </p>
-
-
+                            <p class="text-sm text-gray-500">Menunggu Verifikasi</p>
                             <p class="mt-1 text-3xl font-bold text-red-500">
-                                {{ stats?.menunggu_verifikasi ?? 3 }}
+                                {{ stats?.menunggu_verifikasi ?? 0 }}
                             </p>
-
-
                             <p class="mt-1 text-xs text-gray-400">
                                 Total tugas menunggu verifikasi admin
                             </p>
-
                         </div>
-
                     </div>
-
-                </div>
-
-            </div>
-
-
-    
-<!-- TUGAS PRIORITAS + AKTIVITAS HARI INI -->
-<div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-
-    <!-- TUGAS PRIORITAS -->
-    <div class="rounded-xl bg-white shadow-sm">
-
-        <!-- HEADER -->
-        <div class="flex items-center justify-between border-b border-gray-200 p-5">
-            <h3 class="font-semibold text-gray-800">
-                Tugas Prioritas
-            </h3>
-
-            <Link
-                :href="route('petugas.tasks.index')"
-                class="text-sm font-medium text-green-500 underline"
-            >
-                Lihat semua
-            </Link>
-        </div>
-
-        <!-- DAFTAR TUGAS -->
-        <div class="space-y-6 p-5">
-
-            <!-- TUGAS 1 -->
-            <div class="flex items-start gap-3">
-                <img
-                    src="/storage/reports/default.jpg"
-                    alt="Tumpukan sampah"
-                    class="h-10 w-10 shrink-0 rounded-lg object-cover"
-                />
-
-                <div class="min-w-0 flex-1">
-                    <h4 class="font-medium text-gray-800">
-                        Tumpukan sampah di pinggir jalan
-                    </h4>
-
-                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-500">
-                        <MapPin class="h-3.5 w-3.5 shrink-0" />
-                        <span>Jl. Margonda Raya, Depok</span>
-                    </div>
-
-                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-400">
-                        <CalendarDays class="h-3.5 w-3.5 shrink-0" />
-                        <span>15 Jul 2026 | 09:30</span>
-                    </div>
-                </div>
-
-                <div class="flex shrink-0 flex-col items-end gap-2">
-                    <span class="rounded-full bg-red-100 px-3 py-1 text-[10px] font-medium text-red-600">
-                        Mendesak
-                    </span>
-
-                    <Link
-                        v-if="tugas?.[0]?.id"
-                        :href="route('petugas.tasks.show', tugas[0].id)"
-                        class="rounded-md border border-green-500 px-3 py-1 text-[10px] font-medium text-green-600 hover:bg-green-50"
-                    >
-                        Lihat Detail
-                    </Link>
-
-                    <span
-                        v-else
-                        class="text-[10px] text-gray-400"
-                    >
-                        Belum ada tugas
-                    </span>
                 </div>
             </div>
 
-            <!-- TUGAS 2 -->
-            <div class="flex items-start gap-3">
-                <img
-                    src="/storage/reports/jalanberlubang.jpg"
-                    alt="Jalan berlubang"
-                    class="h-10 w-10 shrink-0 rounded-lg object-cover"
-                />
+            <!-- TUGAS PRIORITAS + AKTIVITAS HARI INI -->
+            <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <!-- TUGAS PRIORITAS -->
+                <div class="rounded-xl bg-white shadow-sm">
+                    <div class="flex items-center justify-between border-b border-gray-200 p-5">
+                        <h3 class="font-semibold text-gray-800">
+                            Tugas Prioritas
+                        </h3>
 
-                <div class="min-w-0 flex-1">
-                    <h4 class="font-medium text-gray-800">
-                        Jalan berlubang
-                    </h4>
-
-                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-500">
-                        <MapPin class="h-3.5 w-3.5 shrink-0" />
-                        <span>Jl. Bogor Raya, Depok</span>
+                        <Link
+                            :href="route('petugas.tasks.index')"
+                            class="text-sm font-medium text-green-500 underline"
+                        >
+                            Lihat semua
+                        </Link>
                     </div>
 
-                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-400">
-                        <CalendarDays class="h-3.5 w-3.5 shrink-0" />
-                        <span>15 Jul 2026 | 09:15</span>
+                    <!-- DAFTAR TUGAS DARI PROPS -->
+                    <div v-if="tugas?.length" class="space-y-6 p-5">
+                        <div
+                            v-for="task in tugas.slice(0, 3)"
+                            :key="task.id"
+                            class="flex items-start gap-3"
+                        >
+                            <img
+                                v-if="task.report?.photo"
+                                :src="`/storage/${task.report.photo}`"
+                                :alt="task.report?.title ?? 'Foto laporan'"
+                                class="h-10 w-10 shrink-0 rounded-lg object-cover"
+                            />
+
+                            <div
+                                v-else
+                                class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gray-100"
+                            >
+                                <FileText class="h-5 w-5 text-gray-400" />
+                            </div>
+
+                            <div class="min-w-0 flex-1">
+                                <h4 class="font-medium text-gray-800">
+                                    {{ task.report?.title ?? 'Laporan tanpa judul' }}
+                                </h4>
+
+                                <div class="mt-1 flex items-center gap-1 text-xs text-gray-500">
+                                    <MapPin class="h-3.5 w-3.5 shrink-0" />
+                                    <span>
+                                        {{ task.report?.address ?? 'Alamat belum tersedia' }}
+                                    </span>
+                                </div>
+
+                                <div class="mt-1 flex items-center gap-1 text-xs text-gray-400">
+                                    <CalendarDays class="h-3.5 w-3.5 shrink-0" />
+                                    <span>{{ formatDate(task.created_at) }}</span>
+                                </div>
+
+                                <span
+                                    class="mt-2 inline-block rounded-full px-3 py-1 text-[10px] font-medium capitalize"
+                                    :class="statusClass(task.status)"
+                                >
+                                    {{ task.status ?? 'Status belum tersedia' }}
+                                </span>
+                            </div>
+
+                            <Link
+                                :href="route('petugas.tasks.show', task.id)"
+                                class="shrink-0 rounded-md border border-green-500 px-3 py-1 text-[10px] font-medium text-green-600 hover:bg-green-50"
+                            >
+                                Lihat Detail
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div v-else class="p-8 text-center">
+                        <ClipboardList class="mx-auto h-9 w-9 text-gray-300" />
+                        <p class="mt-3 text-sm font-medium text-gray-600">
+                            Belum ada tugas
+                        </p>
+                        <p class="mt-1 text-sm text-gray-400">
+                            Tugas akan muncul setelah ditugaskan kepada Anda.
+                        </p>
                     </div>
                 </div>
 
-                <div class="flex shrink-0 flex-col items-end gap-2">
-                    <span class="rounded-full bg-orange-100 px-3 py-1 text-[10px] font-medium text-orange-600">
-                        Sedang
-                    </span>
+                <!-- AKTIVITAS HARI INI -->
+                <div class="rounded-xl bg-white shadow-sm">
+                    <div class="flex items-center justify-between border-b border-gray-200 p-5">
+                        <h3 class="font-semibold text-gray-800">
+                            Aktivitas Hari Ini
+                        </h3>
 
-                    <Link
-                        v-if="tugas?.[1]?.id"
-                        :href="route('petugas.tasks.show', tugas[1].id)"
-                        class="rounded-md border border-green-500 px-3 py-1 text-[10px] font-medium text-green-600 hover:bg-green-50"
-                    >
-                        Lihat Detail
-                    </Link>
-
-                    <span
-                        v-else
-                        class="text-[10px] text-gray-400"
-                    >
-                        Belum ada tugas
-                    </span>
-                </div>
-            </div>
-
-            <!-- TUGAS 3 -->
-            <div class="flex items-start gap-3">
-                <img
-                    src="/storage/reports/drainase.jpg"
-                    alt="Drainase"
-                    class="h-10 w-10 shrink-0 rounded-lg object-cover"
-                />
-
-                <div class="min-w-0 flex-1">
-                    <h4 class="font-medium text-gray-800">
-                        Saluran drainase tersumbat
-                    </h4>
-
-                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-500">
-                        <MapPin class="h-3.5 w-3.5 shrink-0" />
-                        <span>Jl. Nusa Indah, Depok</span>
+                        <Link
+                            :href="route('petugas.history.index')"
+                            class="text-sm font-medium text-green-500 underline"
+                        >
+                            Lihat semua
+                        </Link>
                     </div>
 
-                    <div class="mt-1 flex items-center gap-1 text-xs text-gray-400">
-                        <CalendarDays class="h-3.5 w-3.5 shrink-0" />
-                        <span>14 Jul 2026 | 16:45</span>
+                    <div v-if="aktivitas_petugas?.length" class="px-5 py-3">
+                        <div
+                            v-for="(aktivitas, index) in aktivitas_petugas"
+                            :key="aktivitas.id ?? index"
+                            class="flex items-start gap-3 py-3"
+                        >
+                            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-100">
+                                <CheckCircle2 class="h-4 w-4 text-green-600" />
+                            </div>
+
+                            <div class="min-w-0 flex-1">
+                                <p class="text-sm text-gray-600">
+                                    {{ aktivitas.description ?? aktivitas.deskripsi ?? 'Aktivitas' }}
+                                </p>
+
+                                <p class="mt-1 text-xs text-gray-400">
+                                    {{ formatDate(aktivitas.created_at) }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-else class="p-8 text-center">
+                        <Clock3 class="mx-auto h-9 w-9 text-gray-300" />
+                        <p class="mt-3 text-sm font-medium text-gray-600">
+                            Belum ada aktivitas
+                        </p>
+                        <p class="mt-1 text-sm text-gray-400">
+                            Aktivitas akan muncul setelah tercatat di sistem.
+                        </p>
                     </div>
                 </div>
-
-                <div class="flex shrink-0 flex-col items-end gap-2">
-                    <span class="rounded-full bg-blue-100 px-3 py-1 text-[10px] font-medium text-blue-600">
-                        Rendah
-                    </span>
-
-                    <Link
-                        v-if="tugas?.[2]?.id"
-                        :href="route('petugas.tasks.show', tugas[2].id)"
-                        class="rounded-md border border-green-500 px-3 py-1 text-[10px] font-medium text-green-600 hover:bg-green-50"
-                    >
-                        Lihat Detail
-                    </Link>
-
-                    <span
-                        v-else
-                        class="text-[10px] text-gray-400"
-                    >
-                        Belum ada tugas
-                    </span>
-                </div>
             </div>
 
-        </div>
-    </div>
-
-    <!-- AKTIVITAS HARI INI -->
-    <div class="rounded-xl bg-white shadow-sm">
-
-        <!-- HEADER -->
-        <div class="flex items-center justify-between border-b border-gray-200 p-5">
-            <h3 class="font-semibold text-gray-800">
-                Aktivitas Hari Ini
-            </h3>
-
-            <Link
-                :href="route('petugas.history.index')"
-                class="text-sm font-medium text-green-500 underline"
-            >
-                Lihat semua
-            </Link>
-        </div>
-
-        <!-- DAFTAR AKTIVITAS -->
-        <div class="px-5 py-3">
-
-            <!-- AKTIVITAS 1 -->
-            <div class="relative flex items-center gap-3 py-3">
-                <div class="absolute bottom-[-1px] left-[10px] top-[31px] w-px bg-gray-200"></div>
-
-                <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100">
-                    <CheckCircle2 class="h-3.5 w-3.5 text-green-600" />
-                </div>
-
-                <p class="flex-1 text-sm text-gray-600">
-                    Sampah di Jl. Melati Raya berhasil dibersihkan
-                </p>
-
-                <span class="shrink-0 text-xs text-gray-400">
-                    10:30
-                </span>
-            </div>
-
-            <!-- AKTIVITAS 2 -->
-            <div class="relative flex items-center gap-3 py-3">
-                <div class="absolute bottom-[-1px] left-[10px] top-[31px] w-px bg-gray-200"></div>
-
-                <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100">
-                    <CheckCircle2 class="h-3.5 w-3.5 text-green-600" />
-                </div>
-
-                <p class="flex-1 text-sm text-gray-600">
-                    Drainase di Jl. Nusa Indah selesai diperbaiki
-                </p>
-
-                <span class="shrink-0 text-xs text-gray-400">
-                    09:45
-                </span>
-            </div>
-
-            <!-- AKTIVITAS 3 -->
-            <div class="relative flex items-center gap-3 py-3">
-                <div class="absolute bottom-[-1px] left-[10px] top-[31px] w-px bg-gray-200"></div>
-
-                <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-orange-100">
-                    <Clock3 class="h-3.5 w-3.5 text-orange-500" />
-                </div>
-
-                <p class="flex-1 text-sm text-gray-600">
-                    Sedang menangani jalan berlubang di Jl. Bogor
-                </p>
-
-                <span class="shrink-0 text-xs text-gray-400">
-                    08:50
-                </span>
-            </div>
-
-            <!-- AKTIVITAS 4 -->
-            <div class="relative flex items-center gap-3 py-3">
-                <div class="relative z-10 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-blue-100">
-                    <Info class="h-3.5 w-3.5 text-blue-500" />
-                </div>
-
-                <p class="flex-1 text-sm text-gray-600">
-                    Laporan baru diterima: lampu jalan mati di Jl. Melati
-                </p>
-
-                <span class="shrink-0 text-xs text-gray-400">
-                    08:20
-                </span>
-            </div>
-
-        </div>
-    </div>
-
-</div>
-
-            <!-- ========================================================= -->
             <!-- PETA LAPORAN -->
-            <!-- ========================================================= -->
-
             <div class="rounded-xl bg-white shadow-sm">
-
-
-                <!-- HEADER -->
-
                 <div class="flex items-center justify-between border-b border-gray-200 p-5">
-
                     <div>
-
                         <h2 class="text-[18px] font-semibold text-gray-800">
                             Peta Laporan
                         </h2>
-
-
                         <p class="mt-1 text-sm text-gray-500">
                             Lokasi laporan yang perlu ditangani
                         </p>
-
                     </div>
-
 
                     <Link
                         :href="route('petugas.map.index')"
@@ -1350,129 +1121,40 @@ const changeCategory = () => {
                     >
                         Lihat Peta Lengkap
                     </Link>
-
                 </div>
 
-
-                <!-- PETA + LEGEND -->
-
                 <div class="grid grid-cols-1 lg:grid-cols-[180px_1fr]">
-
-
-                    <!-- LEGEND -->
-
+                    <!-- LEGENDA STATUS -->
                     <div class="space-y-4 border-r border-gray-100 p-5">
-
-
-                        <!-- MENDESAK -->
-
                         <div class="flex items-center gap-3">
-
-                            <span class="h-3 w-3 rounded-full bg-red-500"></span>
-
-
-                            <div>
-
-                                <p class="text-xs font-medium text-gray-700">
-                                    Mendesak
-                                </p>
-
-
-                                <p class="text-[11px] text-gray-400">
-                                    3 laporan
-                                </p>
-
-                            </div>
-
+                            <span class="h-3 w-3 rounded-full bg-amber-500"></span>
+                            <p class="text-xs font-medium text-gray-700">Menunggu</p>
                         </div>
 
-
-                        <!-- SEDANG -->
-
                         <div class="flex items-center gap-3">
-
-                            <span class="h-3 w-3 rounded-full bg-orange-500"></span>
-
-
-                            <div>
-
-                                <p class="text-xs font-medium text-gray-700">
-                                    Sedang
-                                </p>
-
-
-                                <p class="text-[11px] text-gray-400">
-                                    4 laporan
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- RENDAH -->
-
-                        <div class="flex items-center gap-3">
-
                             <span class="h-3 w-3 rounded-full bg-blue-500"></span>
-
-
-                            <div>
-
-                                <p class="text-xs font-medium text-gray-700">
-                                    Rendah
-                                </p>
-
-
-                                <p class="text-[11px] text-gray-400">
-                                    5 laporan
-                                </p>
-
-                            </div>
-
+                            <p class="text-xs font-medium text-gray-700">Diproses</p>
                         </div>
-
-
-                        <!-- SELESAI -->
 
                         <div class="flex items-center gap-3">
-
-                            <span class="h-3 w-3 rounded-full bg-green-500"></span>
-
-
-                            <div>
-
-                                <p class="text-xs font-medium text-gray-700">
-                                    Selesai
-                                </p>
-
-
-                                <p class="text-[11px] text-gray-400">
-                                    12 laporan
-                                </p>
-
-                            </div>
-
+                            <span class="h-3 w-3 rounded-full bg-green-600"></span>
+                            <p class="text-xs font-medium text-gray-700">Selesai</p>
                         </div>
 
+                        <div class="flex items-center gap-3">
+                            <span class="h-3 w-3 rounded-full bg-red-500"></span>
+                            <p class="text-xs font-medium text-gray-700">Ditolak</p>
+                        </div>
                     </div>
 
-
-                    <!-- MAP -->
-
+                    <!-- PETA PETUGAS -->
                     <div
                         ref="mapElement"
                         class="h-[280px] w-full overflow-hidden"
                     ></div>
-
-
                 </div>
-
             </div>
-
         </div>
-
-
       
         <!-- MASYARAKAT -->
      
