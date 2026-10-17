@@ -74,7 +74,8 @@ class StatisticsController extends Controller
             });
 
         $villageStatistics = Village::withCount('reports')
-            ->orderByDesc('reports_count')
+            ->whereHas('district')
+            ->orderBy('name')
             ->get()
             ->map(function ($village) {
                 return [

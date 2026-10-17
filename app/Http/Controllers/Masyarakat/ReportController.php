@@ -100,12 +100,16 @@ class ReportController extends Controller
     ]);
 }
 
-    public function create()
-    {
-        return inertia('Masyarakat/CreateReport', [
-            'categories' => Category::orderBy('name')->get(),
-        ]);
-    }
+    
+public function create()
+{
+    return inertia('Masyarakat/CreateReport', [
+        'categories' => Category::orderBy('name')->get(),
+        'districts' => District::orderBy('name')->get(),
+        'villages' => Village::orderBy('name')->get(),
+    ]);
+}
+
 
     public function show(Report $report)
     {
@@ -139,6 +143,16 @@ class ReportController extends Controller
             'category_id' => [
                 'required',
                 'exists:categories,id',
+            ],
+
+            'district_id' => [
+                'required',
+                'exists:districts,id',
+            ],
+
+            'village_id' => [
+                'required',
+                'exists:villages,id',
             ],
 
             'description' => [
@@ -180,41 +194,18 @@ class ReportController extends Controller
             ],
         ]);
 
-        // Cari kecamatan dan kelurahan dari alamat laporan.
-        $addressParts = array_map(
-            'trim',
-            explode(',', $validated['address'])
-        );
-
-        $districtId = null;
-        $villageId = null;
-
-        foreach ($addressParts as $part) {
-            $village = Village::whereRaw(
-                'LOWER(name) = ?',
-                [mb_strtolower($part)]
-            )->first();
-
-            if ($village) {
-                $villageId = $village->id;
-                $districtId = $village->district_id;
-                break;
-            }
+        if (
+            ! Village::where('id', $validated['village_id'])
+                ->where('district_id', $validated['district_id'])
+                ->exists()
+        ) {
+            return back()
+                ->withErrors([
+                    'village_id' => 'Kelurahan tidak sesuai dengan kecamatan yang dipilih.',
+                ])
+                ->withInput();
         }
 
-        if (!$districtId) {
-            foreach ($addressParts as $part) {
-                $district = District::whereRaw(
-                    'LOWER(name) = ?',
-                    [mb_strtolower($part)]
-                )->first();
-
-                if ($district) {
-                    $districtId = $district->id;
-                    break;
-                }
-            }
-        }
 
         $photos = $request->file('photos');
 
@@ -229,9 +220,9 @@ class ReportController extends Controller
             'user_id' => $request->user()->id,
             'category_id' => $validated['category_id'],
 
-            'district_id' => $districtId,
-            'village_id' => $villageId,
-
+            'district_id' => $validated['district_id'],
+            'village_id' => $validated['village_id'],
+            
             'title' => $validated['title'],
             'description' => $validated['description'],
 

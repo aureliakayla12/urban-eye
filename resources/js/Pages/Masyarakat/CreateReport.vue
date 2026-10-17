@@ -147,6 +147,63 @@
 
                     </div>
 
+                    <!-- KECAMATAN DAN KELURAHAN -->
+                    <div class="mt-6 grid gap-5 lg:grid-cols-2">
+                        <div>
+                            <label class="mb-2 block text-[15px] font-medium text-black">
+                                Kecamatan <span class="text-red-500">*</span>
+                            </label>
+
+                            <select
+                                v-model="form.district_id"
+                                @change="handleDistrictChange"
+                                class="h-[52px] w-full rounded-xl border border-[#D7DCE3] bg-white px-4 text-[14px] text-black outline-none focus:border-[#1B5E20]"
+                            >
+                                <option value="" disabled>Pilih kecamatan</option>
+
+                                <option
+                                    v-for="district in props.districts"
+                                    :key="district.id"
+                                    :value="district.id"
+                                >
+                                    {{ district.name }}
+                                </option>
+                            </select>
+
+                            <p v-if="form.errors.district_id" class="mt-1 text-sm text-red-500">
+                                {{ form.errors.district_id }}
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="mb-2 block text-[15px] font-medium text-black">
+                                Kelurahan <span class="text-red-500">*</span>
+                            </label>
+
+                            <select
+                                v-model="form.village_id"
+                                :disabled="!form.district_id"
+                                class="h-[52px] w-full rounded-xl border border-[#D7DCE3] bg-white px-4 text-[14px] text-black outline-none focus:border-[#1B5E20] disabled:cursor-not-allowed disabled:bg-gray-100"
+                            >
+                                <option value="" disabled>
+                                    {{ form.district_id ? 'Pilih kelurahan' : 'Pilih kecamatan dahulu' }}
+                                </option>
+
+                                <option
+                                    v-for="village in filteredVillages"
+                                    :key="village.id"
+                                    :value="village.id"
+                                >
+                                    {{ village.name }}
+                                </option>
+                            </select>
+
+                            <p v-if="form.errors.village_id" class="mt-1 text-sm text-red-500">
+                                {{ form.errors.village_id }}
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- FOTO + LOKASI -->
                     <div
                         class="mt-6 grid gap-6 lg:grid-cols-[1fr_1.08fr]"
@@ -458,12 +515,20 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
 const props = defineProps({
     categories: {
+        type: Array,
+        default: () => [],
+    },
+    districts: {
+        type: Array,
+        default: () => [],
+    },
+    villages: {
         type: Array,
         default: () => [],
     },
@@ -483,6 +548,8 @@ const locationMessage = ref('')
 const form = useForm({
     title: '',
     category_id: '',
+    district_id: '',
+    village_id: '',
     description: '',
     photo: null,
     photos: [],
@@ -490,6 +557,22 @@ const form = useForm({
     longitude: '',
     address: '',
 })
+
+const filteredVillages = computed(() => {
+    if (!form.district_id) {
+        return []
+    }
+
+    return props.villages.filter(
+        (village) =>
+            String(village.district_id) ===
+            String(form.district_id)
+    )
+})
+
+const handleDistrictChange = () => {
+    form.village_id = ''
+}
 
 const descriptionLength = ref(0)
 
@@ -734,8 +817,7 @@ const setLocation = (latitude, longitude) => {
 /* REVERSE GEOCODING */
 
 const getAddress = async (latitude, longitude) => {
-    locationMessage.value =
-        'Mencari alamat lokasi...'
+    locationMessage.value = 'Mencari alamat lokasi...'
 
     try {
         const response = await fetch(
@@ -748,24 +830,26 @@ const getAddress = async (latitude, longitude) => {
         )
 
         if (!response.ok) {
-            throw new Error(
-                'Gagal mendapatkan alamat.'
-            )
+            throw new Error('Gagal mendapatkan alamat.')
         }
 
         const data = await response.json()
+        const address = data.address || {}
 
         if (data.display_name) {
-            form.address =
-                data.display_name
+            form.address = data.display_name
 
-            locationMessage.value =
-                'Alamat berhasil ditemukan.'
+            console.log('Alamat GPS:', data.display_name)
+            console.log('Detail wilayah GPS:', address)
+
+            locationMessage.value = 'Alamat berhasil ditemukan.'
         } else {
             locationMessage.value =
                 'Alamat tidak ditemukan. Silakan isi secara manual.'
         }
     } catch (error) {
+        console.error('Reverse geocoding gagal:', error)
+
         locationMessage.value =
             'Alamat tidak ditemukan. Silakan isi secara manual.'
     }

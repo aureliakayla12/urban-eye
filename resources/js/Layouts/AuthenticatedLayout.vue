@@ -1,6 +1,7 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
+import Toast from '@/Components/Toast.vue'
 import {
     LayoutDashboard,
     ClipboardList,
@@ -27,6 +28,46 @@ import {
 } from 'lucide-vue-next'
 
 const page = usePage()
+
+const toast = ref({
+    show: false,
+    type: 'success',
+    title: '',
+    message: '',
+})
+
+let toastTimeout = null
+
+const showToast = (message, type = 'success', title = '') => {
+    clearTimeout(toastTimeout)
+
+    toast.value = {
+        show: true,
+        type,
+        title,
+        message,
+    }
+}
+
+const closeToast = () => {
+    toast.value.show = false
+}
+
+const flash = computed(() => page.props.flash ?? {})
+
+watch(
+    flash,
+    (messages) => {
+        if (messages.success) {
+            showToast(messages.success, 'success')
+        } else if (messages.error) {
+            showToast(messages.error, 'error')
+        } else if (messages.info) {
+            showToast(messages.info, 'info')
+        }
+    },
+    { immediate: true },
+)
 
 const showingUserMenu = ref(false)
 const showingMobileMenu = ref(false)
@@ -554,7 +595,6 @@ const toggleMobileMenu = () => {
                             {{ unreadNotificationCount > 99 ? '99+' : unreadNotificationCount }}
                         </span>
                     </Link>
-
                     
                     <!-- Header User -->
                     <button
@@ -619,6 +659,15 @@ const toggleMobileMenu = () => {
             </main>
 
         </div>
+
+        <!-- Global Toast Notification -->
+        <Toast
+            :show="toast.show"
+            :type="toast.type"
+            :title="toast.title"
+            :message="toast.message"
+            @close="closeToast"
+        />
 
     </div>
 </template>
