@@ -1,5 +1,11 @@
 <script setup>
-import { computed, ref, watch } from 'vue'
+import {
+    computed,
+    ref,
+    watch,
+    onMounted,
+    onBeforeUnmount,
+} from 'vue'
 import { Link, usePage } from '@inertiajs/vue3'
 import Toast from '@/Components/Toast.vue'
 import {
@@ -72,6 +78,27 @@ watch(
 const showingUserMenu = ref(false)
 const showingMobileMenu = ref(false)
 const showingSidebar = ref(true)
+const isMobile = ref(false)
+
+const checkScreenSize = () => {
+    isMobile.value = window.innerWidth < 1024
+
+    if (isMobile.value) {
+        showingSidebar.value = true
+    } else {
+        showingMobileMenu.value = false
+    }
+}
+
+onMounted(() => {
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+})
+
+onBeforeUnmount(() => {
+    window.removeEventListener('resize', checkScreenSize)
+})
+
 const openSubmenus = ref({})
 
 const user = computed(() => page.props.auth?.user)
@@ -545,17 +572,17 @@ const toggleMobileMenu = () => {
 
             <!-- Header -->
             <header
-                class="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-gray-200 bg-white px-5 shadow-sm transition-all duration-300 sm:px-8"
+                class="sticky top-0 z-30 flex min-h-20 items-center justify-between gap-2 border-b border-gray-200 bg-white px-3 py-3 shadow-sm transition-all duration-300 sm:px-6 lg:px-8"
             >
 
                 <!-- Left Header -->
-                <div class="flex items-center gap-4">
+                <div class="flex min-w-0 items-center gap-2 sm:gap-4">
 
-                    <!-- Sidebar Toggle -->
                     <button
                         type="button"
                         class="rounded-lg p-2 text-gray-700 transition hover:bg-gray-100"
-                        @click="toggleSidebar"
+                        :aria-label="isMobile ? 'Buka menu navigasi' : 'Ciutkan sidebar'"
+                        @click="isMobile ? toggleMobileMenu() : toggleSidebar()"
                     >
                         <Menu :size="24" />
                     </button>
@@ -568,7 +595,7 @@ const toggleMobileMenu = () => {
                 </div>
 
                 <!-- Right Header -->
-                <div class="relative flex items-center gap-5">
+                <div class="relative flex shrink-0 items-center gap-2 sm:gap-5">
 
                 <!-- Notifikasi untuk Admin, Petugas, dan Masyarakat -->
                    <Link
