@@ -1,16 +1,7 @@
 <script setup>
-
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
-
 import { Head, Link } from '@inertiajs/vue3'
-
-import {
-    computed,
-    onBeforeUnmount,
-    onMounted,
-    ref,
-} from 'vue'
-
+import { computed, onBeforeUnmount, onMounted, ref, } from 'vue'
 import {
     ClipboardList,
     AlertTriangle,
@@ -33,9 +24,7 @@ import {
     AlertCircle,
     CalendarDays,
 } from 'lucide-vue-next'
-
 import L from 'leaflet'
-
 import 'leaflet/dist/leaflet.css'
 
 
@@ -82,6 +71,11 @@ const props = defineProps({
     },
 
     badge: {
+        type: String,
+        default: 'Belum Ada',
+    },
+
+    badge_count: {
         type: Number,
         default: 0,
     },
@@ -99,11 +93,20 @@ const props = defineProps({
 })
 
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN - PIE CHART
-|--------------------------------------------------------------------------
-*/
+const formatNumber = (value) => Number(value ?? 0).toLocaleString('id-ID')
+
+const formatDate = (value) => {
+    if (!value) return 'Tanggal tidak tersedia'
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return String(value)
+    return new Intl.DateTimeFormat('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    }).format(date)
+}
+
+/* ADMIN - PIE CHART */
 
 const totalKategori = computed(() => {
 
@@ -177,11 +180,7 @@ const pieStyle = computed(() => {
 })
 
 
-/*
-|--------------------------------------------------------------------------
-| STATUS
-|--------------------------------------------------------------------------
-*/
+// STATUS 
 
 const statusClass = (status) => {
 
@@ -195,11 +194,7 @@ const statusClass = (status) => {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| MAP
-|--------------------------------------------------------------------------
-*/
+// MAP
 
 const mapElement = ref(null)
 
@@ -240,12 +235,15 @@ const filteredMapReports = computed(() => {
 
 const statusMarkerColor = (status) => {
 
+    // Samakan warna marker dengan warna status di legenda peta.
+    const normalizedStatus = String(status ?? '').trim().toLowerCase()
+
     return {
-        menunggu: '#F59E0B',
-        diproses: '#3B82F6',
-        selesai: '#16A34A',
-        ditolak: '#EF4444',
-    }[status] ?? '#6B7280'
+        menunggu: '#F59E0B', // amber-500: Menunggu
+        diproses: '#3B82F6', // blue-500: Diproses
+        selesai: '#16A34A',  // green-600: Selesai
+        ditolak: '#EF4444',  // red-500: Ditolak
+    }[normalizedStatus] ?? '#6B7280'
 
 }
 
@@ -278,11 +276,7 @@ const createMarkerIcon = (status) => {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| MAP MASYARAKAT
-|--------------------------------------------------------------------------
-*/
+// MAP MASYARAKAT
 
 const loadMapMarkers = () => {
 
@@ -357,11 +351,7 @@ const loadMapMarkers = () => {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| MAP PETUGAS
-|--------------------------------------------------------------------------
-*/
+// MAP PETUGAS
 
 const loadPetugasMapMarkers = () => {
 
@@ -448,11 +438,7 @@ const loadPetugasMapMarkers = () => {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| INITIALIZE MAP
-|--------------------------------------------------------------------------
-*/
+// INITIALIZE MAP
 
 const initializeMap = () => {
 
@@ -491,11 +477,7 @@ const initializeMap = () => {
     }).addTo(map.value)
 
 
-    /*
-    |----------------------------------------------------------------------
-    | BEDAKAN DATA MASYARAKAT DAN PETUGAS
-    |----------------------------------------------------------------------
-    */
+    // BEDAKAN DATA MASYARAKAT DAN PETUGAS 
 
     if (props.user?.role === 'petugas') {
 
@@ -510,11 +492,7 @@ const initializeMap = () => {
 }
 
 
-/*
-|--------------------------------------------------------------------------
-| MOUNT
-|--------------------------------------------------------------------------
-*/
+// MOUNT
 
 onMounted(() => {
 
@@ -530,11 +508,7 @@ onMounted(() => {
 })
 
 
-/*
-|--------------------------------------------------------------------------
-| UNMOUNT
-|--------------------------------------------------------------------------
-*/
+//  UNMOUNT
 
 onBeforeUnmount(() => {
 
@@ -549,11 +523,7 @@ onBeforeUnmount(() => {
 })
 
 
-/*
-|--------------------------------------------------------------------------
-| CHANGE CATEGORY
-|--------------------------------------------------------------------------
-*/
+// CHANGE CATEGORY
 
 const changeCategory = () => {
 
@@ -572,124 +542,74 @@ const changeCategory = () => {
     <AuthenticatedLayout>
 
 
-        <!-- ========================================================= -->
+
         <!-- HEADER -->
-        <!-- ========================================================= -->
-
         <template #header>
-
             <div>
-
                 <h2 class="text-xl font-semibold text-gray-900">
-
                     Dashboard
-
                 </h2>
-
-
                 <p class="mt-1 text-sm text-gray-500">
-
                     Ringkasan aktivitas UrbanEye
-
                 </p>
-
             </div>
-
         </template>
 
 
-        <!-- ========================================================= -->
         <!-- ADMIN -->
-        <!-- ========================================================= -->
-
-        <div
-            v-if="user?.role === 'admin'"
-            class="space-y-6"
-        >
+        <div v-if="user?.role === 'admin'" class="space-y-6">
 
 
             <!-- STATISTICS -->
-
             <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
 
-
                 <!-- TOTAL LAPORAN -->
-
                 <div class="rounded-2xl bg-white p-5 shadow-sm">
-
                     <div class="flex items-center gap-4">
-
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-100">
-
-                            <ClipboardList
-                                :size="24"
-                                class="text-green-600"
-                                stroke-width="1.8"
-                            />
-
+                            <ClipboardList :size="24" class="text-green-600" stroke-width="1.8" />
                         </div>
 
 
                         <div>
-
                             <p class="text-sm text-gray-500">
                                 Total Laporan
                             </p>
-
 
                             <p class="mt-1 text-2xl font-semibold text-gray-900">
                                 {{ stats?.total ?? 0 }}
                             </p>
 
-
                             <p class="mt-1 text-xs text-green-600">
                                 Total seluruh laporan
                             </p>
-
                         </div>
-
                     </div>
-
                 </div>
 
 
                 <!-- LAPORAN MENDESAK -->
-
                 <div class="rounded-2xl bg-white p-5 shadow-sm">
-
                     <div class="flex items-center gap-4">
-
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-100">
-
-                            <AlertTriangle
-                                :size="24"
-                                class="text-red-500"
-                                stroke-width="1.8"
-                            />
-
+                            <AlertTriangle :size="24" class="text-red-500" stroke-width="1.8"/>
                         </div>
 
 
                         <div>
-
                             <p class="text-sm text-gray-500">
                                 Laporan Mendesak
                             </p>
-
 
                             <p class="mt-1 text-2xl font-semibold text-red-500">
                                 {{ stats?.mendesak ?? 0 }}
                             </p>
 
-
                             <p class="mt-1 text-xs text-gray-500">
                                 Perlu segera ditindaklanjuti
                             </p>
-
                         </div>
-
                     </div>
-
                 </div>
 
 
@@ -761,87 +681,49 @@ const changeCategory = () => {
                                 {{ stats?.selesai ?? 0 }}
                             </p>
 
-
                             <p class="mt-1 text-xs text-green-600">
                                 Laporan terselesaikan
                             </p>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
 
 
             <!-- LAPORAN TERBARU + PIE -->
-
             <div class="grid grid-cols-1 gap-6 xl:grid-cols-[1.5fr_1fr]">
 
-
                 <!-- LAPORAN TERBARU -->
-
                 <div class="rounded-2xl bg-white p-5 shadow-sm">
-
                     <div class="mb-4 flex items-center justify-between">
-
                         <h3 class="font-semibold text-gray-900">
                             Laporan Terbaru
                         </h3>
 
-
-                        <Link
-                            :href="route('admin.reports.index')"
-                            class="text-sm font-medium text-green-600"
-                        >
+                        <Link :href="route('admin.reports.index')" class="text-sm font-medium text-green-600">
                             Lihat Semua
                         </Link>
-
                     </div>
 
-
-                    <div
-                        v-if="laporan_terbaru.length"
-                        class="divide-y divide-gray-100"
-                    >
-
-                        <div
-                            v-for="laporan in laporan_terbaru"
-                            :key="laporan.id"
-                            class="flex items-center gap-4 py-3"
-                        >
-
+                    <div v-if="laporan_terbaru.length" class="divide-y divide-gray-100" >
+                        <div v-for="laporan in laporan_terbaru" :key="laporan.id"class="flex items-center gap-4 py-3">
                             <div class="h-20 w-28 shrink-0 overflow-hidden rounded-xl bg-gray-100">
-
-                                <img
-                                    v-if="laporan.photo"
-                                    :src="`/storage/${laporan.photo}`"
-                                    :alt="laporan.title"
-                                    class="h-full w-full object-cover"
-                                />
-
+                                <img v-if="laporan.photo" :src="`/storage/${laporan.photo}`" :alt="laporan.title" class="h-full w-full object-cover"/>
                             </div>
 
-
                             <div class="min-w-0 flex-1">
-
                                 <p class="truncate font-medium text-gray-900">
                                     {{ laporan.title }}
                                 </p>
-
 
                                 <p class="mt-1 text-sm text-gray-500">
                                     {{ laporan.address ?? 'Alamat belum tersedia' }}
                                 </p>
 
-
                                 <p class="mt-1 text-xs text-gray-400">
                                     {{ laporan.created_at }}
                                 </p>
-
                             </div>
-
 
                             <span
                                 class="shrink-0 rounded-full px-4 py-2 text-xs font-medium capitalize"
@@ -849,11 +731,8 @@ const changeCategory = () => {
                             >
                                 {{ laporan.status }}
                             </span>
-
                         </div>
-
                     </div>
-
 
                     <div
                         v-else
@@ -866,79 +745,48 @@ const changeCategory = () => {
 
 
                 <!-- PIE -->
-
                 <div class="rounded-2xl bg-white p-5 shadow-sm">
-
                     <h3 class="font-semibold text-gray-900">
                         Laporan per Kategori
                     </h3>
 
-
-                    <div
-                        v-if="kategoriChart.length"
-                        class="mt-5 flex flex-col items-center"
-                    >
-
-                        <div
-                            class="relative h-[210px] w-[210px] rounded-full"
-                            :style="pieStyle"
-                        >
-
-                            <div
-                                class="absolute inset-[48px] flex items-center justify-center rounded-full bg-white"
-                            >
-
+                    <div v-if="kategoriChart.length" class="mt-5 flex flex-col items-center">
+                        <div class="relative h-[210px] w-[210px] rounded-full" :style="pieStyle">
+                            <div class="absolute inset-[48px] flex items-center justify-center rounded-full bg-white">
                                 <div class="text-center">
-
                                     <p class="text-2xl font-semibold text-gray-900">
                                         {{ totalKategori }}
                                     </p>
 
-
                                     <p class="text-xs text-gray-400">
                                         Total Laporan
                                     </p>
-
                                 </div>
-
                             </div>
-
                         </div>
 
 
                         <div class="mt-5 w-full space-y-2">
-
-                            <div
-                                v-for="item in kategoriChart"
-                                :key="item.name"
-                                class="flex items-center justify-between"
-                            >
-
+                            <div v-for="item in kategoriChart" :key="item.name" class="flex items-center justify-between">
                                 <div class="flex items-center gap-2">
-
                                     <span
                                         class="h-3 w-3 rounded-full"
                                         :style="{
                                             backgroundColor: item.color
-                                        }"
-                                    ></span>
-
+                                        }">
+                                    </span>
 
                                     <span class="text-xs text-gray-600">
                                         {{ item.name }}
                                     </span>
-
                                 </div>
 
 
                                 <span class="text-xs font-medium text-gray-900">
                                     {{ item.total }}
                                 </span>
-
                             </div>
-
                         </div>
-
                     </div>
 
 
@@ -1625,570 +1473,230 @@ const changeCategory = () => {
         </div>
 
 
-        <!-- ========================================================= -->
+      
         <!-- MASYARAKAT -->
-        <!-- ========================================================= -->
-
-        <div
-            v-else
-            class="space-y-5"
-        >
-
-
-            <!-- GREETING + BANNER -->
-
-            <div class="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-
-
-                <div>
-
-                    <h1 class="text-3xl font-semibold text-[#102A43]">
-                        Halo, {{ user?.name }}!
-                    </h1>
-
-
-                    <p class="mt-1 text-sm text-gray-500">
-                        Bersama kita wujudkan lingkungan kota yang lebih bersih dan sehat.
-                    </p>
-
-                </div>
-
-
-                <div class="flex min-h-[80px] items-center gap-4 rounded-2xl bg-[#E8F5E9] px-5 py-4 lg:w-[465px]">
-
-                    <Leaf
-                        :size="48"
-                        class="shrink-0 text-green-600"
-                        stroke-width="1.5"
-                    />
-
-
-                    <div>
-
-                        <p class="font-semibold text-green-900">
-                            Setiap laporanmu berarti
+     
+        <div v-else class="space-y-6">
+            <!-- Greeting / cityscape hero (tanpa ilustrasi orang) -->
+            <section class="relative isolate min-h-[156px] overflow-hidden rounded-[24px] border border-emerald-100 bg-gradient-to-r from-[#EAF8F0] via-[#E9F7FA] to-[#DCEFFC] shadow-sm sm:min-h-[164px]">
+                <img
+                    src="/images/urbaneye-city-hero.png"
+                    alt="Ilustrasi perkotaan hijau"
+                    aria-hidden="true"
+                    class="pointer-events-none absolute inset-y-0 right-0 h-full w-[58%] object-contain object-right-bottom opacity-70 sm:w-[52%] sm:opacity-100"
+                />
+                <div class="pointer-events-none absolute inset-y-0 right-[28%] z-0 w-[28%] bg-gradient-to-r from-[#EAF8F0] via-[#E9F7FA]/85 to-transparent"></div>
+                <div class="relative z-10 flex min-h-[156px] items-center px-5 py-6 sm:min-h-[164px] sm:px-7">
+                    <div class="max-w-[690px] sm:max-w-[62%]">
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h1 class="text-2xl font-bold tracking-tight text-[#102A43] sm:text-3xl lg:text-4xl">
+                                Halo, <span class="text-[#1B5E20]">{{ user?.name }}</span>!
+                            </h1>
+                        </div>
+                        <p class="mt-2 max-w-xl text-sm font-medium leading-5 text-[#344B5C] sm:text-base sm:leading-6">
+                            Bersama kita wujudkan lingkungan kota yang lebih bersih dan sehat.
                         </p>
-
-
-                        <p class="mt-1 text-xs leading-5 text-gray-600">
-                            Bantu kami menjaga lingkungan Depok lebih baik untuk masa depan!
+                        <p class="mt-1.5 max-w-xl text-xs leading-5 text-[#526777] sm:text-sm">
+                            Setiap laporan kecilmu membawa perubahan besar untuk masa depan yang lebih baik.
                         </p>
-
                     </div>
+                </div>
+            </section>
 
+            <!-- Summary cards -->
+            <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <div class="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md">
+                    <div class="relative flex min-h-[112px] items-center gap-4">
+                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-green-100 text-green-700">
+                            <FileText :size="25" :stroke-width="1.8" />
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium text-gray-500">Total Laporan</p>
+                            <p class="mt-2 text-3xl font-bold tracking-tight text-[#102A43]">{{ stats?.total_laporan ?? 0 }}</p>
+                            <p class="mt-1 text-xs text-gray-500">Laporan yang kamu kirim</p>
+                        </div>
+                    </div>
                 </div>
 
-            </div>
-
-
-            <!-- 4 STATISTICS -->
-
-            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
-
-
-                <!-- TOTAL -->
-
-                <div class="rounded-2xl bg-white p-5 shadow-sm">
-
-                    <div class="flex items-center gap-4">
-
-                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-100">
-
-                            <FileText
-                                :size="27"
-                                class="text-green-600"
-                                stroke-width="1.8"
-                            />
-
+                <div class="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md">
+                    <div class="relative flex min-h-[112px] items-center gap-4">
+                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
+                            <Medal :size="25" :stroke-width="1.8" />
                         </div>
-
-
-                        <div>
-
-                            <p class="text-xs text-gray-500">
-                                Total Laporan
-                            </p>
-
-
-                            <p class="mt-1 text-2xl font-semibold text-[#102A43]">
-                                {{ stats?.total_laporan ?? 0 }}
-                            </p>
-
-
-                            <p class="mt-1 text-xs text-green-600">
-                                ↑ Laporan Anda
-                            </p>
-
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium text-gray-500">Poin Anda</p>
+                            <p class="mt-2 text-3xl font-bold tracking-tight text-[#102A43]">{{ formatNumber(poin) }}</p>
+                            <p class="mt-1 text-xs text-gray-500">Total poin bersih terkumpul</p>
                         </div>
-
                     </div>
-
                 </div>
 
-
-                <!-- POIN -->
-
-                <div class="rounded-2xl bg-white p-5 shadow-sm">
-
-                    <div class="flex items-center gap-4">
-
-                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100">
-
-                            <Medal
-                                :size="27"
-                                class="text-blue-600"
-                                stroke-width="1.8"
-                            />
-
+                <div class="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md">
+                    <div class="relative flex min-h-[112px] items-center gap-4">
+                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-purple-100 text-purple-700">
+                            <Award :size="25" :stroke-width="1.8" />
                         </div>
-
-
-                        <div>
-
-                            <p class="text-xs text-gray-500">
-                                Poin Anda
-                            </p>
-
-
-                            <p class="mt-1 text-2xl font-semibold text-[#102A43]">
-                                {{ poin }}
-                            </p>
-
-
-                            <p class="mt-1 text-xs text-blue-600">
-                                Poin yang Anda kumpulkan
-                            </p>
-
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium text-gray-500">Badge Saya</p>
+                            <p class="mt-2 line-clamp-2 break-words text-lg font-bold leading-tight tracking-tight text-[#102A43] sm:text-xl" :title="badge">{{ badge || 'Belum Ada' }}</p>
+                            <p class="mt-1 text-xs text-gray-500">{{ badge_count }} badge diperoleh</p>
                         </div>
-
                     </div>
-
                 </div>
 
-
-                <!-- BADGE -->
-
-                <div class="rounded-2xl bg-white p-5 shadow-sm">
-
-                    <div class="flex items-center gap-4">
-
-                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-100">
-
-                            <Award
-                                :size="27"
-                                class="text-purple-600"
-                                stroke-width="1.8"
-                            />
-
+                <div class="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md">
+                    <div class="relative flex min-h-[112px] items-center gap-4">
+                        <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-amber-100 text-amber-600">
+                            <Trophy :size="25" :stroke-width="1.8" />
                         </div>
-
-
-                        <div>
-
-                            <p class="text-xs text-gray-500">
-                                Badge
-                            </p>
-
-
-                            <p class="mt-1 text-2xl font-semibold text-[#102A43]">
-                                {{ badge }}
-                            </p>
-
-
-                            <p class="mt-1 text-xs text-gray-500">
-                                Dapatkan badge baru!
-                            </p>
-
+                        <div class="min-w-0 flex-1">
+                            <p class="text-sm font-medium text-gray-500">Peringkat</p>
+                            <p class="mt-2 text-3xl font-bold tracking-tight text-[#102A43]">{{ peringkat === '-' ? '-' : `#${peringkat}` }}</p>
+                            <p class="mt-1 text-xs text-gray-500">Peringkat poin sepanjang waktu</p>
                         </div>
-
                     </div>
-
                 </div>
+            </section>
 
-
-                <!-- PERINGKAT -->
-
-                <div class="rounded-2xl bg-white p-5 shadow-sm">
-
-                    <div class="flex items-center gap-4">
-
-                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-100">
-
-                            <Trophy
-                                :size="27"
-                                class="text-yellow-500"
-                                stroke-width="1.8"
-                            />
-
-                        </div>
-
-
+            <!-- Map and recent reports -->
+            <section class="grid grid-cols-1 gap-5 xl:grid-cols-[1.35fr_1fr]">
+                <div class="relative z-0 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
+                    <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <div>
-
-                            <p class="text-xs text-gray-500">
-                                Peringkat
-                            </p>
-
-
-                            <p class="mt-1 text-2xl font-semibold text-[#102A43]">
-                                #{{ peringkat }}
-                            </p>
-
-
-                            <p class="mt-1 text-xs text-gray-500">
-                                Peringkat Anda
-                            </p>
-
+                            <div class="flex items-center gap-2">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-green-50 text-green-700">
+                                    <MapPin :size="19" />
+                                </div>
+                                <h2 class="font-semibold text-[#102A43]">Peta Lokasi Laporan</h2>
+                            </div>
+                            <p class="mt-2 text-xs leading-5 text-gray-500">Jelajahi sebaran laporan lingkungan di sekitar kota.</p>
                         </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- MAP + LAPORAN TERBARU -->
-
-            <div class="grid grid-cols-1 gap-5 xl:grid-cols-[1.55fr_1fr]">
-
-
-                <!-- MAP -->
-
-                <div class="rounded-2xl bg-white p-5 shadow-sm">
-
-                    <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-
-
-                        <div>
-
-                            <h3 class="font-semibold text-[#102A43]">
-                                Peta Lokasi Laporan
-                            </h3>
-
-
-                            <p class="mt-1 text-xs text-gray-400">
-                                Lihat sebaran laporan di sekitar wilayah Anda
-                            </p>
-
-                        </div>
-
-
-                        <div class="relative">
-
+                        <div class="relative w-full sm:w-[190px]">
                             <select
                                 v-model="selectedCategory"
                                 @change="changeCategory"
-                                class="h-10 w-full appearance-none rounded-xl border border-gray-200 bg-white pl-4 pr-10 text-xs text-gray-600 outline-none focus:border-green-500 sm:w-[180px]"
+                                class="h-10 w-full appearance-none rounded-xl border border-gray-200 bg-white pl-3 pr-9 text-xs text-gray-600 outline-none transition focus:border-green-600 focus:ring-2 focus:ring-green-100"
                             >
-
-                                <option
-                                    v-for="category in categoryOptions"
-                                    :key="category"
-                                    :value="category"
-                                >
+                                <option v-for="category in categoryOptions" :key="category" :value="category">
                                     {{ category }}
                                 </option>
-
                             </select>
-
-
-                            <ChevronDown
-                                :size="15"
-                                class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                            />
-
+                            <ChevronDown :size="15" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
                         </div>
-
                     </div>
 
-
-                    <!-- LEAFLET -->
-
+                    <!-- Isolated stacking context keeps Leaflet panes below the sticky header while scrolling. -->
                     <div
                         ref="mapElement"
-                        class="h-[360px] w-full overflow-hidden rounded-xl"
+                        class="relative z-0 isolate h-[300px] w-full overflow-hidden rounded-xl sm:h-[360px]"
                     ></div>
 
-
-                    <!-- LEGEND -->
-
-                    <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2">
-
-
-                        <div class="flex items-center gap-2">
-
-                            <span class="h-3 w-3 rounded-full bg-yellow-500"></span>
-
-                            <span class="text-xs text-gray-500">
-                                Menunggu
-                            </span>
-
-                        </div>
-
-
-                        <div class="flex items-center gap-2">
-
-                            <span class="h-3 w-3 rounded-full bg-blue-500"></span>
-
-                            <span class="text-xs text-gray-500">
-                                Diproses
-                            </span>
-
-                        </div>
-
-
-                        <div class="flex items-center gap-2">
-
-                            <span class="h-3 w-3 rounded-full bg-green-600"></span>
-
-                            <span class="text-xs text-gray-500">
-                                Selesai
-                            </span>
-
-                        </div>
-
-
-                        <div class="flex items-center gap-2">
-
-                            <span class="h-3 w-3 rounded-full bg-red-500"></span>
-
-                            <span class="text-xs text-gray-500">
-                                Ditolak
-                            </span>
-
-                        </div>
-
+                    <div class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-gray-100 pt-4">
+                        <div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full" style="background-color: #F59E0B"></span><span class="text-xs text-gray-500">Menunggu</span></div>
+                        <div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full" style="background-color: #3B82F6"></span><span class="text-xs text-gray-500">Diproses</span></div>
+                        <div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full" style="background-color: #16A34A"></span><span class="text-xs text-gray-500">Selesai</span></div>
+                        <div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full" style="background-color: #EF4444"></span><span class="text-xs text-gray-500">Ditolak</span></div>
                     </div>
-
                 </div>
 
-
-                <!-- LAPORAN TERBARU -->
-
-                <div class="rounded-2xl bg-white p-5 shadow-sm">
-
-                    <div class="mb-4 flex items-center justify-between">
-
-                        <h3 class="font-semibold text-[#102A43]">
-                            Laporan Terbaru
-                        </h3>
-
-
-                        <Link
-                            :href="route('masyarakat.reports.index')"
-                            class="text-xs font-medium text-blue-600"
-                        >
-                            Lihat Semua →
+                <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
+                    <div class="mb-4 flex items-center justify-between gap-3">
+                        <div>
+                            <h2 class="font-semibold text-[#102A43]">Laporan Terbaru</h2>
+                            <p class="mt-1 text-xs text-gray-500">Tiga laporan terakhir yang kamu kirim.</p>
+                        </div>
+                        <Link :href="route('masyarakat.reports.index')" class="shrink-0 text-xs font-semibold text-green-700 transition hover:text-green-900">
+                            Lihat Semua <ArrowRight :size="13" class="ml-1 inline" />
                         </Link>
-
                     </div>
 
-
-                    <div
-                        v-if="laporan_terbaru.length"
-                        class="divide-y divide-gray-100"
-                    >
-
-                        <div
-                            v-for="laporan in laporan_terbaru"
-                            :key="laporan.id"
-                            class="flex gap-3 py-3"
-                        >
-
-                            <div class="h-[70px] w-[70px] shrink-0 overflow-hidden rounded-xl bg-gray-100">
-
-                                <img
-                                    v-if="laporan.photo"
-                                    :src="`/storage/${laporan.photo}`"
-                                    :alt="laporan.title"
-                                    class="h-full w-full object-cover"
-                                />
-
+                    <div v-if="laporan_terbaru.length" class="divide-y divide-gray-100">
+                        <div v-for="laporan in laporan_terbaru.slice(0, 3)" :key="laporan.id" class="flex gap-3 py-4 first:pt-1 last:pb-1">
+                            <div class="h-[76px] w-[76px] shrink-0 overflow-hidden rounded-xl bg-green-50 ring-1 ring-black/5">
+                                <img v-if="laporan.photo" :src="`/storage/${laporan.photo}`" :alt="laporan.title" class="h-full w-full object-cover" loading="lazy" />
+                                <div v-else class="flex h-full w-full items-center justify-center text-green-700"><Leaf :size="25" /></div>
                             </div>
-
-
                             <div class="min-w-0 flex-1">
-
                                 <div class="flex items-start justify-between gap-2">
-
-                                    <p class="line-clamp-2 text-xs font-semibold text-[#102A43]">
-                                        {{ laporan.title }}
-                                    </p>
-
-
-                                    <span
-                                        class="shrink-0 rounded-full px-2.5 py-1 text-[10px] font-medium capitalize"
-                                        :class="statusClass(laporan.status)"
-                                    >
-                                        {{ laporan.status }}
-                                    </span>
-
+                                    <p class="line-clamp-2 text-sm font-semibold leading-5 text-[#102A43]">{{ laporan.title }}</p>
+                                    <span class="shrink-0 rounded-full px-2 py-1 text-[10px] font-semibold capitalize" :class="statusClass(laporan.status)">{{ laporan.status }}</span>
                                 </div>
-
-
-                                <p class="mt-1 text-[11px] text-gray-500">
-                                    {{ laporan.category?.name ?? 'Tanpa kategori' }}
+                                <p class="mt-1.5 text-xs text-gray-500">{{ laporan.category?.name ?? 'Tanpa kategori' }}</p>
+                                <p class="mt-1.5 flex items-start gap-1 text-[11px] leading-4 text-gray-400">
+                                    <MapPin :size="12" class="mt-0.5 shrink-0" />
+                                    <span class="line-clamp-1">{{ laporan.address ?? 'Lokasi belum tersedia' }}</span>
                                 </p>
-
-
-                                <p class="mt-1 flex items-center gap-1 text-[10px] text-gray-400">
-
-                                    <MapPin :size="11" />
-
-                                    {{ laporan.address ?? 'Lokasi belum tersedia' }}
-
-                                </p>
-
-
-                                <p class="mt-1 text-[10px] text-gray-400">
-                                    {{ laporan.created_at }}
-                                </p>
-
+                                <p class="mt-1.5 text-[10px] text-gray-400">{{ formatDate(laporan.created_at) }}</p>
                             </div>
-
                         </div>
-
                     </div>
-
-
-                    <div
-                        v-else
-                        class="flex h-[350px] items-center justify-center text-sm text-gray-400"
-                    >
-                        Belum ada laporan.
+                    <div v-else class="flex min-h-[300px] flex-col items-center justify-center px-4 text-center">
+                        <div class="flex h-14 w-14 items-center justify-center rounded-2xl bg-green-50 text-green-700"><FileText :size="25" /></div>
+                        <p class="mt-3 text-sm font-semibold text-gray-700">Belum ada laporan</p>
+                        <p class="mt-1 max-w-[220px] text-xs leading-5 text-gray-500">Laporan pertamamu bisa membantu menjaga lingkungan sekitar.</p>
                     </div>
+                </div>
+            </section>
 
+            <!-- Report call-to-action and weekly leaderboard -->
+            <section class="grid grid-cols-1 gap-5 xl:grid-cols-[0.95fr_1.25fr]">
+                <div class="relative isolate overflow-hidden rounded-2xl border border-green-100 bg-gradient-to-br from-[#E8F5E9] via-[#F2FAF0] to-[#D9F0D6] p-6 sm:p-7">
+                    <div class="pointer-events-none absolute -bottom-7 -right-5 text-green-800/10"><Leaf :size="170" :stroke-width="1.1" /></div>
+                    <img
+                        src="/images/urbaneye-report-cta.png"
+                        alt=""
+                        aria-hidden="true"
+                        class="pointer-events-none absolute inset-y-0 right-0 z-0 h-full w-[38%] object-cover object-center opacity-90 sm:w-[40%]"
+                    />
+                    <div class="pointer-events-none absolute inset-y-0 right-[18%] z-0 w-[50%] bg-gradient-to-r from-[#F2FAF0] via-[#F2FAF0]/55 to-transparent"></div>
+                    <div class="relative z-10 max-w-[72%] sm:max-w-[68%]">
+                        <span class="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-[10px] font-bold tracking-wide text-green-800"><Leaf :size="12" /> MULAI DARI SEKITARMU</span>
+                        <h2 class="mt-4 text-xl font-bold leading-7 text-[#173B2A]">Ada masalah lingkungan yang kamu temukan?</h2>
+                        <p class="mt-2 text-sm leading-6 text-gray-600">Jangan biarkan begitu saja. Laporkan dengan foto dan lokasi agar petugas bisa menindaklanjutinya.</p>
+                        <Link :href="route('masyarakat.reports.create')" class="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#168344] px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#116D38]">
+                            <Plus :size="16" /> Laporkan Sekarang <ArrowRight :size="15" />
+                        </Link>
+                    </div>
                 </div>
 
-            </div>
-
-
-            <!-- BOTTOM -->
-
-            <div class="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_1.35fr]">
-
-
-                <!-- LAPORKAN MASALAH -->
-
-                <div class="relative overflow-hidden rounded-2xl bg-[#E8F5E9] p-6">
-
-                    <div class="relative z-10 max-w-[65%]">
-
-                        <h3 class="text-lg font-semibold text-[#173B2A]">
-                            Laporkan Masalah Lingkungan
-                        </h3>
-
-
-                        <p class="mt-2 text-xs leading-5 text-gray-600">
-
-                            Jadilah bagian dari perubahan. Laporkan masalah
-                            lingkungan di sekitar Anda dengan mudah dan cepat.
-
-                        </p>
-
-
-                        <Link
-                            :href="route('masyarakat.reports.create')"
-                            class="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#168344] px-4 py-2.5 text-xs font-medium text-white transition hover:bg-[#116D38]"
-                        >
-
-                            <Plus :size="15" />
-
-                            Laporkan Sekarang
-
-                            <ArrowRight :size="14" />
-
-                        </Link>
-
-                    </div>
-
-
-                    <div class="absolute -right-2 bottom-0 text-green-700/20">
-
-                        <Leaf :size="150" />
-
-                    </div>
-
-                </div>
-
-
-                <!-- LEADERBOARD -->
-
-                <div class="rounded-2xl bg-white p-5 shadow-sm">
-
-                    <div class="mb-5 flex items-center justify-between">
-
-                        <h3 class="font-semibold text-[#102A43]">
-                            Leaderboard Mingguan
-                        </h3>
-
-
-                        <Link
-                            :href="route('masyarakat.leaderboard.index')"
-                            class="text-[10px] font-medium text-blue-600"
-                        >
-                            Lihat Semua →
-                        </Link>
-
-                    </div>
-
-
-                    <div
-                        v-if="leaderboard.length"
-                        class="grid grid-cols-3 gap-3"
-                    >
-
-                        <div
-                            v-for="(item, index) in leaderboard.slice(0, 3)"
-                            :key="item.id ?? index"
-                            class="text-center"
-                        >
-
-                            <div class="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-gray-100">
-
-                                <Trophy
-                                    :size="17"
-                                    :class="[
-                                        index === 0
-                                            ? 'text-yellow-500'
-                                            : index === 1
-                                                ? 'text-gray-400'
-                                                : 'text-orange-500'
-                                    ]"
-                                />
-
+                <div class="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
+                    <div class="mb-5 flex items-start justify-between gap-3">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600"><Trophy :size="19" /></div>
+                                <h2 class="font-semibold text-[#102A43]">Leaderboard Mingguan</h2>
                             </div>
-
-
-                            <p class="mt-2 truncate text-[10px] font-medium text-gray-700">
-                                {{ item.name }}
-                            </p>
-
-
-                            <p class="mt-1 text-[10px] text-blue-500">
-                                {{ item.points }} poin
-                            </p>
-
+                            <p class="mt-2 text-xs text-gray-500">Top 3 kontributor berdasarkan poin minggu ini.</p>
                         </div>
-
+                        <Link :href="route('masyarakat.leaderboard.index')" class="shrink-0 text-xs font-semibold text-green-700 transition hover:text-green-900">
+                            Lihat Semua <ArrowRight :size="13" class="ml-1 inline" />
+                        </Link>
                     </div>
 
-
-                    <div
-                        v-else
-                        class="flex h-[90px] items-center justify-center text-xs text-gray-400"
-                    >
-                        Leaderboard akan tersedia saat fitur gamifikasi selesai.
+                    <div v-if="leaderboard.length" class="space-y-3">
+                        <div v-for="(item, index) in leaderboard.slice(0, 3)" :key="item.id ?? index" class="flex items-center gap-3 rounded-xl border px-3 py-3 sm:px-4" :class="index === 0 ? 'border-amber-100 bg-amber-50/70' : 'border-gray-100 bg-gray-50/70'">
+                            <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold" :class="index === 0 ? 'bg-amber-400 text-white' : index === 1 ? 'bg-slate-300 text-slate-700' : 'bg-orange-200 text-orange-800'">
+                                <Trophy v-if="index === 0" :size="18" />
+                                <span v-else>{{ index + 1 }}</span>
+                            </div>
+                            <div class="min-w-0 flex-1">
+                                <p class="truncate text-sm font-semibold text-[#102A43]">{{ item.name }}</p>
+                                <p class="mt-0.5 text-xs text-gray-500">Peringkat {{ index + 1 }} minggu ini</p>
+                            </div>
+                            <div class="shrink-0 text-right">
+                                <p class="text-sm font-bold text-green-800">{{ formatNumber(item.points) }}</p>
+                                <p class="text-[10px] text-gray-500">poin</p>
+                            </div>
+                        </div>
                     </div>
-
+                    <div v-else class="flex min-h-[170px] flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/70 px-4 text-center">
+                        <div class="flex h-11 w-11 items-center justify-center rounded-full bg-amber-50 text-amber-600"><Trophy :size="21" /></div>
+                        <p class="mt-3 text-sm font-semibold text-gray-700">Belum ada perolehan poin minggu ini</p>
+                        <p class="mt-1 max-w-sm text-xs leading-5 text-gray-500">Jadilah salah satu kontributor teratas dengan mengirim laporan yang valid.</p>
+                    </div>
                 </div>
-
-            </div>
-
+            </section>
         </div>
 
-
     </AuthenticatedLayout>
-
 </template>

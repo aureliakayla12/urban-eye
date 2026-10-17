@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Report;
 use App\Models\ReportAssignment;
+use App\Models\User;
+use App\Models\UserBadge;
+use App\Models\UserPoint;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -28,22 +31,16 @@ class DashboardController extends Controller
         | ADMIN
         |--------------------------------------------------------------------------
         */
-
         if ($role === 'admin') {
             $data['stats'] = [
-            'total' => Report::count(),
-            'mendesak' => Report::whereIn('urgency_level', [
-                'sangat_mendesak',
-                'mendesak',
-            ])->count(),
-
-            'diproses' => Report::where('status', 'diproses')
-                ->count(),
-
-            'selesai' => Report::where('status', 'selesai')
-                ->count(),
+                'total' => Report::count(),
+                'mendesak' => Report::whereIn('urgency_level', [
+                    'sangat_mendesak',
+                    'mendesak',
+                ])->count(),
+                'diproses' => Report::where('status', 'diproses')->count(),
+                'selesai' => Report::where('status', 'selesai')->count(),
             ];
-
 
             $data['laporan_terbaru'] = Report::with('category')
                 ->latest()
@@ -51,20 +48,14 @@ class DashboardController extends Controller
                 ->get();
 
             $data['kategori'] = Report::query()
-                ->select(
-                    'category_id',
-                    DB::raw('COUNT(*) as total')
-                )
+                ->select('category_id', DB::raw('COUNT(*) as total'))
                 ->with('category')
                 ->whereNotNull('category_id')
                 ->groupBy('category_id')
                 ->orderByDesc('total')
                 ->get();
 
-            $data['aktivitas_petugas'] = ReportAssignment::with([
-                    'officer',
-                    'report',
-                ])
+            $data['aktivitas_petugas'] = ReportAssignment::with(['officer', 'report'])
                 ->latest('updated_at')
                 ->take(5)
                 ->get()
@@ -79,9 +70,7 @@ class DashboardController extends Controller
 
                     return [
                         'id' => $assignment->id,
-                        'user' => [
-                            'name' => $assignment->officer?->name,
-                        ],
+                        'user' => ['name' => $assignment->officer?->name],
                         'description' => $description,
                         'report' => $assignment->report?->title,
                         'time' => $assignment->updated_at?->diffForHumans(),
@@ -94,42 +83,23 @@ class DashboardController extends Controller
         | PETUGAS
         |--------------------------------------------------------------------------
         */
-
         if ($role === 'petugas') {
             $data['stats'] = [
-                'tugas_hari_ini' => ReportAssignment::where(
-                        'officer_id',
-                        $user->id
-                    )
+                'tugas_hari_ini' => ReportAssignment::where('officer_id', $user->id)
                     ->whereDate('assigned_at', today())
                     ->count(),
-
-                'ditugaskan' => ReportAssignment::where(
-                        'officer_id',
-                        $user->id
-                    )
+                'ditugaskan' => ReportAssignment::where('officer_id', $user->id)
                     ->where('status', 'ditugaskan')
                     ->count(),
-
-                'diproses' => ReportAssignment::where(
-                        'officer_id',
-                        $user->id
-                    )
+                'diproses' => ReportAssignment::where('officer_id', $user->id)
                     ->where('status', 'diproses')
                     ->count(),
-
-                'selesai' => ReportAssignment::where(
-                        'officer_id',
-                        $user->id
-                    )
+                'selesai' => ReportAssignment::where('officer_id', $user->id)
                     ->where('status', 'selesai')
                     ->count(),
             ];
 
-            $data['tugas'] = ReportAssignment::with([
-                    'report.category',
-                    'report.user',
-                ])
+            $data['tugas'] = ReportAssignment::with(['report.category', 'report.user'])
                 ->where('officer_id', $user->id)
                 ->latest('assigned_at')
                 ->take(5)
@@ -141,56 +111,119 @@ class DashboardController extends Controller
         | MASYARAKAT
         |--------------------------------------------------------------------------
         */
+        if ($role === 'masyarakat') {
+            $reports = Report::query()
+                ->with('category')
+                ->where('user_id', $user->id);
 
-       if ($role === 'masyarakat') {
-    $reports = Report::with('category')
-        ->where('user_id', $user->id);
+            $data['stats'] = [
+                'total_laporan' => (clone $reports)->count(),
+                'menunggu' => (clone $reports)->where('status', 'menunggu')->count(),
+                'diproses' => (clone $reports)->where('status', 'diproses')->count(),
+                'selesai' => (clone $reports)->where('status', 'selesai')->count(),
+            ];
 
-    $data['stats'] = [
-        'total_laporan' => (clone $reports)->count(),
+            // Dashboard hanya menampilkan tiga laporan terbaru milik pengguna yang login.
+            $data['laporan_terbaru'] = (clone $reports)
+                ->latest('created_at')
+                ->take(3)
+                ->get();
 
-        'menunggu' => (clone $reports)
-            ->where('status', 'menunggu')
-            ->count(),
+            // Peta masyarakat hanya menampilkan laporan milik pengguna yang login.
+            // Pengguna baru yang belum membuat laporan akan melihat peta tanpa marker.
+            $data['peta_laporan'] = Report::with('category')
+                ->where('user_id', $user->id)
+                ->whereNotNull('latitude')
+                ->whereNotNull('longitude')
+                ->latest('created_at')
+                ->get([
+                    'id',
+                    'category_id',
+                    'title',
+                    'photo',
+                    'latitude',
+                    'longitude',
+                    'address',
+                    'status',
+                ]);
 
-        'diproses' => (clone $reports)
-            ->where('status', 'diproses')
-            ->count(),
+            // Total poin bersih sepanjang waktu: poin tambah dikurangi poin kurang.
+            $lifetimePoints = UserPoint::query()
+                ->where('user_id', $user->id)
+                ->selectRaw("COALESCE(SUM(CASE WHEN type = 'tambah' THEN points WHEN type = 'kurang' THEN -points ELSE 0 END), 0) as total_points")
+                ->value('total_points');
 
-        'selesai' => (clone $reports)
-            ->where('status', 'selesai')
-            ->count(),
-    ];
+            $data['poin'] = (int) ($lifetimePoints ?? 0);
 
-    $data['laporan_terbaru'] = (clone $reports)
-        ->latest()
-        ->take(5)
-        ->get();
+            // Dashboard menampilkan julukan badge terbaru, sesuai halaman Reward Saya.
+            $userBadges = UserBadge::with('badge')
+                ->where('user_id', $user->id)
+                ->orderByDesc('earned_at')
+                ->orderByDesc('created_at')
+                ->get();
 
-    $data['peta_laporan'] = Report::with('category')
-        ->whereNotNull('latitude')
-        ->whereNotNull('longitude')
-        ->latest()
-        ->get([
-            'id',
-            'category_id',
-            'title',
-            'photo',
-            'latitude',
-            'longitude',
-            'address',
-            'status',
-        ]);
+            $data['badge'] = $userBadges->first()?->badge?->name ?? 'Belum Ada';
+            $data['badge_count'] = $userBadges->count();
 
-    /*
-     * Data gamifikasi akan digunakan saat fitur
-     * poin, badge, dan leaderboard Sprint 3 selesai.
-     */
-    $data['poin'] = 0;
-    $data['badge'] = 0;
-    $data['peringkat'] = '-';
-    $data['leaderboard'] = [];
-}
+            // Pengguna yang memiliki setidaknya satu laporan memenuhi syarat peringkat.
+            $communityUsersWithReports = User::role('masyarakat')
+                ->whereExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('reports')
+                        ->whereColumn('reports.user_id', 'users.id');
+                });
+
+            $lifetimePointTotals = UserPoint::query()
+                ->select('user_id')
+                ->selectRaw("SUM(CASE WHEN type = 'tambah' THEN points WHEN type = 'kurang' THEN -points ELSE 0 END) as total_points")
+                ->groupBy('user_id');
+
+            $rankedUsers = (clone $communityUsersWithReports)
+                ->leftJoinSub($lifetimePointTotals, 'point_totals', 'users.id', '=', 'point_totals.user_id')
+                ->select(
+                    'users.id',
+                    'users.name',
+                    DB::raw('COALESCE(point_totals.total_points, 0) as points')
+                )
+                ->orderByDesc('points')
+                ->orderBy('users.id')
+                ->get();
+
+            $currentUserRankIndex = $rankedUsers->search(
+                fn ($rankedUser) => (int) $rankedUser->id === (int) $user->id
+            );
+            $data['peringkat'] = $currentUserRankIndex === false
+                ? '-'
+                : $currentUserRankIndex + 1;
+
+            // Leaderboard mingguan dihitung dari transaksi poin pada minggu berjalan.
+            $weekStart = now()->startOfWeek();
+            $weekEnd = now()->endOfWeek();
+
+            $weeklyPointTotals = UserPoint::query()
+                ->whereBetween('created_at', [$weekStart, $weekEnd])
+                ->select('user_id')
+                ->selectRaw("SUM(CASE WHEN type = 'tambah' THEN points WHEN type = 'kurang' THEN -points ELSE 0 END) as weekly_points")
+                ->groupBy('user_id');
+
+            $data['leaderboard'] = (clone $communityUsersWithReports)
+                ->joinSub($weeklyPointTotals, 'weekly_point_totals', 'users.id', '=', 'weekly_point_totals.user_id')
+                ->select(
+                    'users.id',
+                    'users.name',
+                    DB::raw('COALESCE(weekly_point_totals.weekly_points, 0) as points')
+                )
+                ->orderByDesc('points')
+                ->orderBy('users.id')
+                ->take(3)
+                ->get()
+                ->map(fn ($leader) => [
+                    'id' => (int) $leader->id,
+                    'name' => $leader->name,
+                    'points' => (int) $leader->points,
+                ])
+                ->values();
+        }
 
         return Inertia::render('Dashboard', $data);
     }

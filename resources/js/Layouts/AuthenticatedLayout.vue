@@ -316,7 +316,7 @@ const toggleMobileMenu = () => {
                         class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-white"
                     >
                         <UserCircle
-                            :size="31"
+                            :size="24"
                             stroke-width="1.8"
                         />
                     </div>
