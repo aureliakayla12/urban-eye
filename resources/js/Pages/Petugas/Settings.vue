@@ -19,27 +19,23 @@ const props = defineProps({
     },
 })
 
-// Form informasi profil
 const profileForm = useForm({
     name: props.user?.name ?? '',
     email: props.user?.email ?? '',
 })
 
-// Form keamanan akun
 const passwordForm = useForm({
     current_password: '',
     password: '',
     password_confirmation: '',
 })
 
-// Simpan perubahan profil
 const updateProfile = () => {
     profileForm.patch(route('profile.update'), {
         preserveScroll: true,
     })
 }
 
-// Simpan kata sandi baru
 const updatePassword = () => {
     passwordForm.put(route('password.update'), {
         preserveScroll: true,
@@ -66,7 +62,6 @@ const updatePassword = () => {
 
         <div class="space-y-6 p-6 lg:p-8">
 
-            <!-- INFORMASI PROFIL -->
             <section class="overflow-hidden rounded-xl bg-white shadow-sm">
                 <div class="flex items-center gap-3 border-b border-gray-200 p-5">
                     <div
@@ -90,7 +85,6 @@ const updatePassword = () => {
                     class="space-y-5 p-5"
                     @submit.prevent="updateProfile"
                 >
-                    <!-- NAMA -->
                     <div>
                         <label
                             for="name"
@@ -116,7 +110,6 @@ const updatePassword = () => {
                         </p>
                     </div>
 
-                    <!-- EMAIL -->
                     <div>
                         <label
                             for="email"
@@ -142,7 +135,6 @@ const updatePassword = () => {
                         </p>
                     </div>
 
-                    <!-- ROLE -->
                     <div>
                         <label
                             class="mb-2 block text-sm font-medium text-gray-700"
@@ -157,7 +149,6 @@ const updatePassword = () => {
                         </div>
                     </div>
 
-                    <!-- BERHASIL -->
                     <p
                         v-if="profileForm.recentlySuccessful"
                         class="flex items-center gap-2 text-sm text-green-600"
@@ -166,7 +157,6 @@ const updatePassword = () => {
                         Profil berhasil diperbarui.
                     </p>
 
-                    <!-- TOMBOL -->
                     <div class="flex justify-end border-t border-gray-100 pt-4">
                         <button
                             type="submit"
@@ -185,7 +175,6 @@ const updatePassword = () => {
                 </form>
             </section>
 
-            <!-- KEAMANAN AKUN -->
             <section class="overflow-hidden rounded-xl bg-white shadow-sm">
                 <div class="flex items-center gap-3 border-b border-gray-200 p-5">
                     <div
@@ -209,7 +198,6 @@ const updatePassword = () => {
                     class="space-y-5 p-5"
                     @submit.prevent="updatePassword"
                 >
-                    <!-- PASSWORD LAMA -->
                     <div>
                         <label
                             for="current_password"
@@ -235,7 +223,6 @@ const updatePassword = () => {
                         </p>
                     </div>
 
-                    <!-- PASSWORD BARU -->
                     <div>
                         <label
                             for="password"
@@ -261,7 +248,6 @@ const updatePassword = () => {
                         </p>
                     </div>
 
-                    <!-- KONFIRMASI PASSWORD -->
                     <div>
                         <label
                             for="password_confirmation"
@@ -280,7 +266,6 @@ const updatePassword = () => {
                         />
                     </div>
 
-                    <!-- BERHASIL -->
                     <p
                         v-if="passwordForm.recentlySuccessful"
                         class="flex items-center gap-2 text-sm text-green-600"
@@ -289,7 +274,6 @@ const updatePassword = () => {
                         Kata sandi berhasil diperbarui.
                     </p>
 
-                    <!-- TOMBOL -->
                     <div class="flex justify-end border-t border-gray-100 pt-4">
                         <button
                             type="submit"

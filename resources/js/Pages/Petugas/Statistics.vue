@@ -23,7 +23,6 @@ const props = defineProps({
     },
 })
 
-// DATA UNTUK DIAGRAM DONAT
 const statusChart = computed(() => {
     const items = [
         {
@@ -91,7 +90,6 @@ const statusChart = computed(() => {
     <Head title="Statistik" />
 
     <AuthenticatedLayout>
-        <!-- HEADER -->
         <template #header>
             <div>
                 <h2 class="text-xl font-semibold text-gray-900">
@@ -106,10 +104,8 @@ const statusChart = computed(() => {
 
         <div class="space-y-6 p-5 sm:p-8">
 
-            <!-- 4 KARTU STATISTIK -->
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
-                <!-- TOTAL TUGAS -->
                 <div class="rounded-xl bg-white p-5 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div
@@ -136,7 +132,6 @@ const statusChart = computed(() => {
                     </div>
                 </div>
 
-                <!-- DITUGASKAN -->
                 <div class="rounded-xl bg-white p-5 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div
@@ -163,7 +158,6 @@ const statusChart = computed(() => {
                     </div>
                 </div>
 
-                <!-- DIPROSES -->
                 <div class="rounded-xl bg-white p-5 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div
@@ -190,7 +184,6 @@ const statusChart = computed(() => {
                     </div>
                 </div>
 
-                <!-- SELESAI -->
                 <div class="rounded-xl bg-white p-5 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div
@@ -219,10 +212,8 @@ const statusChart = computed(() => {
 
             </div>
 
-            <!-- DIAGRAM STATUS TUGAS -->
             <div class="rounded-xl bg-white p-6 shadow-sm">
 
-                <!-- JUDUL DIAGRAM -->
                 <div class="mb-6 flex items-center gap-3">
                     <div
                         class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100"
@@ -243,18 +234,15 @@ const statusChart = computed(() => {
                     </div>
                 </div>
 
-                <!-- DIAGRAM DAN LEGENDA -->
                 <div
                     class="grid grid-cols-1 items-center gap-8 md:grid-cols-2"
                 >
 
-                    <!-- DIAGRAM DONAT -->
                     <div class="flex justify-center py-3">
                         <div
                             class="relative h-56 w-56 shrink-0 rounded-full"
                             :style="statusChart.style"
                         >
-                            <!-- BAGIAN TENGAH DIAGRAM -->
                             <div
                                 class="absolute inset-7 flex flex-col items-center justify-center rounded-full bg-white shadow-sm"
                             >
@@ -273,7 +261,6 @@ const statusChart = computed(() => {
                         </div>
                     </div>
 
-                    <!-- LEGENDA DIAGRAM -->
                     <div class="space-y-5">
 
                         <div
@@ -305,7 +292,6 @@ const statusChart = computed(() => {
                             </p>
                         </div>
 
-                        <!-- KETERANGAN JIKA BELUM ADA TUGAS -->
                         <p
                             v-if="statusChart.totalStatus === 0"
                             class="border-t border-gray-100 pt-4 text-xs text-gray-400"
@@ -317,7 +303,6 @@ const statusChart = computed(() => {
                 </div>
             </div>
 
-            <!-- PERFORMA PENANGANAN -->
             <div class="rounded-xl border border-green-100 bg-green-50 p-5">
                 <div class="flex items-start gap-3">
                     <CheckCircle2

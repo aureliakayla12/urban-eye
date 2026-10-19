@@ -68,7 +68,6 @@ const formatDate = (date) => {
 
         <div class="py-8">
             <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-                <!-- Header -->
                 <div
                     class="mb-6 flex flex-col gap-4 rounded-xl bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between"
                 >
@@ -101,7 +100,6 @@ const formatDate = (date) => {
                     </button>
                 </div>
 
-                <!-- Empty State -->
                 <div
                     v-if="!notifications.data || notifications.data.length === 0"
                     class="rounded-xl bg-white px-6 py-14 text-center shadow-sm"
@@ -122,7 +120,6 @@ const formatDate = (date) => {
                     </p>
                 </div>
 
-                <!-- Notification List -->
                 <div v-else class="space-y-3">
                     <div
                         v-for="notification in notifications.data"
@@ -211,7 +208,6 @@ const formatDate = (date) => {
                         </div>
                     </div>
 
-                    <!-- Pagination -->
                     <div
                         v-if="notifications.links && notifications.last_page > 1"
                         class="flex flex-wrap justify-center gap-2 pt-4"

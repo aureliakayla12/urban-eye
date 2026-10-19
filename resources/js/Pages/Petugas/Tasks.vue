@@ -20,17 +20,14 @@ const props = defineProps({
     },
 })
 
-// PENCARIAN DAN JUMLAH DATA
 const search = ref('')
 const pageSize = ref(5)
 const currentPage = ref(1)
 
-// Kembali ke halaman pertama saat pencarian atau jumlah data berubah
 watch([search, pageSize], () => {
     currentPage.value = 1
 })
 
-// FORMAT STATUS
 const statusLabel = (status) => {
     const labels = {
         ditugaskan: 'Ditugaskan',
@@ -48,7 +45,6 @@ const statusLabel = (status) => {
             : 'Belum ada status')
 }
 
-// WARNA STATUS
 const statusClass = (status) => {
     const normalized = String(status ?? '').trim().toLowerCase()
 
@@ -70,8 +66,6 @@ const statusClass = (status) => {
 
     return 'bg-gray-100 text-gray-600'
 }
-
-// MENGAMBIL FOTO LAPORAN
 
 const getImageUrl = (task) => {
     const report = task?.report
@@ -111,9 +105,6 @@ const getImageUrl = (task) => {
         .replace(/^storage\//, '')}`
 }
 
-
-
-// FORMAT TANGGAL
 const formatDate = (value) => {
     if (!value) return '-'
 
@@ -130,7 +121,6 @@ const formatDate = (value) => {
     }).format(date)
 }
 
-// FORMAT JAM
 const formatTime = (value) => {
     if (!value) return ''
 
@@ -147,7 +137,6 @@ const formatTime = (value) => {
     }).format(date)
 }
 
-// PENCARIAN OTOMATIS
 const filteredTasks = computed(() => {
     const keyword = search.value.trim().toLowerCase()
 
@@ -171,7 +160,6 @@ const filteredTasks = computed(() => {
     })
 })
 
-// PAGINATION
 const totalPages = computed(() => {
     return Math.max(
         1,
@@ -225,13 +213,11 @@ const goToPage = (page) => {
     </template>
 
     <div class="space-y-5 p-5 sm:p-6 lg:p-8">
-
-            <!-- PENCARIAN DAN TAMPILKAN DATA -->
             <div
                 class="flex flex-col gap-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
             >
-                <!-- SEARCHING -->
-                <div class="relative w-full sm:max-w-md">
+
+            <div class="relative w-full sm:max-w-md">
                     <Search
                         class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
                     />
@@ -244,7 +230,6 @@ const goToPage = (page) => {
                     />
                 </div>
 
-                <!-- JUMLAH DATA -->
                 <div class="flex items-center gap-2 text-sm text-gray-600">
                     <span class="whitespace-nowrap">
                         Tampilkan
@@ -264,12 +249,10 @@ const goToPage = (page) => {
                 </div>
             </div>
 
-            <!-- TABEL TUGAS -->
             <div class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
                 <div class="overflow-x-auto">
                     <table class="w-full min-w-[900px] border-collapse text-left">
 
-                        <!-- HEADER TABEL -->
                         <thead class="border-b border-gray-200 bg-gray-50">
                             <tr>
                                 <th class="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-gray-500">
@@ -298,14 +281,12 @@ const goToPage = (page) => {
                             </tr>
                         </thead>
 
-                        <!-- ISI TABEL -->
                         <tbody class="divide-y divide-gray-100">
                             <tr
                                 v-for="task in paginatedTasks"
                                 :key="task.id"
                                 class="transition hover:bg-gray-50"
                             >
-                                <!-- FOTO -->
                                 <td class="px-5 py-3">
                                     <img
                                         v-if="getImageUrl(task)"
@@ -322,15 +303,13 @@ const goToPage = (page) => {
                                     </div>
                                 </td>
 
-                                <!-- JUDUL LAPORAN -->
                                 <td class="max-w-[280px] px-5 py-3">
                                     <p class="truncate text-sm font-semibold text-gray-800">
                                         {{ task.report?.title ?? 'Tanpa judul' }}
                                     </p>
                                 </td>
 
-                                <!-- LOKASI -->
-                                <td class="max-w-[240px] px-5 py-3">
+\                                <td class="max-w-[240px] px-5 py-3">
                                     <div class="flex items-start gap-2 text-sm text-gray-500">
                                         <MapPin class="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
 
@@ -340,7 +319,6 @@ const goToPage = (page) => {
                                     </div>
                                 </td>
 
-                                <!-- TANGGAL -->
                                 <td class="whitespace-nowrap px-5 py-3">
                                     <p class="text-sm text-gray-700">
                                         {{ formatDate(task.assigned_at) }}
@@ -352,7 +330,6 @@ const goToPage = (page) => {
                                     </p>
                                 </td>
 
-                                <!-- STATUS -->
                                 <td class="whitespace-nowrap px-5 py-3">
                                     <span
                                         class="inline-flex rounded-full px-3 py-1 text-xs font-medium"
@@ -362,7 +339,6 @@ const goToPage = (page) => {
                                     </span>
                                 </td>
 
-                                <!-- AKSI -->
                                 <td class="whitespace-nowrap px-5 py-3 text-center">
                                     <Link
                                         :href="`/petugas/tasks/${task.id}`"
@@ -373,7 +349,6 @@ const goToPage = (page) => {
                                 </td>
                             </tr>
 
-                            <!-- DATA KOSONG -->
                             <tr v-if="paginatedTasks.length === 0">
                                 <td colspan="6" class="px-5 py-12 text-center">
                                     <Search class="mx-auto mb-3 h-10 w-10 text-gray-300" />
@@ -395,7 +370,6 @@ const goToPage = (page) => {
                     </table>
                 </div>
 
-                <!-- FOOTER DAN PAGINATION -->
                 <div class="flex flex-col gap-4 border-t border-gray-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                     <p class="text-sm text-gray-500">
                         Menampilkan
@@ -410,7 +384,6 @@ const goToPage = (page) => {
                     </p>
 
                     <div class="flex items-center justify-end gap-2">
-                        <!-- HALAMAN SEBELUMNYA -->
                         <button
                             type="button"
                             :disabled="currentPage === 1"
@@ -421,7 +394,6 @@ const goToPage = (page) => {
                             <ChevronLeft class="h-4 w-4" />
                         </button>
 
-                        <!-- NOMOR HALAMAN -->
                         <button
                             v-for="pageNumber in totalPages"
                             :key="pageNumber"
@@ -437,7 +409,6 @@ const goToPage = (page) => {
                             {{ pageNumber }}
                         </button>
 
-                        <!-- HALAMAN BERIKUTNYA -->
                         <button
                             type="button"
                             :disabled="currentPage >= totalPages"

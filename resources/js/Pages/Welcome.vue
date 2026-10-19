@@ -2,30 +2,20 @@
     <Head title="UrbanEye" />
     <div class="min-h-screen bg-white text-black">
 
-        <!-- NAVBAR -->
-      
-        <header
-            class="sticky top-0 z-50 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur"
-        >
+        <header class="sticky top-0 z-50 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur">
             <div
-                class="mx-auto flex h-20 max-w-6xl items-center justify-between px-6 lg:px-8"
-            >
-                <!-- Logo -->
+                class="mx-auto flex h-20 max-w-6xl items-center justify-between px-6 lg:px-8">
                 <Link
                     href="/"
-                    class="shrink-0"
-                >
+                    class="shrink-0">
                     <img
                         src="/images/urbaneye-logo.png"
                         alt="UrbanEye"
-                        class="h-11 w-auto object-contain"
-                    />
+                        class="h-11 w-auto object-contain"/>
                 </Link>
 
-                <!-- Menu -->
                 <nav class="hidden items-center gap-8 lg:flex">
 
-                    <!-- Beranda -->
                     <button
                         type="button"
                         @click="scrollToSection('beranda')"
@@ -38,8 +28,6 @@
                     >
                         Beranda
                     </button>
-
-                    <!-- Fitur -->
                     <button
                         type="button"
                         @click="scrollToSection('fitur')"
@@ -53,7 +41,6 @@
                         Fitur
                     </button>
 
-                    <!-- Cara Kerja -->
                     <button
                         type="button"
                         @click="scrollToSection('cara-kerja')"
@@ -67,7 +54,6 @@
                         Cara Kerja
                     </button>
 
-                    <!-- Tentang -->
                     <button
                         type="button"
                         @click="scrollToSection('tentang')"
@@ -81,7 +67,6 @@
                         Tentang
                     </button>
 
-                    <!-- Kontak -->
                     <button
                         type="button"
                         @click="scrollToSection('kontak')"
@@ -96,7 +81,6 @@
                     </button>
                 </nav>
 
-                <!-- Auth -->
                 <div
                     v-if="canLogin"
                     class="flex items-center gap-3"
@@ -111,8 +95,7 @@
                     <Link
                         v-if="canRegister"
                         :href="route('register')"
-                        class="inline-flex rounded-xl bg-[#1B5E20] px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#164A19] focus:outline-none focus:ring-2 focus:ring-[#4CAF50] focus:ring-offset-2"
-                    >
+                        class="inline-flex rounded-xl bg-[#1B5E20] px-5 py-2.5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#164A19] focus:outline-none focus:ring-2 focus:ring-[#4CAF50] focus:ring-offset-2">
                         Daftar
                     </Link>
                 </div>
@@ -120,18 +103,12 @@
             </div>
         </header>
 
-        
-        <!-- HERO -->
-       
         <section
             id="beranda"
-            class="scroll-mt-20 bg-white"
-        >
+            class="scroll-mt-20 bg-white">
             <div
-                class="mx-auto grid max-w-7xl items-center gap-10 px-6 py-12 lg:grid-cols-[0.9fr_1.1fr] lg:px-20 lg:py-14"
-            >
+                class="mx-auto grid max-w-7xl items-center gap-10 px-6 py-12 lg:grid-cols-[0.9fr_1.1fr] lg:px-20 lg:py-14">
 
-                <!-- Hero text -->
                 <div>
                     <div
                         class="mb-5 inline-flex rounded-full bg-[#E8F5E9] px-4 py-2 text-xs font-medium text-[#1B5E20]"
@@ -179,18 +156,13 @@
                     </div>
                 </div>
 
-          
-                <!-- URBANEYE WEB PREVIEW -->
-
                 <div class="flex justify-center lg:justify-end">
                     <div class="w-full max-w-[570px]">
 
-                        <!-- Browser Window -->
                         <div
                             class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-[0_18px_40px_rgba(0,0,0,0.12)]"
                         >
 
-                            <!-- Browser bar -->
                             <div
                                 class="flex h-9 items-center justify-between border-b border-gray-200 bg-[#F7F7F7] px-4"
                             >
@@ -211,14 +183,11 @@
                                 </span>
                             </div>
 
-                            <!-- Web App -->
                             <div class="flex min-h-[315px]">
 
-                                <!-- Sidebar -->
                                 <aside
                                     class="hidden w-[105px] shrink-0 bg-[#0B1F2A] px-2.5 py-3 text-white sm:block"
                                 >
-                                    <!-- Logo -->
                                     <div
                                         class="flex items-center gap-2 border-b border-white/10 pb-3"
                                     >
@@ -239,7 +208,6 @@
                                         </div>
                                     </div>
 
-                                    <!-- Menu -->
                                     <div class="mt-3 space-y-1">
 
                                         <div
@@ -286,7 +254,6 @@
 
                                     </div>
 
-                                    <!-- User -->
                                     <div
                                         class="mt-8 border-t border-white/10 pt-3"
                                     >
@@ -308,10 +275,8 @@
                                     </div>
                                 </aside>
 
-                                <!-- Dashboard -->
                                 <div class="min-w-0 flex-1 bg-[#F7F9F7]">
 
-                                    <!-- Topbar -->
                                     <div
                                         class="flex h-9 items-center justify-between border-b border-gray-200 bg-white px-3"
                                     >
@@ -336,10 +301,8 @@
                                         </div>
                                     </div>
 
-                                    <!-- Dashboard content -->
                                     <div class="p-3">
 
-                                        <!-- Statistics -->
                                         <div
                                             class="grid grid-cols-4 gap-2"
                                         >
@@ -408,12 +371,10 @@
                                             </div>
                                         </div>
 
-                                        <!-- Map + Activity -->
                                         <div
                                             class="mt-2 grid grid-cols-[1.35fr_1fr] gap-2"
                                         >
 
-                                            <!-- Map -->
                                             <div
                                                 class="overflow-hidden rounded-lg bg-white shadow-sm"
                                             >
@@ -470,7 +431,6 @@
                                                 </div>
                                             </div>
 
-                                            <!-- Activity -->
                                             <div
                                                 class="rounded-lg bg-white p-2.5 shadow-sm"
                                             >
@@ -544,7 +504,6 @@
                                             </div>
                                         </div>
 
-                                        <!-- Recent Reports -->
                                         <div
                                             class="mt-2 rounded-lg bg-white p-2.5 shadow-sm"
                                         >
@@ -635,8 +594,6 @@
             </div>
         </section>
 
-       
-        <!-- FEATURES -->
             <section
                 id="fitur"
                 class="scroll-mt-20 bg-white py-10"
@@ -663,7 +620,6 @@
                             <div
                                 class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#E8F5E9] text-[#1B5E20] transition duration-300 group-hover:bg-[#1B5E20] group-hover:text-white"
                             >
-                                <!-- Location -->
                                 <svg
                                     v-if="feature.icon === 'location'"
                                     class="h-8 w-8"
@@ -678,7 +634,6 @@
                                     <circle cx="12" cy="11" r="2.5" />
                                 </svg>
 
-                                <!-- Camera -->
                                 <svg
                                     v-else-if="feature.icon === 'camera'"
                                     class="h-8 w-8"
@@ -693,7 +648,6 @@
                                     <circle cx="12" cy="13" r="3.5" />
                                 </svg>
 
-                                <!-- Tracking -->
                                 <svg
                                     v-else-if="feature.icon === 'tracking'"
                                     class="h-8 w-8"
@@ -707,7 +661,6 @@
                                     <path d="m16 17 2 2 3-3" />
                                 </svg>
 
-                                <!-- Notification -->
                                 <svg
                                     v-else
                                     class="h-8 w-8"
@@ -739,7 +692,6 @@
                 </div>
             </section>
 
-            <!-- HOW IT WORKS -->
             <section
                 id="cara-kerja"
                 class="scroll-mt-20 bg-[#F5F5F5] py-10"
@@ -841,10 +793,6 @@
                 </div>
             </section>
 
-
-     
-            <!-- TENTANG -->
-
             <section
                 id="tentang"
                 class="scroll-mt-20 bg-white py-16"
@@ -855,7 +803,6 @@
                     class="grid items-center gap-10 lg:grid-cols-[1.2fr_0.9fr]"
                 >
 
-            <!-- Text -->
             <div>
                 <span
                     class="inline-flex rounded-full bg-[#E8F5E9] px-4 py-2 text-xs font-semibold text-[#1B5E20]"
@@ -891,8 +838,6 @@
                 </p>
             </div>
 
-
-            <!-- Highlight -->
             <div
                 class="rounded-2xl bg-[#F7FAF7] p-7 shadow-[0_8px_24px_rgba(0,0,0,0.08)]"
             >
@@ -943,7 +888,6 @@
     </div>
 </section>
 
-        <!--Footer-->
         <footer
             id="kontak"
             class="scroll-mt-20 bg-[#2E7D32] text-white"
@@ -952,7 +896,6 @@
                 class="mx-auto grid max-w-7xl gap-2 px-6 py-10 lg:grid-cols-[1.5fr_1fr_1fr_1fr] lg:px-8"
             >
 
-        <!-- Brand -->
         <div>
             <h3 class="text-xl font-bold leading-6">
                 Bersama UrbanEye,
@@ -965,7 +908,6 @@
             </p>
         </div>
 
-        <!-- Navigasi -->
         <div>
             <h4 class="text-sm font-bold">
                 Navigasi
@@ -1006,7 +948,6 @@
             </div>
         </div>
 
-        <!-- Informasi -->
         <div>
             <h4 class="text-sm font-bold">
                 Informasi
@@ -1036,7 +977,6 @@
             </div>
         </div>
 
-        <!-- Social Media -->
         <div>
             <h4 class="text-sm font-bold">
                 Ikuti Kami
@@ -1044,7 +984,6 @@
 
             <div class="mt-4 flex items-center gap-3">
 
-                <!-- Instagram -->
                 <a
                     href="#"
                     aria-label="Instagram"
@@ -1079,7 +1018,6 @@
                     </svg>
                 </a>
 
-                <!-- Facebook -->
                 <a
                     href="#"
                     aria-label="Facebook"
@@ -1096,7 +1034,6 @@
                     </svg>
                 </a>
 
-                <!-- X -->
                 <a
                     href="#"
                     aria-label="X"
@@ -1113,7 +1050,6 @@
                     </svg>
                 </a>
 
-                <!-- YouTube -->
                 <a
                     href="#"
                     aria-label="YouTube"
@@ -1135,7 +1071,6 @@
 
     </div>
 
-        <!-- Copyright -->
         <div
             class="border-t border-white/20 px-6 py-4 text-center text-[10px] text-green-50"
         >

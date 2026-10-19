@@ -20,12 +20,10 @@ const props = defineProps({
     },
 })
 
-// MAP
 const mapElement = ref(null)
 const map = ref(null)
 const selectedStatus = ref('Semua Status')
 
-// FILTER LAPORAN
 const filteredReports = computed(() => {
     if (selectedStatus.value === 'Semua Status') {
         return props.reports
@@ -36,7 +34,6 @@ const filteredReports = computed(() => {
     )
 })
 
-// STATUS
 const statusLabel = (status) => {
     return {
         menunggu: 'Menunggu',
@@ -55,7 +52,6 @@ const statusColor = (status) => {
     }[status] ?? '#6B7280'
 }
 
-// MARKER ICON
 const createMarkerIcon = (status) => {
     const color = statusColor(status)
 
@@ -76,7 +72,6 @@ const createMarkerIcon = (status) => {
     })
 }
 
-// LOAD MARKERS
 const loadMarkers = () => {
     if (!map.value) {
         return
@@ -151,7 +146,6 @@ const loadMarkers = () => {
     })
 }
 
-// INITIALIZE MAP
 const initializeMap = () => {
     if (!mapElement.value || map.value) {
         return
@@ -175,13 +169,11 @@ const initializeMap = () => {
     loadMarkers()
 }
 
-// FILTER DARI KARTU
 const selectStatus = (status) => {
     selectedStatus.value = status
     loadMarkers()
 }
 
-// LIFECYCLE
 onMounted(() => {
     initializeMap()
 })
@@ -198,7 +190,6 @@ onBeforeUnmount(() => {
     <Head title="Peta Laporan" />
 
     <AuthenticatedLayout>
-        <!-- HEADER -->
         <template #header>
             <div>
                 <h2 class="text-xl font-semibold text-gray-900">
@@ -211,10 +202,8 @@ onBeforeUnmount(() => {
             </div>
         </template>
 
-        <!-- KONTEN: PADDING DIATUR OLEH LAYOUT -->
         <div class="space-y-6">
 
-            <!-- HEADER PETA -->
             <div class="rounded-2xl bg-white p-5 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div>
@@ -233,7 +222,6 @@ onBeforeUnmount(() => {
                 </div>
             </div>
 
-            <!-- MAP -->
             <div class="overflow-hidden rounded-2xl bg-white shadow-sm">
                 <div
                     ref="mapElement"
@@ -241,7 +229,6 @@ onBeforeUnmount(() => {
                 ></div>
             </div>
 
-            <!-- LEGEND -->
             <div class="rounded-2xl bg-white p-5 shadow-sm">
                 <h3 class="mb-4 font-semibold text-gray-900">
                     Keterangan Status
@@ -278,10 +265,8 @@ onBeforeUnmount(() => {
                 </div>
             </div>
 
-            <!-- FILTER CARD -->
             <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
 
-                <!-- TOTAL LAPORAN -->
                 <button
                     type="button"
                     @click="selectStatus('Semua Status')"
@@ -312,7 +297,6 @@ onBeforeUnmount(() => {
                     </div>
                 </button>
 
-                <!-- DIPROSES -->
                 <button
                     type="button"
                     @click="selectStatus('diproses')"
@@ -347,7 +331,6 @@ onBeforeUnmount(() => {
                     </div>
                 </button>
 
-                <!-- SELESAI -->
                 <button
                     type="button"
                     @click="selectStatus('selesai')"

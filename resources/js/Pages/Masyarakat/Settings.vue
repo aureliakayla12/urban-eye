@@ -1,4 +1,3 @@
-
 <script setup>
 import { computed } from 'vue'
 import { Head, usePage } from '@inertiajs/vue3'
@@ -57,7 +56,6 @@ const initials = computed(() => {
 
         <div class="mx-auto max-w-6xl space-y-7">
 
-            <!-- Account Overview -->
             <section
                 class="relative overflow-hidden rounded-2xl bg-[#0B1F2A] p-6 text-white shadow-sm sm:p-8"
             >
@@ -117,7 +115,6 @@ const initials = computed(() => {
             </section>
 
 
-            <!-- Profile Information -->
             <section
                 id="informasi-akun"
                 class="scroll-mt-28 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
@@ -150,7 +147,6 @@ const initials = computed(() => {
                 </div>
             </section>
 
-            <!-- Password & Security -->
             <section
                 id="keamanan-akun"
                 class="scroll-mt-28 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
@@ -179,7 +175,6 @@ const initials = computed(() => {
                 </div>
             </section>
 
-            <!-- Delete Account -->
             <section
                 id="hapus-akun"
                 class="scroll-mt-28 overflow-hidden rounded-2xl border border-red-200 bg-white shadow-sm"

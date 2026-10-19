@@ -96,7 +96,6 @@ const formatDate = (date) => {
                 </button>
             </div>
 
-            <!-- Daftar Notifikasi -->
             <div
                 class="overflow-hidden rounded-2xl border border-gray-200
                        bg-white shadow-sm"
@@ -187,7 +186,6 @@ const formatDate = (date) => {
                     </div>
                 </div>
 
-                <!-- Tampilan Kosong -->
                 <div
                     v-else
                     class="flex flex-col items-center px-5 py-16 text-center"
@@ -202,8 +200,7 @@ const formatDate = (date) => {
                         Notifikasi tugas baru akan muncul di sini.
                     </p>
                 </div>
-
-                <!-- Pagination -->
+                
                 <div
                     v-if="notifications.last_page > 1"
                     class="flex flex-wrap items-center justify-center

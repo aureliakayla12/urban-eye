@@ -106,7 +106,6 @@ const formatDate = (value) => {
     }).format(date)
 }
 
-/* ADMIN - PIE CHART */
 
 const totalKategori = computed(() => {
 
@@ -178,10 +177,7 @@ const pieStyle = computed(() => {
     }
 
 })
-
-
-// STATUS 
-
+ 
 const statusClass = (status) => {
 
     return {
@@ -192,9 +188,6 @@ const statusClass = (status) => {
     }[status] ?? 'bg-gray-100 text-gray-600'
 
 }
-
-
-// MAP
 
 const mapElement = ref(null)
 
@@ -235,14 +228,13 @@ const filteredMapReports = computed(() => {
 
 const statusMarkerColor = (status) => {
 
-    // Samakan warna marker dengan warna status di legenda peta.
     const normalizedStatus = String(status ?? '').trim().toLowerCase()
 
     return {
-        menunggu: '#F59E0B', // amber-500: Menunggu
-        diproses: '#3B82F6', // blue-500: Diproses
-        selesai: '#16A34A',  // green-600: Selesai
-        ditolak: '#EF4444',  // red-500: Ditolak
+        menunggu: '#F59E0B',
+        diproses: '#3B82F6',
+        selesai: '#16A34A',  
+        ditolak: '#EF4444',
     }[normalizedStatus] ?? '#6B7280'
 
 }
@@ -275,9 +267,6 @@ const createMarkerIcon = (status) => {
 
 }
 
-
-// MAP MASYARAKAT
-
 const loadMapMarkers = () => {
 
     if (!map.value) {
@@ -285,7 +274,6 @@ const loadMapMarkers = () => {
         return
 
     }
-
 
     map.value.eachLayer((layer) => {
 
@@ -349,9 +337,6 @@ const loadMapMarkers = () => {
     })
 
 }
-
-
-// MAP PETUGAS
 
 const loadPetugasMapMarkers = () => {
 
@@ -437,9 +422,6 @@ const loadPetugasMapMarkers = () => {
 
 }
 
-
-// INITIALIZE MAP
-
 const initializeMap = () => {
 
     if (
@@ -476,9 +458,6 @@ const initializeMap = () => {
         position: 'topright',
     }).addTo(map.value)
 
-
-    // BEDAKAN DATA MASYARAKAT DAN PETUGAS 
-
     if (props.user?.role === 'petugas') {
 
         loadPetugasMapMarkers()
@@ -490,9 +469,6 @@ const initializeMap = () => {
     }
 
 }
-
-
-// MOUNT
 
 onMounted(() => {
 
@@ -507,9 +483,6 @@ onMounted(() => {
 
 })
 
-
-//  UNMOUNT
-
 onBeforeUnmount(() => {
 
     if (map.value) {
@@ -521,9 +494,6 @@ onBeforeUnmount(() => {
     }
 
 })
-
-
-// CHANGE CATEGORY
 
 const changeCategory = () => {
 
@@ -540,10 +510,6 @@ const changeCategory = () => {
 
 
     <AuthenticatedLayout>
-
-
-
-        <!-- HEADER -->
         <template #header>
             <div>
                 <h2 class="text-xl font-semibold text-gray-900">
@@ -555,15 +521,10 @@ const changeCategory = () => {
             </div>
         </template>
 
-
-        <!-- ADMIN -->
         <div v-if="user?.role === 'admin'" class="space-y-6">
 
-
-            <!-- STATISTICS -->
             <div class="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
 
-                <!-- TOTAL LAPORAN -->
                 <div class="rounded-2xl bg-white p-5 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-green-100">
@@ -587,8 +548,6 @@ const changeCategory = () => {
                     </div>
                 </div>
 
-
-                <!-- LAPORAN MENDESAK -->
                 <div class="rounded-2xl bg-white p-5 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-100">
@@ -612,10 +571,7 @@ const changeCategory = () => {
                     </div>
                 </div>
 
-
-                <!-- DALAM PROSES -->
-
-                <div class="rounded-2xl bg-white p-5 shadow-sm">
+                <di class="rounded-2xl bg-white p-5 shadow-sm">
 
                     <div class="flex items-center gap-4">
 
@@ -650,10 +606,7 @@ const changeCategory = () => {
 
                     </div>
 
-                </div>
-
-
-                <!-- SELESAI -->
+                </di>
 
                 <div class="rounded-2xl bg-white p-5 shadow-sm">
 
@@ -689,11 +642,8 @@ const changeCategory = () => {
                 </div>
             </div>
 
-
-            <!-- LAPORAN TERBARU + PIE -->
             <div class="grid grid-cols-1 gap-6 xl:grid-cols-[1.5fr_1fr]">
 
-                <!-- LAPORAN TERBARU -->
                 <div class="rounded-2xl bg-white p-5 shadow-sm">
                     <div class="mb-4 flex items-center justify-between">
                         <h3 class="font-semibold text-gray-900">
@@ -743,8 +693,6 @@ const changeCategory = () => {
 
                 </div>
 
-
-                <!-- PIE -->
                 <div class="rounded-2xl bg-white p-5 shadow-sm">
                     <h3 class="font-semibold text-gray-900">
                         Laporan per Kategori
@@ -764,7 +712,6 @@ const changeCategory = () => {
                                 </div>
                             </div>
                         </div>
-
 
                         <div class="mt-5 w-full space-y-2">
                             <div v-for="item in kategoriChart" :key="item.name" class="flex items-center justify-between">
@@ -800,10 +747,6 @@ const changeCategory = () => {
                 </div>
 
             </div>
-
-
-            <!-- AKTIVITAS PETUGAS -->
-
             <div class="rounded-2xl bg-white p-5 shadow-sm">
 
                 <div class="mb-4">
@@ -872,16 +815,12 @@ const changeCategory = () => {
             </div>
 
         </div>
-        
-        <!-- ========================================================= -->
-        <!-- PETUGAS -->
-        <!-- ========================================================= -->
+
 
         <div
             v-else-if="user?.role === 'petugas'"
             class="space-y-6"
         >
-            <!-- SELAMAT DATANG -->
             <div class="rounded-xl bg-white p-6 shadow-sm">
                 <h1 class="text-[18px] font-semibold text-gray-800">
                     Selamat datang, {{ user?.name }}!
@@ -892,9 +831,7 @@ const changeCategory = () => {
                 </p>
             </div>
 
-            <!-- 4 STATISTIK -->
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
-                <!-- TUGAS HARI INI -->
                 <div class="rounded-xl bg-white p-5 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-100">
@@ -912,8 +849,6 @@ const changeCategory = () => {
                         </div>
                     </div>
                 </div>
-
-                <!-- SEDANG DIKERJAKAN -->
                 <div class="rounded-xl bg-white p-5 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-yellow-100">
@@ -932,7 +867,6 @@ const changeCategory = () => {
                     </div>
                 </div>
 
-                <!-- SUDAH SELESAI -->
                 <div class="rounded-xl bg-white p-5 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-blue-100">
@@ -951,7 +885,6 @@ const changeCategory = () => {
                     </div>
                 </div>
 
-                <!-- MENUNGGU VERIFIKASI -->
                 <div class="rounded-xl bg-white p-5 shadow-sm">
                     <div class="flex items-center gap-4">
                         <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-red-100">
@@ -971,9 +904,7 @@ const changeCategory = () => {
                 </div>
             </div>
 
-            <!-- TUGAS PRIORITAS + AKTIVITAS HARI INI -->
             <div class="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <!-- TUGAS PRIORITAS -->
                 <div class="rounded-xl bg-white shadow-sm">
                     <div class="flex items-center justify-between border-b border-gray-200 p-5">
                         <h3 class="font-semibold text-gray-800">
@@ -988,7 +919,6 @@ const changeCategory = () => {
                         </Link>
                     </div>
 
-                    <!-- DAFTAR TUGAS DARI PROPS -->
                     <div v-if="tugas?.length" class="space-y-6 p-5">
                         <div
                             v-for="task in tugas.slice(0, 3)"
@@ -1054,7 +984,6 @@ const changeCategory = () => {
                     </div>
                 </div>
 
-                <!-- AKTIVITAS HARI INI -->
                 <div class="rounded-xl bg-white shadow-sm">
                     <div class="flex items-center justify-between border-b border-gray-200 p-5">
                         <h3 class="font-semibold text-gray-800">
@@ -1103,7 +1032,6 @@ const changeCategory = () => {
                 </div>
             </div>
 
-            <!-- PETA LAPORAN -->
             <div class="rounded-xl bg-white shadow-sm">
                 <div class="flex items-center justify-between border-b border-gray-200 p-5">
                     <div>
@@ -1124,7 +1052,6 @@ const changeCategory = () => {
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-[180px_1fr]">
-                    <!-- LEGENDA STATUS -->
                     <div class="space-y-4 border-r border-gray-100 p-5">
                         <div class="flex items-center gap-3">
                             <span class="h-3 w-3 rounded-full bg-amber-500"></span>
@@ -1147,7 +1074,6 @@ const changeCategory = () => {
                         </div>
                     </div>
 
-                    <!-- PETA PETUGAS -->
                     <div
                         ref="mapElement"
                         class="h-[280px] w-full overflow-hidden"
@@ -1155,11 +1081,8 @@ const changeCategory = () => {
                 </div>
             </div>
         </div>
-      
-        <!-- MASYARAKAT -->
-     
+           
         <div v-else class="space-y-6">
-            <!-- Greeting / cityscape hero (tanpa ilustrasi orang) -->
             <section class="relative isolate min-h-[156px] overflow-hidden rounded-[24px] border border-emerald-100 bg-gradient-to-r from-[#EAF8F0] via-[#E9F7FA] to-[#DCEFFC] shadow-sm sm:min-h-[164px]">
                 <img
                     src="/images/urbaneye-city-hero.png"
@@ -1185,7 +1108,6 @@ const changeCategory = () => {
                 </div>
             </section>
 
-            <!-- Summary cards -->
             <section class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <div class="group relative overflow-hidden rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md">
                     <div class="relative flex min-h-[112px] items-center gap-4">
@@ -1240,7 +1162,6 @@ const changeCategory = () => {
                 </div>
             </section>
 
-            <!-- Map and recent reports -->
             <section class="grid grid-cols-1 gap-5 xl:grid-cols-[1.35fr_1fr]">
                 <div class="relative z-0 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
                     <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -1267,7 +1188,6 @@ const changeCategory = () => {
                         </div>
                     </div>
 
-                    <!-- Isolated stacking context keeps Leaflet panes below the sticky header while scrolling. -->
                     <div
                         ref="mapElement"
                         class="relative z-0 isolate h-[300px] w-full overflow-hidden rounded-xl sm:h-[360px]"
@@ -1320,7 +1240,6 @@ const changeCategory = () => {
                 </div>
             </section>
 
-            <!-- Report call-to-action and weekly leaderboard -->
             <section class="grid grid-cols-1 gap-5 xl:grid-cols-[0.95fr_1.25fr]">
                 <div class="relative isolate overflow-hidden rounded-2xl border border-green-100 bg-gradient-to-br from-[#E8F5E9] via-[#F2FAF0] to-[#D9F0D6] p-6 sm:p-7">
                     <div class="pointer-events-none absolute -bottom-7 -right-5 text-green-800/10"><Leaf :size="170" :stroke-width="1.1" /></div>

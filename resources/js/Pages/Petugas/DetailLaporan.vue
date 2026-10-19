@@ -20,14 +20,12 @@ const props = defineProps({
     },
 })
 
-// Mendeteksi halaman asal
 const page = usePage()
 
 const fromHistory = computed(() => {
     return page.url.includes('from=history')
 })
 
-// Status tugas
 const status = computed(() => {
     return props.task?.status ?? 'ditugaskan'
 })
@@ -40,7 +38,6 @@ const statusText = computed(() => {
     }[status.value] ?? status.value
 })
 
-// Prioritas laporan
 const priority = computed(() => {
     const reportPriority =
         props.task?.report?.priority ?? props.task?.priority
@@ -65,7 +62,6 @@ const priority = computed(() => {
         }
     }
 
-    // Pemetaan sementara sampai prioritas tersedia di database.
     const title = (props.task?.report?.title ?? '').toLowerCase()
 
     if (title.includes('sampah')) return 'mendesak'
@@ -91,7 +87,6 @@ const priorityClass = computed(() => {
     }[priority.value] ?? 'bg-gray-100 text-gray-600'
 })
 
-// Foto laporan
 const reportImageUrl = computed(() => {
     const photo =
         props.task?.report?.photo ??
@@ -119,7 +114,6 @@ const reportImageUrl = computed(() => {
     return `/storage/${cleanedPath}`
 })
 
-// CATATAN PENANGANAN
 const catatanPenanganan = ref(props.task?.note ?? '')
 const isSaving = ref(false)
 
@@ -127,7 +121,6 @@ const noteError = computed(() => {
     return page.props.errors?.note ?? null
 })
 
-// Sinkronkan catatan saat data tugas diperbarui oleh server.
 watch(
     () => props.task?.note,
     (note) => {
@@ -135,7 +128,6 @@ watch(
     },
 )
 
-// Terima tugas
 const terimaTugas = () => {
     router.put(
         `/petugas/tasks/${props.task.id}`,
@@ -148,7 +140,6 @@ const terimaTugas = () => {
     )
 }
 
-// Simpan catatan tanpa menyelesaikan tugas.
 const simpanCatatan = () => {
     router.put(
         `/petugas/tasks/${props.task.id}`,
@@ -168,7 +159,6 @@ const simpanCatatan = () => {
     )
 }
 
-// Selesaikan tugas sekaligus simpan catatan.
 const selesaikanTugas = () => {
     router.put(
         `/petugas/tasks/${props.task.id}`,
@@ -212,11 +202,10 @@ const selesaikanTugas = () => {
                 </h1>
             </div>
 
-            <!-- KONTEN -->
             <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <!-- BAGIAN KIRI -->
+
                 <div class="space-y-6 lg:col-span-2">
-                    <!-- FOTO LAPORAN -->
+               
                     <div class="overflow-hidden rounded-xl bg-white shadow-sm">
                         <div
                             class="flex h-[320px] w-full items-center justify-center bg-gray-100"
@@ -237,7 +226,6 @@ const selesaikanTugas = () => {
                         </div>
                     </div>
 
-                    <!-- DETAIL LAPORAN -->
                     <div class="rounded-xl bg-white p-6 shadow-sm">
                         <div
                             class="flex items-start justify-between gap-4"
@@ -265,7 +253,6 @@ const selesaikanTugas = () => {
                                 </div>
                             </div>
 
-                            <!-- BADGE PRIORITAS -->
                             <span
                                 class="shrink-0 rounded-full px-3 py-1 text-xs font-medium"
                                 :class="priorityClass"
@@ -276,7 +263,6 @@ const selesaikanTugas = () => {
 
                         <div class="my-5 border-t border-gray-100"></div>
 
-                        <!-- DESKRIPSI -->
                         <div>
                             <h3
                                 class="text-sm font-semibold text-gray-800"
@@ -294,11 +280,9 @@ const selesaikanTugas = () => {
                             </p>
                         </div>
 
-                        <!-- INFORMASI LAPORAN -->
                         <div
                             class="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2"
                         >
-                            <!-- TANGGAL -->
                             <div class="rounded-lg bg-gray-50 p-4">
                                 <div
                                     class="flex items-center gap-2 text-gray-500"
@@ -317,7 +301,6 @@ const selesaikanTugas = () => {
                                 </p>
                             </div>
 
-                            <!-- PELAPOR -->
                             <div class="rounded-lg bg-gray-50 p-4">
                                 <div
                                     class="flex items-center gap-2 text-gray-500"
@@ -339,16 +322,13 @@ const selesaikanTugas = () => {
                     </div>
                 </div>
 
-                <!-- BAGIAN KANAN -->
                 <div class="space-y-6">
-                    <!-- STATUS TUGAS -->
                     <div class="rounded-xl bg-white p-6 shadow-sm">
                         <h3 class="font-semibold text-gray-800">
                             Status Tugas
                         </h3>
 
                         <div class="mt-5 space-y-4">
-                            <!-- DITUGASKAN -->
                             <div class="flex items-center gap-3">
                                 <div
                                     class="flex h-9 w-9 items-center justify-center rounded-full bg-yellow-100"
@@ -371,7 +351,6 @@ const selesaikanTugas = () => {
                                 </div>
                             </div>
 
-                            <!-- DIPROSES -->
                             <div class="flex items-center gap-3">
                                 <div
                                     class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100"
@@ -394,7 +373,6 @@ const selesaikanTugas = () => {
                                 </div>
                             </div>
 
-                            <!-- SELESAI -->
                             <div class="flex items-center gap-3">
                                 <div
                                     class="flex h-9 w-9 items-center justify-center rounded-full bg-green-100"
@@ -429,13 +407,10 @@ const selesaikanTugas = () => {
                         </div>
                     </div>
 
-                    <!-- AKSI TUGAS -->
                     <div class="rounded-xl bg-white p-6 shadow-sm">
                         <h3 class="font-semibold text-gray-800">
                             Aksi Tugas
                         </h3>
-
-                        <!-- TERIMA TUGAS -->
                         <button
                             v-if="status === 'ditugaskan'"
                             type="button"
@@ -445,7 +420,6 @@ const selesaikanTugas = () => {
                             Terima Tugas
                         </button>
 
-                        <!-- SELESAIKAN TUGAS -->
                         <button
                             v-else-if="status === 'diproses'"
                             type="button"
@@ -455,7 +429,6 @@ const selesaikanTugas = () => {
                             Selesaikan Tugas
                         </button>
 
-                        <!-- SUDAH SELESAI -->
                         <div
                             v-else-if="status === 'selesai'"
                             class="mt-5 flex items-center justify-center gap-2 rounded-lg bg-green-100 px-4 py-3 text-sm font-medium text-green-700"
@@ -473,7 +446,6 @@ const selesaikanTugas = () => {
                         </div>
                     </div>
 
-                    <!-- FORM CATATAN PENANGANAN -->
                     <div
                         v-if="status === 'diproses' && !fromHistory"
                         class="rounded-xl bg-white p-6 shadow-sm"
@@ -516,7 +488,6 @@ const selesaikanTugas = () => {
                         </button>
                     </div>
 
-                    <!-- CATATAN TERSIMPAN -->
                     <div
                         v-else-if="
                             task?.note ||

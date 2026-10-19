@@ -22,14 +22,12 @@ import {
 
 const page = usePage()
 
-// FAQ yang dibuka saat ini
 const openFaq = ref(0)
 
 const toggleFaq = (index) => {
     openFaq.value = openFaq.value === index ? null : index
 }
 
-// Pesan WhatsApp otomatis untuk Admin
 const whatsappLink = computed(() => {
     const name = page.props.auth?.user?.name ?? 'Pengguna UrbanEye'
     const role = page.props.auth?.role ?? 'Petugas'
@@ -46,7 +44,6 @@ Terima kasih.`
     return `https://wa.me/6289508423660?text=${encodeURIComponent(message)}`
 })
 
-// Daftar pertanyaan yang sering ditanyakan
 const faqs = [
     {
         question: 'Bagaimana cara menerima tugas baru?',
@@ -92,8 +89,6 @@ const faqs = [
         </template>
 
         <div class="space-y-6 p-6 lg:p-8">
-
-            <!-- BANNER BANTUAN -->
             <div
                 class="flex flex-col gap-4 rounded-2xl bg-[#E8F5E9] p-6 sm:flex-row sm:items-center"
             >
@@ -115,7 +110,6 @@ const faqs = [
                 </div>
             </div>
 
-            <!-- AKSES CEPAT -->
             <section class="space-y-4">
                 <div>
                     <h2 class="text-lg font-semibold text-gray-800">
@@ -128,8 +122,6 @@ const faqs = [
                 </div>
 
                 <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
-
-                    <!-- TUGAS SAYA -->
                     <Link
                         :href="route('petugas.tasks.index')"
                         class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-green-200 hover:shadow-md"
@@ -151,7 +143,6 @@ const faqs = [
                         </p>
                     </Link>
 
-                    <!-- PETA LAPORAN -->
                     <Link
                         :href="route('petugas.map.index')"
                         class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-green-200 hover:shadow-md"
@@ -173,7 +164,6 @@ const faqs = [
                         </p>
                     </Link>
 
-                    <!-- RIWAYAT PENANGANAN -->
                     <Link
                         :href="route('petugas.history.index')"
                         class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-green-200 hover:shadow-md"
@@ -195,7 +185,6 @@ const faqs = [
                         </p>
                     </Link>
 
-                    <!-- STATISTIK -->
                     <Link
                         :href="route('petugas.statistics.index')"
                         class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-green-200 hover:shadow-md"
@@ -217,7 +206,6 @@ const faqs = [
                         </p>
                     </Link>
 
-                    <!-- PENGATURAN -->
                     <Link
                         :href="route('petugas.settings.index')"
                         class="group rounded-xl border border-gray-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-green-200 hover:shadow-md"
@@ -242,7 +230,6 @@ const faqs = [
                 </div>
             </section>
 
-            <!-- PANDUAN PENANGANAN LAPORAN -->
             <section class="rounded-xl bg-white p-5 shadow-sm sm:p-6">
                 <div class="flex items-center gap-3">
                     <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
@@ -333,7 +320,6 @@ const faqs = [
                 </div>
             </section>
 
-            <!-- FAQ -->
             <section class="rounded-xl bg-white p-5 shadow-sm sm:p-6">
                 <div class="flex items-center gap-3">
                     <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
@@ -385,7 +371,6 @@ const faqs = [
                 </div>
             </section>
 
-            <!-- HUBUNGI ADMIN VIA WHATSAPP -->
             <section class="rounded-xl border border-green-100 bg-green-50 p-5 sm:p-6">
                 <div class="flex items-start gap-4">
                     <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white">
