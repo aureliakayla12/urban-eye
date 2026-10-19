@@ -79,7 +79,6 @@ const submit = () => {
 
                 <div class="rounded-xl bg-white shadow-sm">
 
-                    <!-- Header -->
                     <div class="border-b px-6 py-5">
                         <div class="flex items-center gap-3">
 
@@ -102,13 +101,9 @@ const submit = () => {
                         </div>
                     </div>
 
-                    <!-- Form -->
-                    <form
-                        @submit.prevent="submit"
-                        class="space-y-6 p-6"
-                    >
+                   
+                    <form @submit.prevent="submit" class="space-y-6 p-6">
 
-                        <!-- Nama -->
                         <div>
                             <label
                                 for="name"
@@ -133,7 +128,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Jenis Reward -->
+                      
                         <div>
                             <label
                                 for="reward_type"
@@ -176,7 +171,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Deskripsi -->
+                       
                         <div>
                             <label
                                 for="description"
@@ -201,7 +196,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Poin & Stok -->
+                       
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
 
                             <div>
@@ -256,7 +251,7 @@ const submit = () => {
 
                         </div>
 
-                        <!-- Upload Gambar -->
+                      
                         <div>
                             <label
                                 for="image"
@@ -299,7 +294,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Status -->
+                      
                         <div>
                             <label class="mb-2 block text-sm font-medium text-gray-700">
                                 Status
@@ -325,7 +320,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Tombol -->
+                      
                         <div class="flex items-center justify-end gap-3 border-t pt-6">
 
                             <Link

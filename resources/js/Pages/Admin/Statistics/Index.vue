@@ -303,10 +303,8 @@ function createVillageChart() {
 
 <template>
     <Head title="Statistik & Grafik" />
-
     <AuthenticatedLayout>
 
-        <!-- Header di samping garis tiga -->
         <template #header>
             <div class="flex items-center justify-between">
                 <div>
@@ -321,16 +319,11 @@ function createVillageChart() {
             </div>
         </template>
 
-        <!-- Isi halaman -->
+    
         <div class="py-6">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-                <!-- Summary Cards -->
-                <div
-                    class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
-                >
-
-                    <!-- Total Laporan -->
+              
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <div class="rounded-xl bg-white p-5 shadow-sm">
                         <div class="flex items-center justify-between">
 
@@ -353,7 +346,7 @@ function createVillageChart() {
                         </div>
                     </div>
 
-                    <!-- Menunggu -->
+                  
                     <div class="rounded-xl bg-white p-5 shadow-sm">
                         <div class="flex items-center justify-between">
 
@@ -376,7 +369,7 @@ function createVillageChart() {
                         </div>
                     </div>
 
-                    <!-- Diproses -->
+                  
                     <div class="rounded-xl bg-white p-5 shadow-sm">
                         <div class="flex items-center justify-between">
 
@@ -399,7 +392,7 @@ function createVillageChart() {
                         </div>
                     </div>
 
-                    <!-- Selesai -->
+                   
                     <div class="rounded-xl bg-white p-5 shadow-sm">
                         <div class="flex items-center justify-between">
 
@@ -424,10 +417,8 @@ function createVillageChart() {
 
                 </div>
 
-                <!-- Grafik Kategori + Grafik Mingguan -->
+               
                 <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-
-                    <!-- Grafik Kategori -->
                     <div class="rounded-xl bg-white p-6 shadow-sm">
 
                         <h2 class="text-lg font-semibold text-gray-800">
@@ -444,7 +435,7 @@ function createVillageChart() {
 
                     </div>
 
-                    <!-- Grafik Mingguan -->
+                  
                     <div class="rounded-xl bg-white p-6 shadow-sm">
 
                         <h2 class="text-lg font-semibold text-gray-800">
@@ -463,7 +454,7 @@ function createVillageChart() {
 
                 </div>
 
-                <!-- Grafik Kecamatan -->
+               
                 <div class="mt-6 rounded-xl bg-white p-6 shadow-sm">
 
                     <h2 class="text-lg font-semibold text-gray-800">
@@ -480,7 +471,7 @@ function createVillageChart() {
 
                 </div>
 
-                <!-- Grafik Kelurahan -->
+               
                 <div class="mt-6 rounded-xl bg-white p-6 shadow-sm">
 
                     <h2 class="text-lg font-semibold text-gray-800">

@@ -20,95 +20,95 @@ use Throwable;
 class ReportController extends Controller
 {
     public function index(Request $request)
-{
-    $validated = $request->validate([
-        'search' => [
-            'nullable',
-            'string',
-            'max:100',
-        ],
+    {
+        $validated = $request->validate([
+            'search' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
 
-        'status' => [
-            'nullable',
-            'in:menunggu,diproses,selesai,ditolak',
-        ],
+            'status' => [
+                'nullable',
+                'in:menunggu,diproses,selesai,ditolak',
+            ],
 
-        'category_id' => [
-            'nullable',
-            'exists:categories,id',
-        ],
+            'category_id' => [
+                'nullable',
+                'exists:categories,id',
+            ],
 
-        'per_page' => [
-            'nullable',
-            'in:5,10,15,25',
-        ],
-    ]);
+            'per_page' => [
+                'nullable',
+                'in:5,10,15,25',
+            ],
+        ]);
 
-    $perPage = (int) ($validated['per_page'] ?? 5);
+        $perPage = (int) ($validated['per_page'] ?? 5);
 
-    $paginator = Report::with('category')
-        ->where('user_id', auth()->id())
+        $paginator = Report::with('category')
+            ->where('user_id', auth()->id())
 
-        ->when(
-            $validated['search'] ?? null,
-            function ($query, $search) {
-                $query->where(function ($query) use ($search) {
-                    $query
-                        ->where('title', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%");
-                });
-            }
-        )
+            ->when(
+                $validated['search'] ?? null,
+                function ($query, $search) {
+                    $query->where(function ($query) use ($search) {
+                        $query
+                            ->where('title', 'like', "%{$search}%")
+                            ->orWhere('description', 'like', "%{$search}%");
+                    });
+                }
+            )
 
-        ->when(
-            $validated['status'] ?? null,
-            function ($query, $status) {
-                $query->where('status', $status);
-            }
-        )
+            ->when(
+                $validated['status'] ?? null,
+                function ($query, $status) {
+                    $query->where('status', $status);
+                }
+            )
 
-        ->when(
-            $validated['category_id'] ?? null,
-            function ($query, $categoryId) {
-                $query->where('category_id', $categoryId);
-            }
-        )
+            ->when(
+                $validated['category_id'] ?? null,
+                function ($query, $categoryId) {
+                    $query->where('category_id', $categoryId);
+                }
+            )
 
-        ->latest()
-        ->paginate($perPage)
-        ->withQueryString();
+            ->latest()
+            ->paginate($perPage)
+            ->withQueryString();
 
-    return inertia('Masyarakat/Reports', [
-        'reports' => $paginator->items(),
+        return inertia('Masyarakat/Reports', [
+            'reports' => $paginator->items(),
 
-        'categories' => Category::orderBy('name')->get(),
+            'categories' => Category::orderBy('name')->get(),
 
-        'filters' => [
-            'search' => $validated['search'] ?? '',
-            'status' => $validated['status'] ?? '',
-            'category_id' => $validated['category_id'] ?? '',
-            'per_page' => $perPage,
-        ],
+            'filters' => [
+                'search' => $validated['search'] ?? '',
+                'status' => $validated['status'] ?? '',
+                'category_id' => $validated['category_id'] ?? '',
+                'per_page' => $perPage,
+            ],
 
-        'pagination' => [
-            'current_page' => $paginator->currentPage(),
-            'last_page' => $paginator->lastPage(),
-            'from' => $paginator->firstItem(),
-            'to' => $paginator->lastItem(),
-            'total' => $paginator->total(),
-        ],
-    ]);
-}
+            'pagination' => [
+                'current_page' => $paginator->currentPage(),
+                'last_page' => $paginator->lastPage(),
+                'from' => $paginator->firstItem(),
+                'to' => $paginator->lastItem(),
+                'total' => $paginator->total(),
+            ],
+        ]);
+    }
 
     
-public function create()
-{
-    return inertia('Masyarakat/CreateReport', [
-        'categories' => Category::orderBy('name')->get(),
-        'districts' => District::orderBy('name')->get(),
-        'villages' => Village::orderBy('name')->get(),
-    ]);
-}
+    public function create()
+    {
+        return inertia('Masyarakat/CreateReport', [
+            'categories' => Category::orderBy('name')->get(),
+            'districts' => District::orderBy('name')->get(),
+            'villages' => Village::orderBy('name')->get(),
+        ]);
+    }
 
 
     public function show(Report $report)
@@ -212,7 +212,6 @@ public function create()
 
         $photos = $request->file('photos');
 
-        /* FOTO PERTAMA */
 
         $firstPhotoPath = $photos[0]->store(
             'reports',
@@ -239,7 +238,6 @@ public function create()
             'status' => 'menunggu',
         ]);
 
-        /* SIMPAN SEMUA FOTO */
 
         foreach ($photos as $index => $photo) {
             if ($index === 0) {
@@ -257,8 +255,6 @@ public function create()
             ]);
         }
 
-        
-        /* SIAPKAN STATUS ANALISIS AI */
 
         $aiAnalysisFailed = false;
 
@@ -266,8 +262,6 @@ public function create()
             storage_path('app/public/' . $firstPhotoPath)
         );
 
-        
-        /* KLASIFIKASI FOTO DENGAN GEMINI */
 
         $response = null;
 
@@ -289,7 +283,6 @@ public function create()
                 'error' => $primaryError->getMessage(),
             ]);
 
-            // Coba model Gemini cadangan.
             try {
                 $response = (new ReportClassifier)->prompt(
                     'Klasifikasikan foto ini berdasarkan salah satu kategori UrbanEye:
@@ -322,7 +315,6 @@ public function create()
             ]);
         }
 
-        /* ANALISIS URGENSI LAPORAN */
 
         try {
             $urgencyResponse = (new ReportUrgencyAnalyzer)->prompt(
@@ -355,7 +347,6 @@ public function create()
             ]);
         }
 
-        /* STATUS HISTORY */
 
         $report->statusHistories()->create([
             'changed_by' => $request->user()->id,
@@ -365,7 +356,6 @@ public function create()
             'changed_at' => now(),
         ]);
 
-        // Kirim notifikasi kepada semua Admin ketika ada laporan baru.
         $admins = User::role('admin')->get();
 
         foreach ($admins as $admin) {

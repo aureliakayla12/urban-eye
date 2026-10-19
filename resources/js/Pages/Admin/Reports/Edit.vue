@@ -47,7 +47,7 @@ const submit = () => {
         <div class="py-6">
             <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
 
-                <!-- Header -->
+              
                 <div class="mb-6">
                     <Link
                         :href="route('admin.reports.show', report.id)"
@@ -57,7 +57,7 @@ const submit = () => {
                     </Link>
                 </div>
 
-                <!-- Form -->
+               
                 <div class="overflow-hidden rounded-xl bg-white shadow-sm">
                     <div class="border-b border-gray-100 px-6 py-5">
                         <h3 class="text-lg font-semibold text-gray-800">
@@ -71,7 +71,6 @@ const submit = () => {
 
                     <form @submit.prevent="submit" class="space-y-6 p-6">
 
-                        <!-- Judul -->
                         <div>
                             <label
                                 for="title"
@@ -96,7 +95,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Kategori -->
+                      
                         <div>
                             <label
                                 for="category_id"
@@ -131,7 +130,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Deskripsi -->
+                       
                         <div>
                             <label
                                 for="description"
@@ -156,7 +155,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Alamat -->
+                      
                         <div>
                             <label
                                 for="address"
@@ -181,10 +180,8 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Status + Verifikasi -->
+                     
                         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-
-                            <!-- Status -->
                             <div>
                                 <label
                                     for="status"
@@ -223,7 +220,7 @@ const submit = () => {
                                 </p>
                             </div>
 
-                            <!-- Verifikasi -->
+                         
                             <div>
                                 <label
                                     for="verification_status"
@@ -259,7 +256,7 @@ const submit = () => {
                             </div>
                         </div>
 
-                        <!-- Tombol -->
+                       
                         <div class="flex items-center justify-end gap-3 border-t border-gray-100 pt-6">
 
                             <Link

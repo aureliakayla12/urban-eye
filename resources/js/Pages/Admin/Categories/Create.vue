@@ -32,7 +32,6 @@ const submit = () => {
         <div class="py-6">
             <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
 
-                <!-- Kembali -->
                 <Link
                     :href="route('admin.master.categories.index')"
                     class="mb-5 inline-flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-800"
@@ -41,7 +40,6 @@ const submit = () => {
                     Kembali ke Kategori
                 </Link>
 
-                <!-- Form -->
                 <div class="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
 
                     <div class="mb-6">
@@ -55,12 +53,8 @@ const submit = () => {
 
                     <form @submit.prevent="submit" class="space-y-5">
 
-                        <!-- Nama -->
                         <div>
-                            <label
-                                for="name"
-                                class="mb-2 block text-sm font-medium text-gray-700"
-                            >
+                            <label for="name" class="mb-2 block text-sm font-medium text-gray-700">
                                 Nama Kategori
                             </label>
 
@@ -72,15 +66,12 @@ const submit = () => {
                                 class="w-full rounded-lg border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-green-500 focus:ring-green-500"
                             >
 
-                            <p
-                                v-if="form.errors.name"
-                                class="mt-1 text-sm text-red-600"
-                            >
+                            <p v-if="form.errors.name" class="mt-1 text-sm text-red-600">
                                 {{ form.errors.name }}
                             </p>
                         </div>
 
-                        <!-- Deskripsi -->
+
                         <div>
                             <label
                                 for="description"
@@ -105,7 +96,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Icon -->
+
                         <div>
                             <label
                                 for="icon"
@@ -134,7 +125,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Tombol -->
+
                         <div class="flex justify-end gap-3 border-t pt-5">
 
                             <Link

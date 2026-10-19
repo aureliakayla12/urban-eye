@@ -35,7 +35,7 @@ const deleteBadge = (id) => {
         <div class="py-6">
             <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
 
-                <!-- Header -->
+               
                 <div class="mb-6 flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div
@@ -63,7 +63,7 @@ const deleteBadge = (id) => {
                     </Link>
                 </div>
 
-                <!-- Empty State -->
+              
                 <div
                     v-if="props.badges.length === 0"
                     class="rounded-xl border border-gray-200 bg-white p-10 text-center shadow-sm"
@@ -87,7 +87,7 @@ const deleteBadge = (id) => {
                     </Link>
                 </div>
 
-                <!-- Badge Table -->
+               
                 <div
                     v-else
                     class="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
@@ -134,7 +134,7 @@ const deleteBadge = (id) => {
                                     :key="badge.id"
                                     class="transition hover:bg-gray-50"
                                 >
-                                    <!-- Badge -->
+                                  
                                     <td class="whitespace-nowrap px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <div
@@ -162,14 +162,14 @@ const deleteBadge = (id) => {
                                         </div>
                                     </td>
 
-                                    <!-- Deskripsi -->
+                                  
                                     <td class="max-w-xs px-6 py-4">
                                         <p class="text-sm text-gray-600">
                                             {{ badge.description || '-' }}
                                         </p>
                                     </td>
 
-                                    <!-- Required Points -->
+                                   
                                     <td class="whitespace-nowrap px-6 py-4 text-center">
                                         <span
                                             class="inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800"
@@ -178,7 +178,7 @@ const deleteBadge = (id) => {
                                         </span>
                                     </td>
 
-                                    <!-- Required Reports -->
+                                  
                                     <td class="whitespace-nowrap px-6 py-4 text-center">
                                         <span
                                             class="inline-flex rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700"
@@ -187,7 +187,7 @@ const deleteBadge = (id) => {
                                         </span>
                                     </td>
 
-                                    <!-- Aksi -->
+
                                     <td class="whitespace-nowrap px-6 py-4">
                                         <div class="flex items-center justify-center gap-2">
                                             <Link

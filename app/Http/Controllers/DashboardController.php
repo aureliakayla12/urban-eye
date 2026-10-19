@@ -26,11 +26,8 @@ class DashboardController extends Controller
             ],
         ];
 
-        /*
-        |--------------------------------------------------------------------------
-        | ADMIN
-        |--------------------------------------------------------------------------
-        */
+        // ROLE ADMIN
+
         if ($role === 'admin') {
             $data['stats'] = [
                 'total' => Report::count(),
@@ -78,11 +75,8 @@ class DashboardController extends Controller
                 });
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | PETUGAS
-        |--------------------------------------------------------------------------
-        */
+        // ROLE PETUGAS
+
         if ($role === 'petugas') {
             $data['stats'] = [
                 'tugas_hari_ini' => ReportAssignment::where('officer_id', $user->id)
@@ -106,11 +100,7 @@ class DashboardController extends Controller
                 ->get();
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | MASYARAKAT
-        |--------------------------------------------------------------------------
-        */
+       //ROLE MASYARAKAT
         if ($role === 'masyarakat') {
             $reports = Report::query()
                 ->with('category')
@@ -123,14 +113,11 @@ class DashboardController extends Controller
                 'selesai' => (clone $reports)->where('status', 'selesai')->count(),
             ];
 
-            // Dashboard hanya menampilkan tiga laporan terbaru milik pengguna yang login.
             $data['laporan_terbaru'] = (clone $reports)
                 ->latest('created_at')
                 ->take(3)
                 ->get();
 
-            // Peta masyarakat hanya menampilkan laporan milik pengguna yang login.
-            // Pengguna baru yang belum membuat laporan akan melihat peta tanpa marker.
             $data['peta_laporan'] = Report::with('category')
                 ->where('user_id', $user->id)
                 ->whereNotNull('latitude')
@@ -147,7 +134,6 @@ class DashboardController extends Controller
                     'status',
                 ]);
 
-            // Total poin bersih sepanjang waktu: poin tambah dikurangi poin kurang.
             $lifetimePoints = UserPoint::query()
                 ->where('user_id', $user->id)
                 ->selectRaw("COALESCE(SUM(CASE WHEN type = 'tambah' THEN points WHEN type = 'kurang' THEN -points ELSE 0 END), 0) as total_points")
@@ -155,7 +141,6 @@ class DashboardController extends Controller
 
             $data['poin'] = (int) ($lifetimePoints ?? 0);
 
-            // Dashboard menampilkan julukan badge terbaru, sesuai halaman Reward Saya.
             $userBadges = UserBadge::with('badge')
                 ->where('user_id', $user->id)
                 ->orderByDesc('earned_at')
@@ -165,7 +150,6 @@ class DashboardController extends Controller
             $data['badge'] = $userBadges->first()?->badge?->name ?? 'Belum Ada';
             $data['badge_count'] = $userBadges->count();
 
-            // Pengguna yang memiliki setidaknya satu laporan memenuhi syarat peringkat.
             $communityUsersWithReports = User::role('masyarakat')
                 ->whereExists(function ($query) {
                     $query->select(DB::raw(1))
@@ -196,7 +180,6 @@ class DashboardController extends Controller
                 ? '-'
                 : $currentUserRankIndex + 1;
 
-            // Leaderboard mingguan dihitung dari transaksi poin pada minggu berjalan.
             $weekStart = now()->startOfWeek();
             $weekEnd = now()->endOfWeek();
 

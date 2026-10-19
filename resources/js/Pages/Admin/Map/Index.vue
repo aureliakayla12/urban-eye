@@ -481,7 +481,7 @@ onBeforeUnmount(() => {
         <div class="py-6">
             <div class="mx-auto max-w-7xl space-y-5 px-4 sm:px-6 lg:px-8">
 
-                <!-- Filter -->
+               
                 <div class="overflow-hidden rounded-xl bg-white shadow-sm">
                     <div class="border-b border-gray-200 px-6 py-5">
                         <div class="flex items-center gap-3">
@@ -504,7 +504,7 @@ onBeforeUnmount(() => {
                     <div class="px-6 py-6">
                         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 
-                            <!-- Search -->
+                           
                             <div class="lg:col-span-2">
                                 <label
                                     for="search"
@@ -528,7 +528,7 @@ onBeforeUnmount(() => {
                                 </div>
                             </div>
 
-                            <!-- Category -->
+                           
                             <div>
                                 <label
                                     for="category"
@@ -556,7 +556,7 @@ onBeforeUnmount(() => {
                                 </select>
                             </div>
 
-                            <!-- Status -->
+                           
                             <div>
                                 <label
                                     for="status"
@@ -584,7 +584,7 @@ onBeforeUnmount(() => {
                                 </select>
                             </div>
 
-                            <!-- District -->
+                          
                             <div>
                                 <label
                                     for="district"
@@ -613,7 +613,7 @@ onBeforeUnmount(() => {
                                 </select>
                             </div>
 
-                            <!-- Village -->
+                          
                             <div>
                                 <label
                                     for="village"
@@ -641,7 +641,7 @@ onBeforeUnmount(() => {
                                 </select>
                             </div>
 
-                            <!-- Radius -->
+                           
                             <div>
                                 <label
                                     for="radius"
@@ -716,7 +716,7 @@ onBeforeUnmount(() => {
                     </div>
                 </div>
 
-                <!-- Summary -->
+
                 <div class="grid grid-cols-2 gap-4 lg:grid-cols-5">
 
                     <div class="rounded-xl bg-white p-5 shadow-sm">
@@ -810,7 +810,7 @@ onBeforeUnmount(() => {
                     </div>
                 </div>
 
-                <!-- Map -->
+
                 <div class="overflow-hidden rounded-xl bg-white shadow-sm">
                     <div class="border-b border-gray-200 px-6 py-5">
                         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -855,7 +855,7 @@ onBeforeUnmount(() => {
                     ></div>
                 </div>
 
-                <!-- Report List -->
+
                 <div class="overflow-hidden rounded-xl bg-white shadow-sm">
                     <div class="border-b border-gray-200 px-6 py-5">
                         <div class="flex items-center justify-between">

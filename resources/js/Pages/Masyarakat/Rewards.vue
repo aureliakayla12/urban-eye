@@ -32,11 +32,8 @@ const failedRewardImages = ref([])
 const rewardPage = ref(0)
 const rewardsPerPage = 4
 
-// Badge terbaru yang benar-benar sudah diperoleh pengguna.
-// Controller mengurutkan badge berdasarkan earned_at dari yang terbaru.
 const featuredBadge = computed(() => props.badges[0] ?? null)
 
-// Jumlah badge yang sudah diperoleh pengguna.
 const badgeCount = computed(() => props.badges.length)
 
 function redeemReward(reward) {
@@ -88,8 +85,6 @@ function rewardImage(image) {
     if (!image) return null
     if (/^(https?:|data:)/i.test(image)) return image
 
-    // Mendukung path yang disimpan sebagai rewards/file.jpg,
-    // /storage/rewards/file.jpg, maupun storage/rewards/file.jpg.
     const normalized = String(image)
         .replace(/^\/+/, '')
         .replace(/^storage\//i, '')
@@ -224,10 +219,8 @@ function redemptionStatusClass(status) {
                     </article>
                 </section>
 
-                <!-- Konten utama dua kolom mengikuti mockup -->
                 <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,1.85fr)_minmax(300px,1fr)]">
                     <div class="min-w-0 space-y-6">
-                        <!-- Progress reward -->
                         <section class="rounded-2xl bg-white p-5 shadow-[0_6px_22px_rgba(15,23,42,0.05)] sm:p-6">
                             <h2 class="text-lg font-bold text-[#151B26]">Progress Menuju Reward Berikutnya</h2>
 
@@ -278,7 +271,6 @@ function redemptionStatusClass(status) {
 
                         </section>
 
-                        <!-- Kartu reward dari CRUD Admin -->
                         <section class="rounded-2xl bg-white p-5 shadow-[0_6px_22px_rgba(15,23,42,0.05)] sm:p-6">
                             <div class="flex flex-wrap items-center justify-between gap-2">
                                 <h2 class="text-lg font-bold text-[#151B26]">Reward yang Bisa Ditukar</h2>
@@ -363,7 +355,6 @@ function redemptionStatusClass(status) {
                             </div>
                         </section>
 
-                        <!-- Banner ilustrasi -->
                         <section class="relative isolate min-h-[150px] overflow-hidden rounded-2xl bg-[#EAF7EE] shadow-[0_6px_22px_rgba(15,23,42,0.05)] sm:min-h-[170px]">
                             <img
                                 src="/images/urbaneye-reward-banner.png"
@@ -385,7 +376,6 @@ function redemptionStatusClass(status) {
                     </div>
 
                     <aside class="min-w-0 space-y-6">
-                        <!-- Cara mendapatkan poin -->
                         <section class="rounded-2xl bg-white p-5 shadow-[0_6px_22px_rgba(15,23,42,0.05)] sm:p-6">
                             <h2 class="border-b border-gray-200 pb-3 text-lg font-bold text-[#151B26]">Cara Mendapatkan Poin</h2>
                             <div class="space-y-4 pt-4">
@@ -419,7 +409,6 @@ function redemptionStatusClass(status) {
                             </div>
                         </section>
 
-                        <!-- Riwayat poin -->
                         <section class="rounded-2xl bg-white p-5 shadow-[0_6px_22px_rgba(15,23,42,0.05)] sm:p-6">
                             <div class="flex items-center justify-between gap-3 border-b border-gray-200 pb-3">
                                 <h2 class="text-lg font-bold text-[#151B26]">Riwayat Poin</h2>
@@ -450,7 +439,6 @@ function redemptionStatusClass(status) {
                             </div>
                         </section>
 
-                        <!-- Riwayat penukaran -->
                         <section class="rounded-2xl bg-white p-5 shadow-[0_6px_22px_rgba(15,23,42,0.05)] sm:p-6">
                             <div class="flex items-center justify-between gap-3 border-b border-gray-200 pb-3">
                                 <h2 class="text-lg font-bold text-[#151B26]">Riwayat Penukaran</h2>

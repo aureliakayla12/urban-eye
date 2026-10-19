@@ -16,9 +16,7 @@ function submit() {
 
 <template>
     <Head title="Tambah Petugas" />
-
     <AuthenticatedLayout>
-        <!-- Header di samping garis tiga -->
         <template #header>
             <div class="flex items-center justify-between">
                 <div>
@@ -33,14 +31,12 @@ function submit() {
             </div>
         </template>
 
-        <!-- Isi halaman -->
+       
         <div class="py-6">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-                <!-- Card utama -->
+               
                 <div class="max-w-2xl overflow-hidden rounded-xl bg-white shadow-sm">
-
-                    <!-- Header card -->
+                 
                     <div class="border-b border-gray-200 px-6 py-5">
                         <div class="flex items-center gap-3">
 
@@ -63,14 +59,9 @@ function submit() {
                         </div>
                     </div>
 
-                    <!-- Form -->
+                
                     <div class="px-6 py-6">
-                        <form
-                            @submit.prevent="submit"
-                            class="space-y-5"
-                        >
-
-                            <!-- Nama -->
+                        <form @submit.prevent="submit" class="space-y-5" >
                             <div>
                                 <label
                                     for="name"
@@ -95,7 +86,7 @@ function submit() {
                                 </p>
                             </div>
 
-                            <!-- Email -->
+                            
                             <div>
                                 <label
                                     for="email"
@@ -120,7 +111,7 @@ function submit() {
                                 </p>
                             </div>
 
-                            <!-- Password -->
+                           
                             <div>
                                 <label
                                     for="password"
@@ -145,7 +136,7 @@ function submit() {
                                 </p>
                             </div>
 
-                            <!-- Tombol -->
+                           
                             <div class="flex justify-end gap-3 border-t border-gray-200 pt-5">
 
                                 <Link

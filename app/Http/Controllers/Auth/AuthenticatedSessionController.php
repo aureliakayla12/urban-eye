@@ -33,7 +33,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        // SEMUA ROLE REDIRECT KE DASHBOARD YANG SAMA
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

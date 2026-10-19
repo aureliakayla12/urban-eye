@@ -57,12 +57,10 @@ function submit() {
     <Head title="Daftar - UrbanEye" />
 
     <div class="min-h-screen bg-white text-black">
-        <!-- NAVBAR -->
         <header class="h-[72px] border-b border-gray-100 bg-white shadow-sm">
             <div
                 class="mx-auto flex h-full max-w-6xl items-center justify-between px-6 lg:px-8"
             >
-                <!-- Logo -->
                 <Link
                     href="/"
                     class="shrink-0"
@@ -74,7 +72,6 @@ function submit() {
                     />
                 </Link>
 
-                <!-- Navigation -->
                 <nav class="hidden items-center gap-8 lg:flex">
                     <Link
                         href="/"
@@ -112,7 +109,6 @@ function submit() {
                     </a>
                 </nav>
 
-                <!-- Auth -->
                 <div class="flex items-center gap-3">
                     <Link
                         href="/login"
@@ -131,10 +127,8 @@ function submit() {
             </div>
         </header>
 
-        <!-- MAIN -->
         <main class="h-[calc(100vh-72px)] overflow-hidden">
             <div class="grid h-full lg:grid-cols-[55%_45%]">
-                <!-- LEFT -->
                 <section
                     class="relative hidden h-full overflow-hidden bg-[#E8F7EC] lg:block"
                 >
@@ -156,7 +150,6 @@ function submit() {
                             dan pantau penanganannya secara transparan.
                         </p>
 
-                        <!-- FEATURES -->
                         <div class="mt-8 space-y-5">
                             <!-- Feature 1 -->
                             <div class="flex max-w-[450px] items-start gap-4">
@@ -196,7 +189,6 @@ function submit() {
                                 </div>
                             </div>
 
-                            <!-- Feature 2 -->
                             <div class="flex max-w-[450px] items-start gap-4">
                                 <div
                                     class="mt-0.5 shrink-0 text-[#1B5E20]"
@@ -232,7 +224,6 @@ function submit() {
                                 </div>
                             </div>
 
-                            <!-- Feature 3 -->
                             <div class="flex max-w-[450px] items-start gap-4">
                                 <div
                                     class="mt-0.5 shrink-0 text-[#1B5E20]"
@@ -268,7 +259,6 @@ function submit() {
                         </div>
                     </div>
 
-                    <!-- CITY ILLUSTRATION -->
                     <img
                         src="/images/urbaneye-city.png"
                         alt="UrbanEye city illustration"
@@ -276,7 +266,6 @@ function submit() {
                     />
                 </section>
 
-                <!-- RIGHT -->
                 <section
                     class="h-full overflow-y-auto bg-white px-6 py-8 sm:px-8 lg:px-10"
                 >
@@ -284,7 +273,6 @@ function submit() {
                         <div
                             class="my-4 w-full max-w-[450px] rounded-[22px] bg-white px-7 py-6 shadow-[0_8px_30px_rgba(0,0,0,0.07)] sm:px-8"
                         >
-                            <!-- Heading -->
                             <div class="text-center">
                                 <h2 class="text-2xl font-bold text-black">
                                     Daftar Akun Baru
@@ -298,12 +286,10 @@ function submit() {
                                 </p>
                             </div>
 
-                            <!-- Form -->
                             <form
                                 class="mt-5 space-y-2.5"
                                 @submit.prevent="submit"
                             >
-                                <!-- Nama -->
                                 <div>
                                     <label
                                         class="mb-1.5 block text-xs font-semibold text-black"
@@ -329,7 +315,6 @@ function submit() {
                                     </p>
                                 </div>
 
-                                <!-- Email -->
                                 <div>
                                     <label
                                         class="mb-1.5 block text-xs font-semibold text-black"
@@ -354,7 +339,6 @@ function submit() {
                                     </p>
                                 </div>
 
-                                <!-- No. Telepon -->
                                 <div>
                                     <label
                                         class="mb-1.5 block text-xs font-semibold text-black"
@@ -371,7 +355,6 @@ function submit() {
                                     />
                                 </div>
 
-                                <!-- Password -->
                                 <div>
                                     <label
                                         class="mb-1.5 block text-xs font-semibold text-black"
@@ -420,7 +403,6 @@ function submit() {
                                     </p>
                                 </div>
 
-                                <!-- Confirm Password -->
                                 <div>
                                     <label
                                         class="mb-1.5 block text-xs font-semibold text-black"
@@ -471,7 +453,6 @@ function submit() {
                                         </button>
                                     </div>
 
-                                    <!-- Password mismatch -->
                                     <p
                                         v-if="passwordMismatch"
                                         class="mt-1.5 text-xs text-red-500"
@@ -479,7 +460,6 @@ function submit() {
                                         Password tidak cocok.
                                     </p>
 
-                                    <!-- Password match -->
                                     <p
                                         v-else-if="passwordMatch"
                                         class="mt-1.5 text-xs text-[#1B5E20]"
@@ -495,7 +475,6 @@ function submit() {
                                     </p>
                                 </div>
 
-                                <!-- Terms -->
                                 <div class="pt-1">
                                     <label
                                         class="flex cursor-pointer items-start gap-2"
@@ -520,7 +499,6 @@ function submit() {
                                     </label>
                                 </div>
 
-                                <!-- Register -->
                                 <button
                                     type="submit"
                                     :disabled="
@@ -538,7 +516,6 @@ function submit() {
                                 </button>
                             </form>
 
-                            <!-- Login -->
                             <div class="mt-4 text-center">
                                 <p class="text-xs text-gray-500">
                                     Sudah punya akun?

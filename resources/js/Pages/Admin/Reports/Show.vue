@@ -192,10 +192,7 @@ const formatTime = (date) => {
         <div class="min-h-screen bg-[#f5f7f8] py-8">
             <div class="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
 
-                <!-- Navigasi & Aksi -->
                 <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-
-                    <!-- Kembali -->
                     <Link
                         :href="route('admin.reports.index')"
                         class="inline-flex w-fit items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
@@ -217,10 +214,8 @@ const formatTime = (date) => {
                         Kembali ke Laporan
                     </Link>
 
-                    <!-- Aksi -->
+                   
                     <div class="flex items-center gap-3">
-
-                        <!-- Edit -->
                         <Link
                             :href="route('admin.reports.edit', report.id)"
                             class="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
@@ -242,7 +237,7 @@ const formatTime = (date) => {
                             Edit Laporan
                         </Link>
 
-                        <!-- Hapus -->
+                      
                         <button
                             type="button"
                             @click="deleteReport"
@@ -269,10 +264,10 @@ const formatTime = (date) => {
                     </div>
                 </div>
 
-                <!-- Detail -->
+               
                 <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
 
-                    <!-- Foto -->
+                   
                     <div class="overflow-hidden rounded-2xl bg-white shadow-sm lg:col-span-1">
                         <div class="border-b border-gray-100 px-6 py-5">
                             <h3 class="font-semibold text-gray-800">
@@ -301,7 +296,7 @@ const formatTime = (date) => {
                         </div>
                     </div>
 
-                    <!-- Informasi -->
+                    
                     <div class="overflow-hidden rounded-2xl bg-white shadow-sm lg:col-span-2">
                         <div class="border-b border-gray-100 px-6 py-5">
                             <h3 class="font-semibold text-gray-800">
@@ -311,7 +306,7 @@ const formatTime = (date) => {
 
                         <div class="space-y-6 p-6">
 
-                            <!-- Judul -->
+                           
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
                                     Judul Laporan
@@ -322,7 +317,7 @@ const formatTime = (date) => {
                                 </p>
                             </div>
 
-                            <!-- Status -->
+                          
                             <div class="flex flex-wrap gap-3">
                                 <div>
                                     <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
@@ -355,7 +350,7 @@ const formatTime = (date) => {
                                 </div>
                             </div>
                             
-                            <!-- Kategori -->
+                          
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
                                     Kategori Laporan
@@ -366,7 +361,7 @@ const formatTime = (date) => {
                                 </p>
                             </div>
 
-                            <!-- Hasil Klasifikasi AI -->
+                           
                             <div class="rounded-xl border border-purple-200 bg-purple-50 p-4">
                                 <p class="text-xs font-semibold uppercase tracking-wide text-purple-700">
                                     Hasil Klasifikasi AI
@@ -424,7 +419,7 @@ const formatTime = (date) => {
                                 </div>
                             </div>
 
-                            <!-- Analisis Urgensi AI -->
+                           
                             <div class="rounded-xl border border-amber-200 bg-amber-50 p-4">
                                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">
                                     Analisis Urgensi AI
@@ -487,7 +482,7 @@ const formatTime = (date) => {
                                 </p>
                             </div>
 
-                            <!-- Pelapor -->
+                           
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
                                     Pelapor
@@ -505,7 +500,7 @@ const formatTime = (date) => {
                                 </p>
                             </div>
 
-                            <!-- Deskripsi -->
+                            
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
                                     Deskripsi
@@ -516,7 +511,7 @@ const formatTime = (date) => {
                                 </p>
                             </div>
 
-                            <!-- Alamat -->
+                           
                             <div>
                                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
                                     Alamat
@@ -527,7 +522,7 @@ const formatTime = (date) => {
                                 </p>
                             </div>
 
-                            <!-- Wilayah -->
+                           
                             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                 <div>
                                     <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
@@ -550,7 +545,7 @@ const formatTime = (date) => {
                                 </div>
                             </div>
 
-                            <!-- Lokasi Peta -->
+                           
                             <div class="border-t border-gray-100 pt-5">
                                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
                                     Lokasi Laporan
@@ -608,7 +603,7 @@ const formatTime = (date) => {
                                     </div>
                                 </div>
                             </div>
-                            <!-- Waktu -->
+                           
                             <div class="border-t border-gray-100 pt-5">
                                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
                                     Waktu Laporan
@@ -621,7 +616,7 @@ const formatTime = (date) => {
                                 </p>
                             </div>
 
-                            <!-- Petugas -->
+                          
                             <div class="border-t border-gray-100 pt-5">
                                 <p class="text-xs font-semibold uppercase tracking-wide text-gray-400">
                                     Petugas

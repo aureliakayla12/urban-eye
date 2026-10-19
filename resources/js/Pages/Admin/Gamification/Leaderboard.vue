@@ -30,7 +30,6 @@ defineProps({
         <div class="py-8">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-                <!-- Header Card -->
                 <div class="mb-6 overflow-hidden rounded-xl bg-white shadow-sm">
                     <div class="flex items-center gap-4 p-6">
                         <div
@@ -51,7 +50,7 @@ defineProps({
                     </div>
                 </div>
 
-                <!-- Empty State -->
+              
                 <div
                     v-if="leaderboard.length === 0"
                     class="rounded-xl bg-white p-10 text-center shadow-sm"
@@ -71,7 +70,7 @@ defineProps({
                     </p>
                 </div>
 
-                <!-- Leaderboard Table -->
+               
                 <div
                     v-else
                     class="overflow-hidden rounded-xl bg-white shadow-sm"
@@ -149,7 +148,7 @@ defineProps({
                                         </div>
                                     </td>
 
-                                    <!-- User -->
+                            
                                     <td class="px-6 py-4">
                                         <div>
                                             <p
@@ -166,7 +165,7 @@ defineProps({
                                         </div>
                                     </td>
 
-                                    <!-- Points -->
+                                   
                                     <td class="px-6 py-4 text-right">
                                         <div
                                             class="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1.5"

@@ -28,24 +28,9 @@ class PetugasController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                'unique:users,email',
-            ],
-
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-            ],
+            'name' => ['required', 'string', 'max:255',],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email',],
+            'password' => ['required', 'string',  'min:8',],
         ]);
 
         $user = User::create([
@@ -75,18 +60,8 @@ class PetugasController extends Controller
         $user = User::role('petugas')->findOrFail($id);
 
         $validated = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-            ],
-
-            'email' => [
-                'required',
-                'email',
-                'max:255',
-                'unique:users,email,' . $user->id,
-            ],
+            'name' => ['required', 'string', 'max:255',],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . $user->id,],
         ]);
 
         $user->update([

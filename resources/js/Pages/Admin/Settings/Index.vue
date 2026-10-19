@@ -117,7 +117,7 @@ const submit = () => {
                     </div>
                 </div>
 
-                <!-- Informasi Aplikasi -->
+               
                 <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                     <div class="mb-5 flex items-center gap-3">
                         <div class="rounded-lg bg-green-100 p-2 text-green-700">
@@ -160,7 +160,7 @@ const submit = () => {
                     </div>
                 </section>
 
-                <!-- Pengaturan Reward -->
+               
                 <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                     <div class="mb-5 flex items-center gap-3">
                         <div class="rounded-lg bg-green-100 p-2 text-green-700">
@@ -212,7 +212,7 @@ const submit = () => {
                     </p>
                 </section>
 
-                <!-- Kontak Admin -->
+               
                 <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                     <div class="mb-5 flex items-center gap-3">
                         <div class="rounded-lg bg-green-100 p-2 text-green-700">
@@ -308,7 +308,6 @@ const submit = () => {
                 </section>
                 
                 
-                <!-- Ubah Password -->
                 <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
                     <div class="mb-5 flex items-center gap-3">
                         <div class="rounded-lg bg-green-100 p-2 text-green-700">
@@ -323,7 +322,6 @@ const submit = () => {
                     </div>
 
                     <form @submit.prevent="submitPassword" class="space-y-4">
-                        <!-- Password Saat Ini -->
                         <div>
                             <label for="current_password" class="mb-1.5 block text-sm font-medium text-gray-700">
                                 Password Saat Ini
@@ -354,7 +352,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Password Baru -->
+                      
                         <div>
                             <label for="password" class="mb-1.5 block text-sm font-medium text-gray-700">
                                 Password Baru
@@ -393,7 +391,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Konfirmasi Password Baru -->
+                       
                         <div>
                             <label for="password_confirmation" class="mb-1.5 block text-sm font-medium text-gray-700">
                                 Konfirmasi Password Baru
@@ -424,7 +422,7 @@ const submit = () => {
                             </p>
                         </div>
 
-                        <!-- Tombol Ubah Password -->
+                      
                         <div class="flex justify-end">
                             <button
                                 type="submit"
@@ -437,7 +435,7 @@ const submit = () => {
                     </form>
                 </section>
 
-                <!-- Tombol Simpan -->
+               
                 <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p
                         v-if="saved"

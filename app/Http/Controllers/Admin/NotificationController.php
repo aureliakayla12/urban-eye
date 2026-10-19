@@ -9,9 +9,6 @@ use Inertia\Inertia;
 
 class NotificationController extends Controller
 {
-    /**
-     * Menampilkan notifikasi milik Admin yang sedang login.
-     */
     public function index(Request $request)
     {
         $userId = $request->user()->id;
@@ -31,9 +28,6 @@ class NotificationController extends Controller
         ]);
     }
 
-    /**
-     * Menandai satu notifikasi sebagai sudah dibaca.
-     */
     public function markRead(Request $request, $id)
     {
         $notification = Notification::where(
@@ -48,9 +42,7 @@ class NotificationController extends Controller
         return redirect()->route('admin.notifications.index');
     }
 
-    /**
-     * Menandai semua notifikasi Admin sebagai sudah dibaca.
-     */
+    
     public function markAllRead(Request $request)
     {
         Notification::where('user_id', $request->user()->id)

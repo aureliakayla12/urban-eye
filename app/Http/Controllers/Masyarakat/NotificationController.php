@@ -8,9 +8,6 @@ use Inertia\Inertia;
 
 class NotificationController extends Controller
 {
-    /**
-     * Menampilkan notifikasi milik masyarakat yang login.
-     */
     public function index()
     {
         $userId = auth()->id();
@@ -29,9 +26,6 @@ class NotificationController extends Controller
         ]);
     }
 
-    /**
-     * Menandai satu notifikasi sebagai sudah dibaca.
-     */
     public function markRead($id)
     {
         $notification = Notification::where(
@@ -51,9 +45,6 @@ class NotificationController extends Controller
         );
     }
 
-    /**
-     * Menandai seluruh notifikasi sebagai sudah dibaca.
-     */
     public function markAllRead()
     {
         Notification::where('user_id', auth()->id())

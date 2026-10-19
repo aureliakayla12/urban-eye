@@ -1,4 +1,3 @@
-
 <script setup>
 import { computed, ref } from 'vue'
 import { Head } from '@inertiajs/vue3'
@@ -91,7 +90,6 @@ function toggleFaq(index) {
         </template>
 
         <div class="space-y-6">
-            <!-- Banner bantuan dengan ilustrasi -->
             <section
                 class="relative isolate overflow-hidden rounded-2xl
                        border border-green-100 bg-emerald-50
@@ -154,7 +152,6 @@ function toggleFaq(index) {
                 </div>
             </section>
 
-            <!-- FAQ dan kontak admin -->
             <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-3">
                 <section class="min-w-0 xl:col-span-2">
                     <div class="mb-4 flex items-center gap-3">
@@ -243,8 +240,7 @@ function toggleFaq(index) {
                         </button>
                     </div>
                 </section>
-
-                <!-- WhatsApp admin -->
+                
                 <aside
                     class="rounded-2xl border border-green-100
                            bg-gradient-to-br from-green-50 to-emerald-50

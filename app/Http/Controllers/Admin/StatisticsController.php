@@ -16,18 +16,9 @@ class StatisticsController extends Controller
     public function index(Request $request)
     {
         $totalReports = Report::count();
-        $waitingReports = Report::where(
-            'status',
-            'menunggu'
-        )->count();
-        $processingReports = Report::where(
-            'status',
-            'diproses'
-        )->count();
-        $completedReports = Report::where(
-            'status',
-            'selesai'
-        )->count();
+        $waitingReports = Report::where( 'status', 'menunggu' )->count();
+        $processingReports = Report::where( 'status', 'diproses' )->count();
+        $completedReports = Report::where( 'status', 'selesai' )->count();
 
         $categoryStatistics = Category::withCount('reports')
             ->orderByDesc('reports_count')

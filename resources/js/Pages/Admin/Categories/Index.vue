@@ -50,7 +50,6 @@ const deleteCategory = (id) => {
         <div class="py-6">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-                <!-- Header -->
                 <div class="mb-6 flex items-center justify-between">
                     <div>
                         <h1 class="text-2xl font-bold text-gray-800">
@@ -70,10 +69,9 @@ const deleteCategory = (id) => {
                     </Link>
                 </div>
 
-                <!-- Table -->
+
                 <div class="overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-200">
 
-                    <!-- Jika ada data -->
                     <div v-if="categories.length > 0" class="overflow-x-auto">
                         <table class="w-full text-left">
                             <thead class="border-b bg-gray-50">
@@ -165,7 +163,7 @@ const deleteCategory = (id) => {
                         </table>
                     </div>
 
-                    <!-- Jika belum ada data -->
+        
                     <div
                         v-else
                         class="flex flex-col items-center justify-center px-6 py-16 text-center"

@@ -38,8 +38,6 @@ class RewardRedemptionController extends Controller
                 abort(422, 'Penukaran ini sudah diproses.');
             }
 
-            // Poin dan stok sudah dikurangi saat masyarakat melakukan redeem.
-            // Admin hanya mengubah status penukaran.
             $redemption->update([
                 'status' => 'approved',
                 'redeemed_at' => $redemption->redeemed_at ?? now(),
@@ -74,7 +72,6 @@ class RewardRedemptionController extends Controller
                 ->lockForUpdate()
                 ->findOrFail($redemption->reward_id);
 
-            // Kembalikan poin yang telah dipotong saat redeem.
             UserPoint::create([
                 'user_id' => $user->id,
                 'report_id' => null,
@@ -84,10 +81,8 @@ class RewardRedemptionController extends Controller
                     . $reward->name,
             ]);
 
-            // Pulihkan stok yang telah dikurangi saat redeem.
             $reward->increment('stock');
 
-            // Perubahan status mencegah refund berulang.
             $redemption->update([
                 'status' => 'rejected',
             ]);

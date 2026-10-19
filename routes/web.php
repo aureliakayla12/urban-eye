@@ -44,34 +44,22 @@ Route::get('/', function () {
 });
 
 
-/* Google OAuth Routes */
+// Google OAuth Routes
 
-Route::get('/auth/google', [GoogleController::class, 'redirect'])
-    ->name('google.redirect');
-
-Route::get('/auth/google/callback', [GoogleController::class, 'callback'])
-    ->name('google.callback');
-
+Route::get('/auth/google', [GoogleController::class, 'redirect'])->name('google.redirect');
+Route::get('/auth/google/callback', [GoogleController::class, 'callback'])->name('google.callback');
 require __DIR__.'/auth.php';
 
 
-/* Authenticated Routes */
+// Authenticated Routes
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
-
-    Route::patch('/profile', [ProfileController::class, 'update'])
-        ->name('profile.update');
-
-    Route::delete('/profile', [ProfileController::class, 'destroy'])
-        ->name('profile.destroy');
-
-
-    /* ADMIN */
+    // ADMIN 
 
     Route::prefix('admin')->middleware('role:admin')->group(function () {
 
@@ -137,8 +125,7 @@ Route::middleware(['auth'])->group(function () {
             Route::post('/rewards', [RewardController::class, 'store'])->name('admin.gamification.rewards.store');
             Route::get('/rewards/{id}/edit', [RewardController::class, 'edit'])->name('admin.gamification.rewards.edit');
             Route::put('/rewards/{id}', [RewardController::class, 'update'])->name('admin.gamification.rewards.update');
-            Route::delete('/rewards/{id}', [RewardController::class, 'destroy'])
-                ->name('admin.gamification.rewards.destroy');
+            Route::delete('/rewards/{id}', [RewardController::class, 'destroy'])->name('admin.gamification.rewards.destroy');
         });
 
 
@@ -172,7 +159,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
 
-    /* PETUGAS */
+    // PETUGAS
 
     Route::prefix('petugas')->middleware('role:petugas')->group(function () {
 
@@ -210,7 +197,7 @@ Route::middleware(['auth'])->group(function () {
     });
 
 
-    /* MASYARAKAT */
+    // MASYARAKAT
 
     Route::prefix('masyarakat')->middleware('role:masyarakat')->group(function () {
 
@@ -232,17 +219,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('masyarakat.leaderboard.index');
 
         // Reward Saya
-        Route::get('/rewards', [MasyarakatRewardController::class, 'index'])
-            ->name('masyarakat.rewards.index');
-
-        Route::post('/rewards/{reward}/redeem', [MasyarakatRewardController::class, 'redeem'])
-            ->name('masyarakat.rewards.redeem');
-
-
+        Route::get('/rewards', [MasyarakatRewardController::class, 'index'])->name('masyarakat.rewards.index');
+        Route::post('/rewards/{reward}/redeem', [MasyarakatRewardController::class, 'redeem'])->name('masyarakat.rewards.redeem');
 
         // Pengaturan
         Route::get('/settings', [MasyarakatSettingsController::class, 'index'])->name('masyarakat.settings.index');
-
 
         // Bantuan
         Route::get('/help', [MasyarakatHelpController::class, 'index'])->name('masyarakat.help.index');

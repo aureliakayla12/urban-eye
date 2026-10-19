@@ -9,9 +9,6 @@ use Inertia\Response;
 
 class SettingsController extends Controller
 {
-    /**
-     * Menampilkan halaman Pengaturan Akun Masyarakat.
-     */
     public function index(): Response
     {
         $user = auth()->user();

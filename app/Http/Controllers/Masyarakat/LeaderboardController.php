@@ -15,7 +15,6 @@ class LeaderboardController extends Controller
     {
         $user = auth()->user();
 
-        // Hitung saldo poin berdasarkan riwayat transaksi poin.
         $pointTotals = UserPoint::query()
             ->select('user_id')
             ->selectRaw("
@@ -29,15 +28,14 @@ class LeaderboardController extends Controller
             ")
             ->groupBy('user_id');
 
-        // Hitung jumlah laporan valid setiap pengguna.
+
         $validReportTotals = DB::table('reports')
             ->select('user_id')
             ->selectRaw('COUNT(*) as valid_reports_count')
             ->where('verification_status', 'valid')
             ->groupBy('user_id');
 
-        // Hanya masyarakat yang sudah membuat laporan
-        // yang masuk ke daftar leaderboard.
+
         $rankedUsers = User::role('masyarakat')
             ->whereExists(function ($query) {
                 $query->select(DB::raw(1))
@@ -64,20 +62,19 @@ class LeaderboardController extends Controller
                 DB::raw('COALESCE(point_totals.total_points, 0) as points'),
                 DB::raw('COALESCE(valid_report_totals.valid_reports_count, 0) as valid_reports_count')
             )
-            // Peringkat ditentukan berdasarkan laporan valid terbanyak.
+            
             ->orderByDesc('valid_reports_count')
-            // Jika jumlah laporan valid sama, poin menjadi pemecah seri.
             ->orderByDesc('points')
             ->orderBy('users.id')
             ->get();
 
-        // Ambil badge yang sudah dimiliki pengguna.
+
         $userBadges = UserBadge::with('badge')
             ->whereIn('user_id', $rankedUsers->pluck('id'))
             ->get()
             ->groupBy('user_id');
 
-        // Susun data leaderboard dan nomor peringkat.
+
         $rankedUsers = $rankedUsers
             ->values()
             ->map(function ($item, $index) use ($userBadges) {
@@ -106,7 +103,7 @@ class LeaderboardController extends Controller
                 ];
             });
 
-        // Data pengguna yang sedang login.
+        
         $currentUser = $rankedUsers->firstWhere(
             'id',
             (int) $user->id

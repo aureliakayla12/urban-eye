@@ -63,7 +63,6 @@ class TaskController extends Controller
             ->where('officer_id', Auth::id())
             ->firstOrFail();
 
-        // Simpan status sebelumnya untuk mencegah notifikasi berulang.
         $previousStatus = $task->status;
 
         $data = [
@@ -81,8 +80,6 @@ class TaskController extends Controller
 
         $task->update($data);
 
-
-        // Sinkronisasi status laporan, catat riwayat, dan kirim notifikasi.
         $report = $task->report;
 
         if ($report) {
@@ -96,9 +93,6 @@ class TaskController extends Controller
                 'status' => $newReportStatus,
             ]);
 
-            
-            // Catat riwayat setiap kali status tugas berubah.
-            // Riwayat tetap dibuat meskipun status laporan tidak berubah.
             if ($previousStatus !== $request->status) {
                 $officerName = Auth::user()->name;
 
@@ -123,8 +117,6 @@ class TaskController extends Controller
                 ]);
             }
 
-
-            // Kirim notifikasi hanya jika status tugas benar-benar berubah.
             if ($previousStatus !== $request->status) {
                 if ($request->status === 'diproses') {
                     Notification::create([
@@ -135,7 +127,6 @@ class TaskController extends Controller
                         'is_read' => false,
                     ]);
                 } elseif ($request->status === 'selesai') {
-                    // Notifikasi untuk Masyarakat pemilik laporan
                     Notification::create([
                         'user_id' => $report->user_id,
                         'report_id' => $report->id,
@@ -144,7 +135,6 @@ class TaskController extends Controller
                         'is_read' => false,
                     ]);
 
-                    // Notifikasi untuk semua Admin
                     $admins = User::role('admin')->get();
 
                     foreach ($admins as $admin) {

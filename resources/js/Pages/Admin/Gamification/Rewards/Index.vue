@@ -86,7 +86,7 @@ const rewardTypeLabel = (type) => {
                     </div>
                 </div>
 
-                <!-- Tabel Reward -->
+               
                 <div class="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-sm">
                     <div class="flex items-center justify-between border-b px-5 py-4">
                         <div>

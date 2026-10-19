@@ -104,17 +104,13 @@ class RewardController extends Controller
             ->with('success', 'Reward berhasil dihapus.');
     }
 
-    /**
-     * Halaman poin.
-     */
+   
     public function points()
     {
         return Inertia::render('Admin/Gamification/Points');
     }
 
-    /**
-     * Halaman leaderboard.
-     */
+
     public function leaderboard()
     {
         $leaderboard = User::role('masyarakat')
@@ -151,7 +147,7 @@ class RewardController extends Controller
             ->take(10)
             ->values();
 
-        // Hitung peringkat dengan metode competition ranking.
+            
         $rank = 0;
         $previousPoints = null;
         $previousRank = 0;

@@ -57,7 +57,7 @@ const formatDate = (date) => {
         </template>
 
         <div class="space-y-6">
-            <!-- Ringkasan -->
+          
             <div
                 class="flex flex-col justify-between gap-4 rounded-2xl
                        border border-gray-200 bg-white p-5 shadow-sm
@@ -96,7 +96,7 @@ const formatDate = (date) => {
                 </button>
             </div>
 
-            <!-- Daftar Notifikasi -->
+        
             <div
                 class="overflow-hidden rounded-2xl border border-gray-200
                        bg-white shadow-sm"
@@ -193,7 +193,7 @@ const formatDate = (date) => {
                     </div>
                 </div>
 
-                <!-- Jika Belum Ada Notifikasi -->
+               
                 <div
                     v-else
                     class="flex flex-col items-center px-5 py-16
@@ -210,7 +210,7 @@ const formatDate = (date) => {
                     </p>
                 </div>
 
-                <!-- Pagination -->
+               
                 <div
                     v-if="notifications.last_page > 1"
                     class="flex flex-wrap items-center justify-center

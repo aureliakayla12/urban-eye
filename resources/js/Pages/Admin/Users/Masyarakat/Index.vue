@@ -51,11 +51,8 @@ const filteredUsers = computed(() => {
 
         <div class="py-6">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-                <!-- Card Utama -->
                 <div class="overflow-hidden rounded-xl bg-white shadow-sm">
-
-                    <!-- Header -->
+                   
                     <div class="border-b border-gray-200 px-6 py-5">
                         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
@@ -69,7 +66,7 @@ const filteredUsers = computed(() => {
                                 </p>
                             </div>
 
-                            <!-- Search -->
+                           
                             <div class="w-full sm:w-72">
                                 <input
                                     v-model="search"
@@ -82,7 +79,7 @@ const filteredUsers = computed(() => {
                         </div>
                     </div>
 
-                    <!-- Table -->
+                   
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200">
 
@@ -122,7 +119,7 @@ const filteredUsers = computed(() => {
 
                             <tbody class="divide-y divide-gray-200 bg-white">
 
-                                <!-- Jika ada data -->
+                               
                                 <tr
                                     v-for="(user, index) in filteredUsers"
                                     :key="user.id"
@@ -171,7 +168,7 @@ const filteredUsers = computed(() => {
                                     </td>
                                 </tr>
 
-                                <!-- Jika data kosong -->
+                               
                                 <tr v-if="filteredUsers.length === 0">
                                     <td
                                         colspan="5"
@@ -195,7 +192,7 @@ const filteredUsers = computed(() => {
                         </table>
                     </div>
 
-                    <!-- Pagination -->
+                   
                     <div
                         v-if="users.links && users.links.length > 3 && !search"
                         class="border-t border-gray-200 px-6 py-4"

@@ -18,9 +18,6 @@ class RewardController extends Controller
     {
         $user = auth()->user();
 
-
-        // TOTAL POIN
-        
         $totalPoints = UserPoint::where('user_id', $user->id)
             ->selectRaw("
                 COALESCE(
@@ -37,12 +34,6 @@ class RewardController extends Controller
             ->value('total');
 
         $totalPoints = (int) $totalPoints;
-
-
-
-        // PERINGKAT
-        // Hanya masyarakat yang sudah membuat minimal satu laporan.
-
        
         $pointTotals = UserPoint::query()
             ->select('user_id')
@@ -100,9 +91,6 @@ class RewardController extends Controller
         $rank = $rankIndex !== false ? $rankIndex + 1 : null;
         $totalParticipants = $rankedUsers->count();
 
-
-        // BADGE
-
         $badges = UserBadge::with('badge')
             ->where('user_id', $user->id)
             ->orderByDesc('earned_at')
@@ -117,10 +105,6 @@ class RewardController extends Controller
                 ];
             })
             ->values();
-
-        // =========================
-        // REWARD
-        // =========================
 
         $rewards = Reward::where('status', true)
             ->orderBy('point_cost')
@@ -140,8 +124,6 @@ class RewardController extends Controller
             })
             ->values();
 
-
-        // REWARD BERIKUTNYA
 
        $nextReward = $rewards->first(function ($reward) use ($totalPoints) {
             return $reward['stock'] > 0
@@ -163,8 +145,6 @@ class RewardController extends Controller
         }
 
 
-        // RIWAYAT POIN
-
         $pointHistory = UserPoint::where('user_id', $user->id)
             ->latest()
             ->take(10)
@@ -179,10 +159,6 @@ class RewardController extends Controller
                 ];
             })
             ->values();
-
-
-
-        // RIWAYAT PENUKARAN REWARD
 
         $redemptionHistory = RewardRedemption::with('reward')
             ->where('user_id', $user->id)
@@ -213,15 +189,11 @@ class RewardController extends Controller
     }
 
 
-    // TUKAR REWARD
-
     public function redeem(Reward $reward)
     {
         $userId = auth()->id();
 
         DB::transaction(function () use ($reward, $userId) {
-            // Kunci data agar permintaan bersamaan tidak memakai
-            // poin atau stok yang sama secara bersamaan.
             $user = User::whereKey($userId)
                 ->lockForUpdate()
                 ->firstOrFail();
@@ -230,14 +202,12 @@ class RewardController extends Controller
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            // Pastikan reward masih aktif dan stok tersedia.
             if (!$reward->status || $reward->stock < 1) {
                 throw ValidationException::withMessages([
                     'reward' => 'Reward ini sudah tidak tersedia.',
                 ]);
             }
 
-            // Hitung total poin yang dimiliki.
             $earnedPoints = UserPoint::where('user_id', $user->id)
                 ->where('type', 'tambah')
                 ->sum('points');
@@ -248,14 +218,12 @@ class RewardController extends Controller
 
             $totalPoints = (int) $earnedPoints - (int) $spentPoints;
 
-            // Pastikan poin mencukupi.
             if ($totalPoints < $reward->point_cost) {
                 throw ValidationException::withMessages([
                     'reward' => 'Poin kamu belum cukup untuk menukar reward ini.',
                 ]);
             }
 
-            // Simpan permintaan penukaran.
             RewardRedemption::create([
                 'user_id' => $user->id,
                 'reward_id' => $reward->id,
@@ -264,10 +232,8 @@ class RewardController extends Controller
                 'redeemed_at' => now(),
             ]);
 
-            // Kurangi stok reward.
             $reward->decrement('stock');
 
-            // Catat pengurangan poin.
             UserPoint::create([
                 'user_id' => $user->id,
                 'report_id' => null,

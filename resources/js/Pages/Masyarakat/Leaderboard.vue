@@ -31,7 +31,6 @@ const props = defineProps({
     },
 })
 
-// Backend should pass hasReports/reportCount and only ranked contributors in leaderboard.
 const hasReports = computed(() =>
     props.currentUser.hasReports === true ||
     props.currentUser.has_reports === true ||
@@ -77,7 +76,6 @@ function medalClass(rank) {
                 
 
                 <section class="grid grid-cols-1 gap-5 xl:grid-cols-[1.25fr_0.9fr]">
-                    <!-- Current user summary -->
                     <article class="relative overflow-hidden rounded-2xl bg-[#102A43] p-6 text-white shadow-sm sm:p-7">
                         <Leaf class="pointer-events-none absolute -bottom-8 -right-4 h-40 w-40 text-white opacity-[0.06]" />
                         <div class="relative flex h-full min-h-[220px] flex-col justify-between gap-7">
@@ -113,7 +111,6 @@ function medalClass(rank) {
                         </div>
                     </article>
 
-                    <!-- Top three -->
                     <article class="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
                         <div class="mb-4">
                             <h3 class="text-lg font-extrabold text-[#102A43]">3 Kontributor Teratas</h3>
@@ -211,7 +208,6 @@ function medalClass(rank) {
                         </div>
                     </article>
 
-                    <!-- How to join -->
                     <aside class="rounded-2xl border border-emerald-50 bg-gradient-to-b from-[#F0FBF4] to-white p-5 shadow-sm sm:p-6">
                         <h3 class="text-lg font-extrabold text-[#102A43]">Cara mendapatkan peringkat</h3>
                         <p class="mt-1 text-sm leading-6 text-slate-500">Ikuti langkah berikut untuk muncul di leaderboard dan ikut berkontribusi bagi lingkungan.</p>

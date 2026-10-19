@@ -16,15 +16,12 @@
 
         <div class="py-8">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-
-                <!-- FILTER -->
                 <div
                     class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm"
                 >
                     <div
                         class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between"
                     >
-                        <!-- Left Side -->
                         <div
                             class="flex flex-1 flex-col gap-3 sm:flex-row sm:items-center"
                         >
@@ -54,7 +51,6 @@
                                 />
                             </div>
 
-                            <!-- Status -->
                             <select
                                 v-model="filters.status"
                                 class="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-[#1B5E20] focus:ring-1 focus:ring-[#1B5E20] sm:w-40"
@@ -80,7 +76,6 @@
                                 </option>
                             </select>
 
-                            <!-- Kategori -->
                             <select
                                 v-model="filters.categoryId"
                                 class="h-10 w-full rounded-lg border border-gray-300 bg-white px-3 text-sm text-gray-700 outline-none transition focus:border-[#1B5E20] focus:ring-1 focus:ring-[#1B5E20] sm:w-44"
@@ -99,7 +94,6 @@
                             </select>
                         </div>
 
-                        <!-- Right Side -->
                         <div
                             class="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center"
                         >
@@ -127,12 +121,10 @@
                     </div>
                 </div>
 
-                <!-- TABLE -->
                 <div
                     class="mt-5 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
                 >
 
-                    <!-- Table -->
                     <div class="overflow-x-auto">
                         <table class="w-full min-w-[900px]">
                             <thead>
@@ -178,13 +170,11 @@
                             </thead>
 
                             <tbody>
-                                <!-- Data laporan -->
                                 <tr
                                     v-for="report in reports"
                                     :key="report.id"
                                     class="border-b border-gray-100 transition hover:bg-gray-50"
                                 >
-                                    <!-- Foto -->
                                     <td class="px-5 py-3">
                                         <div
                                             class="h-12 w-16 overflow-hidden rounded-lg bg-gray-100"
@@ -205,7 +195,6 @@
                                         </div>
                                     </td>
 
-                                    <!-- Judul -->
                                     <td class="max-w-[280px] px-5 py-3">
                                         <p
                                             class="truncate text-sm font-semibold text-gray-800"
@@ -220,7 +209,6 @@
                                         </p>
                                     </td>
 
-                                    <!-- Kategori -->
                                     <td class="px-5 py-3">
                                         <span
                                             class="text-sm text-gray-600"
@@ -232,7 +220,6 @@
                                         </span>
                                     </td>
 
-                                    <!-- Tanggal -->
                                     <td class="px-5 py-3">
                                         <p class="text-sm text-gray-700">
                                             {{ formatDate(report.created_at) }}
@@ -243,14 +230,12 @@
                                         </p>
                                     </td>
 
-                                    <!-- Status -->
                                     <td class="px-5 py-3">
                                         <StatusBadge
                                             :status="report.status"
                                         />
                                     </td>
 
-                                    <!-- Aksi -->
                                     <td class="px-5 py-3 text-right">
                                         <Link
                                             :href="
@@ -266,7 +251,6 @@
                                     </td>
                                 </tr>
 
-                                <!-- Tidak ada data -->
                                 <tr v-if="reports.length === 0">
                                     <td
                                         colspan="6"
@@ -289,12 +273,10 @@
                         </table>
                     </div>
 
-                    <!-- Pagination Footer -->
                     <div
                         v-if="pagination.total > 0"
                         class="flex flex-col gap-4 border-t border-gray-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between"
                     >
-                        <!-- Informasi jumlah data -->
                         <p class="text-sm text-gray-500">
                             Menampilkan
                             <span class="font-medium text-gray-700">
@@ -311,9 +293,7 @@
                             laporan
                         </p>
 
-                        <!-- Pagination -->
                         <div class="flex items-center gap-1">
-                            <!-- Previous -->
                             <button
                                 type="button"
                                 class="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
@@ -329,7 +309,6 @@
                                 ←
                             </button>
 
-                            <!-- Page Number -->
                             <button
                                 v-for="page in pagination.last_page"
                                 :key="page"
@@ -345,7 +324,6 @@
                                 {{ page }}
                             </button>
 
-                            <!-- Next -->
                             <button
                                 type="button"
                                 class="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"

@@ -22,7 +22,6 @@
                 class="mx-auto max-w-[1080px] rounded-[22px] bg-white p-6 shadow-[0_8px_30px_rgba(0,0,0,0.06)] lg:p-7"
             >
 
-                <!-- HEADER -->
                 <div class="mb-7">
                     <h1
                         class="text-[26px] font-bold text-black"
@@ -41,12 +40,10 @@
                     @submit.prevent="submit"
                 >
 
-                    <!-- JUDUL + KATEGORI -->
                     <div
                         class="grid gap-5 lg:grid-cols-2"
                     >
 
-                        <!-- JUDUL -->
                         <div>
                             <label
                                 class="mb-2 block text-[15px] font-medium text-black"
@@ -70,7 +67,6 @@
                             </p>
                         </div>
 
-                        <!-- KATEGORI -->
                         <div>
                             <label
                                 class="mb-2 block text-[15px] font-medium text-black"
@@ -109,7 +105,6 @@
 
                     </div>
 
-                    <!-- DESKRIPSI -->
                     <div class="mt-6">
 
                         <div
@@ -147,7 +142,6 @@
 
                     </div>
 
-                    <!-- KECAMATAN DAN KELURAHAN -->
                     <div class="mt-6 grid gap-5 lg:grid-cols-2">
                         <div>
                             <label class="mb-2 block text-[15px] font-medium text-black">
@@ -204,12 +198,10 @@
                         </div>
                     </div>
 
-                    <!-- FOTO + LOKASI -->
                     <div
                         class="mt-6 grid gap-6 lg:grid-cols-[1fr_1.08fr]"
                     >
 
-                        <!-- FOTO -->
                         <div>
 
                             <label
@@ -228,7 +220,6 @@
                                 @change="handleMultiplePhotoChange"
                             />
 
-                            <!-- UPLOAD -->
                             <button
                                 type="button"
                                 class="flex h-[162px] w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#CCD3DD] bg-[#FCFDFE] transition hover:border-[#1B5E20] hover:bg-[#F8FCF8]"
@@ -275,13 +266,11 @@
 
                             </button>
 
-                            <!-- FOTO YANG SUDAH DIUPLOAD -->
                             <div
                                 v-if="photoPreviewUrls.length"
                                 class="mt-4 grid grid-cols-4 gap-3"
                             >
 
-                                <!-- PREVIEW FOTO -->
                                 <div
                                     v-for="(preview, index) in photoPreviewUrls"
                                     :key="preview"
@@ -304,7 +293,6 @@
 
                                 </div>
 
-                                <!-- TAMBAH FOTO -->
                                 <button
                                     v-if="selectedPhotos.length < 5"
                                     type="button"
@@ -344,7 +332,6 @@
 
                         </div>
 
-                        <!-- LOKASI -->
                         <div>
 
                             <label
@@ -360,13 +347,11 @@
                                 Klik pada peta untuk memilih lokasi atau gunakan GPS.
                             </p>
 
-                            <!-- MAP -->
                             <div
                                 ref="mapElement"
                                 class="h-[170px] w-full overflow-hidden rounded-xl border border-[#D7DCE3]"
                             ></div>
 
-                            <!-- GPS -->
                             <button
                                 type="button"
                                 :disabled="isGettingLocation"
@@ -402,7 +387,6 @@
 
                             </button>
 
-                            <!-- ALAMAT -->
                             <div
                                 class="relative mt-3"
                             >
@@ -462,7 +446,6 @@
 
                     </div>
 
-                    <!-- ACTION -->
                     <div
                         class="mt-7 flex justify-end gap-3"
                     >

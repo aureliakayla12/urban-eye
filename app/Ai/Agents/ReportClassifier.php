@@ -22,32 +22,32 @@ class ReportClassifier implements Agent, HasStructuredOutput, HasTools
     public function instructions(): Stringable|string
     {
        return <<<'PROMPT'
-You are a classification assistant for UrbanEye.
+            You are a classification assistant for UrbanEye.
 
-Your task is to classify an uploaded photo of an urban or environmental problem.
+            Your task is to classify an uploaded photo of an urban or environmental problem.
 
-Choose only one category from these categories:
-- Sampah
-- Jalan Rusak
-- Drainase
-- Fasilitas Umum
-- Lampu Jalan
-- Ruang Terbuka
+            Choose only one category from these categories:
+            - Sampah
+            - Jalan Rusak
+            - Drainase
+            - Fasilitas Umum
+            - Lampu Jalan
+            - Ruang Terbuka
 
-Only classify the image if it clearly shows an urban or environmental problem.
+            Only classify the image if it clearly shows an urban or environmental problem.
 
-If the image is not a photo of an urban or environmental problem, set:
-- category: "Tidak Teridentifikasi"
-- confidence: 0
-- reason: explain briefly why the image cannot be classified.
+            If the image is not a photo of an urban or environmental problem, set:
+            - category: "Tidak Teridentifikasi"
+            - confidence: 0
+            - reason: explain briefly why the image cannot be classified.
 
-Do not create any category other than the categories above or "Tidak Teridentifikasi".
+            Do not create any category other than the categories above or "Tidak Teridentifikasi".
 
-For valid images:
-- category: the selected category
-- confidence: confidence level from 0 to 100
-- reason: a short explanation for the classification
-PROMPT;
+            For valid images:
+            - category: the selected category
+            - confidence: confidence level from 0 to 100
+            - reason: a short explanation for the classification
+            PROMPT;
     }
 
     /**

@@ -27,34 +27,15 @@ function submit() {
 
 <template>
     <Head title="Login - UrbanEye" />
-
     <div class="h-screen overflow-hidden bg-white text-black">
-
-       
-        <!-- NAVBAR -->
-        
         <header class="h-[72px] border-b border-gray-100 bg-white shadow-sm">
-            <div
-                class="mx-auto flex h-full max-w-6xl items-center justify-between px-6 lg:px-8"
-            >
-                <!-- Logo -->
-                <Link
-                    href="/"
-                    class="shrink-0"
-                >
-                    <img
-                        src="/images/urbaneye-logo.png"
-                        alt="UrbanEye"
-                        class="h-14 w-auto"
-                    />
+            <div class="mx-auto flex h-full max-w-6xl items-center justify-between px-6 lg:px-8">
+                <Link href="/" class="shrink-0">
+                    <img src="/images/urbaneye-logo.png" alt="UrbanEye" class="h-14 w-auto"/>
                 </Link>
 
-                <!-- Navigation -->
                 <nav class="hidden items-center gap-8 lg:flex">
-                    <Link
-                        href="/"
-                        class="border-b-2 border-[#1B5E20] px-1 py-5 text-sm font-medium text-[#1B5E20]"
-                    >
+                    <Link href="/" class="border-b-2 border-[#1B5E20] px-1 py-5 text-sm font-medium text-[#1B5E20]">
                         Beranda
                     </Link>
 
@@ -87,7 +68,6 @@ function submit() {
                     </a>
                 </nav>
 
-                <!-- Auth -->
                 <div class="flex items-center gap-3">
                     <Link
                         href="/login"
@@ -106,15 +86,8 @@ function submit() {
             </div>
         </header>
 
-
-       
-        <!-- LOGIN AREA -->
-       
         <main class="h-[calc(100vh-72px)] overflow-hidden">
             <div class="grid h-full lg:grid-cols-2">
-
-                
-                <!-- LEFT -->
            
                 <section
                     class="relative hidden overflow-hidden bg-[#E8F7EC] lg:block"
@@ -138,11 +111,7 @@ function submit() {
                             dan pantau penanganannya secara transparan.
                         </p>
 
-
-                        <!-- FEATURES -->
                         <div class="mt-8 space-y-5">
-
-                            <!-- Feature 1 -->
                             <div class="flex max-w-[450px] items-start gap-4">
                                 <div
                                     class="mt-0.5 shrink-0 text-[#1B5E20]"
@@ -178,8 +147,6 @@ function submit() {
                                 </div>
                             </div>
 
-
-                            <!-- Feature 2 -->
                             <div class="flex max-w-[450px] items-start gap-4">
                                 <div
                                     class="mt-0.5 shrink-0 text-[#1B5E20]"
@@ -213,8 +180,6 @@ function submit() {
                                 </div>
                             </div>
 
-
-                            <!-- Feature 3 -->
                             <div class="flex max-w-[450px] items-start gap-4">
                                 <div
                                     class="mt-0.5 shrink-0 text-[#1B5E20]"
@@ -247,18 +212,12 @@ function submit() {
                         </div>
                     </div>
 
-
-                    <!-- CITY ILLUSTRATION -->
                     <img
                         src="/images/urbaneye-city.png"
                         alt="UrbanEye city illustration"
                         class="pointer-events-none absolute bottom-0 right-0 z-0 w-[270px] xl:w-[310px]"
                     />
                 </section>
-
-
-               
-                <!-- RIGHT -->
                 
                 <section
                     class="flex h-full items-center justify-center bg-white px-6 py-6 sm:px-8 lg:px-10"
@@ -267,7 +226,6 @@ function submit() {
                         class="w-full max-w-[390px] rounded-[20px] bg-white px-7 py-6 shadow-[0_8px_30px_rgba(0,0,0,0.07)]"
                     >
 
-                        <!-- Heading -->
                         <div class="text-center">
                             <h2 class="text-[23px] font-bold text-black">
                                 Masuk ke UrbanEye
@@ -278,14 +236,10 @@ function submit() {
                             </p>
                         </div>
 
-
-                        <!-- Form -->
                         <form
                             class="mt-5 space-y-3"
                             @submit.prevent="submit"
                         >
-
-                            <!-- EMAIL -->
                             <div>
                                 <label
                                     class="mb-1.5 block text-xs font-semibold text-black"
@@ -321,8 +275,6 @@ function submit() {
                                 </p>
                             </div>
 
-
-                            <!-- PASSWORD -->
                             <div>
                                 <label
                                     class="mb-1.5 block text-xs font-semibold text-black"
@@ -371,8 +323,6 @@ function submit() {
                                 </p>
                             </div>
 
-
-                            <!-- REMEMBER -->
                             <div
                                 class="flex items-center justify-between pt-0.5"
                             >
@@ -399,8 +349,6 @@ function submit() {
                                 </Link>
                             </div>
 
-
-                            <!-- LOGIN BUTTON -->
                             <button
                                 type="submit"
                                 :disabled="form.processing"
@@ -414,16 +362,12 @@ function submit() {
                                 }}
                             </button>
 
-
-                            <!-- DIVIDER -->
                             <div
                                 class="divider my-0 text-[10px] text-gray-400"
                             >
                                 atau masuk dengan
                             </div>
 
-
-                            <!-- GOOGLE -->
                             <a
                                 :href="route('google.redirect')"
                                 class="flex h-10 w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white text-sm font-medium text-gray-700 transition hover:bg-gray-50"
@@ -456,8 +400,6 @@ function submit() {
 
                         </form>
 
-
-                        <!-- REGISTER -->
                         <p
                             class="mt-4 text-center text-xs text-gray-500"
                         >

@@ -19,7 +19,6 @@
         <div class="min-h-screen bg-[#F5F5F5]">
             <div class="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
 
-                 <!-- Kembali -->
                     <Link
                         :href="route('masyarakat.reports.index')"
                         class="inline-flex w-fit items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50"
@@ -41,8 +40,6 @@
                         Kembali ke Laporan
                     </Link>
 
-
-                <!-- Header laporan -->
                 <Card>
                     <div
                         class="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between"
@@ -71,10 +68,8 @@
                     </div>
                 </Card>
 
-                <!-- Foto + AI -->
                 <div class="mt-5 grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
 
-                    <!-- Foto -->
                     <Card>
                         <div class="flex items-center justify-between">
                             <div>
@@ -89,49 +84,48 @@
                         </div>
 
                         <div class="mt-5">
-    <div
-        v-if="reportPhotos.length"
-        class="grid grid-cols-1 gap-3 sm:grid-cols-2"
-    >
-        <a
-            v-for="(photo, index) in reportPhotos"
-            :key="photo.id"
-            :href="photo.src"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="group flex min-h-[240px] items-center justify-center
-                   overflow-hidden rounded-xl border border-gray-200
-                   bg-[#F5F5F5]"
-        >
-            <img
-                :src="photo.src"
-                :alt="`Foto laporan ${index + 1}`"
-                class="h-full max-h-[360px] w-full object-cover
-                       transition duration-200 group-hover:scale-[1.02]"
-            />
-        </a>
-    </div>
+                            <div
+                                v-if="reportPhotos.length"
+                                class="grid grid-cols-1 gap-3 sm:grid-cols-2"
+                            >
+                                <a
+                                    v-for="(photo, index) in reportPhotos"
+                                    :key="photo.id"
+                                    :href="photo.src"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="group flex min-h-[240px] items-center justify-center
+                                        overflow-hidden rounded-xl border border-gray-200
+                                        bg-[#F5F5F5]"
+                                >
+                                    <img
+                                        :src="photo.src"
+                                        :alt="`Foto laporan ${index + 1}`"
+                                        class="h-full max-h-[360px] w-full object-cover
+                                            transition duration-200 group-hover:scale-[1.02]"
+                                    />
+                                </a>
+                            </div>
 
-    <div
-        v-else
-        class="flex min-h-[300px] items-center justify-center
-               rounded-xl bg-[#F5F5F5]"
-    >
-        <span class="text-sm text-gray-500">
-            Tidak ada foto
-        </span>
-    </div>
+                            <div
+                                v-else
+                                class="flex min-h-[300px] items-center justify-center
+                                    rounded-xl bg-[#F5F5F5]"
+                            >
+                                <span class="text-sm text-gray-500">
+                                    Tidak ada foto
+                                </span>
+                            </div>
 
-    <p
-        v-if="reportPhotos.length > 1"
-        class="mt-3 text-xs text-gray-500"
-    >
-        {{ reportPhotos.length }} foto laporan
-    </p>
-</div>
+                            <p
+                                v-if="reportPhotos.length > 1"
+                                class="mt-3 text-xs text-gray-500"
+                            >
+                                {{ reportPhotos.length }} foto laporan
+                            </p>
+                        </div>
                     </Card>
 
-                    <!-- AI -->
                     <Card>
                         <div>
                             <h3 class="text-base font-semibold text-black">
@@ -147,7 +141,6 @@
                             v-if="report.ai_category"
                             class="mt-5 space-y-4"
                         >
-                            <!-- Kategori -->
                             <div
                                 class="rounded-xl border border-[#DCEBDD] bg-[#F7FBF7] p-4"
                             >
@@ -164,7 +157,6 @@
                                 </p>
                             </div>
 
-                            <!-- Confidence -->
                             <div class="rounded-xl bg-[#F5F5F5] p-4">
                                 <div class="flex items-center justify-between">
                                     <p
@@ -193,7 +185,6 @@
                                 </div>
                             </div>
 
-                            <!-- Analisis -->
                             <div class="rounded-xl bg-[#F5F5F5] p-4">
                                 <p
                                     class="text-xs font-medium uppercase tracking-wide text-gray-500"
@@ -226,7 +217,6 @@
                     </Card>
                 </div>
 
-                <!-- Deskripsi -->
                 <Card class="mt-5">
                     <div>
                         <h3 class="text-base font-semibold text-black">
@@ -247,7 +237,6 @@
                     </div>
                 </Card>
 
-                <!-- Lokasi -->
                 <Card class="mt-5">
                     <div>
                         <h3 class="text-base font-semibold text-black">
@@ -259,13 +248,11 @@
                         </p>
                     </div>
 
-                    <!-- Map -->
                     <div
                         ref="mapContainer"
                         class="relative z-0 isolate mt-5 h-[360px] w-full overflow-hidden rounded-xl border border-gray-200"
                     ></div>
 
-                    <!-- Detail lokasi -->
                     <div class="mt-5 grid gap-4 sm:grid-cols-2">
                         <div class="rounded-xl bg-[#F5F5F5] p-4">
                             <p
@@ -318,7 +305,6 @@
                     </div>
                 </Card>
 
-                <!-- Riwayat status -->
                 <Card class="mt-5">
                     <div>
                         <h3 class="text-base font-semibold text-black">
@@ -339,7 +325,6 @@
                             :key="history.id"
                             class="relative flex gap-4 pb-8 last:pb-0"
                         >
-                            <!-- Garis -->
                             <div
                                 v-if="
                                     index <
@@ -348,14 +333,12 @@
                                 class="absolute left-[9px] top-5 h-full w-px bg-gray-200"
                             ></div>
 
-                            <!-- Titik -->
                             <div class="relative z-10 mt-1 shrink-0">
                                 <div
                                     class="h-[18px] w-[18px] rounded-full border-4 border-[#E8F5E9] bg-[#1B5E20]"
                                 ></div>
                             </div>
 
-                            <!-- Konten -->
                             <div class="min-w-0 flex-1">
                                 <div
                                     class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between"
@@ -438,8 +421,6 @@ const reportPhotos = computed(() => {
         }))
     }
 
-    // Kompatibilitas dengan laporan lama yang hanya memiliki
-    // satu foto di kolom reports.photo.
     return props.report.photo
         ? [{
             id: 'primary-photo',
@@ -542,12 +523,10 @@ function escapeHtml(value) {
 function historyTitle(history) {
     const note = history.note?.toLowerCase() ?? '';
 
-    // Laporan pertama kali dibuat.
     if (note.includes('laporan dibuat')) {
         return 'Laporan Dibuat';
     }
 
-    // Petugas ditugaskan oleh Admin.
     if (
         note.includes('petugas ditugaskan') ||
         note.includes('petugas ditugaskan:')
@@ -555,22 +534,18 @@ function historyTitle(history) {
         return 'Petugas Ditugaskan';
     }
 
-    // Petugas mulai menangani laporan.
     if (note.includes('tugas sedang dikerjakan')) {
         return 'Tugas Sedang Dikerjakan';
     }
 
-    // Petugas menyelesaikan penanganan.
     if (note.includes('penanganan selesai')) {
         return 'Penanganan Selesai';
     }
 
-    // Perubahan verifikasi oleh Admin.
     if (note.includes('verifikasi diubah')) {
         return 'Verifikasi Diperbarui';
     }
 
-    // Perubahan status umum oleh Admin.
     if (history.old_status !== history.new_status) {
         if (history.new_status === 'ditolak') {
             return 'Laporan Ditolak';
