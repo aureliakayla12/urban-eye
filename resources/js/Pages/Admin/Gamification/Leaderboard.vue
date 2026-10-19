@@ -1,7 +1,7 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue'
 import { Head } from '@inertiajs/vue3'
-import { Trophy, Medal, Crown, Star } from 'lucide-vue-next'
+import { Trophy, Medal, Crown, FileText } from 'lucide-vue-next'
 
 defineProps({
     leaderboard: {
@@ -22,7 +22,7 @@ defineProps({
                 </h2>
 
                 <p class="mt-1 text-sm text-gray-500">
-                    Peringkat masyarakat berdasarkan total poin yang diperoleh.
+                    Peringkat masyarakat berdasarkan jumlah laporan valid.
                 </p>
             </div>
         </template>
@@ -40,11 +40,11 @@ defineProps({
 
                         <div>
                             <h1 class="text-lg font-semibold text-gray-800">
-                                Top 10 Masyarakat
+                                Top 10 Kontributor
                             </h1>
 
                             <p class="text-sm text-gray-500">
-                                Pengguna dengan perolehan poin tertinggi.
+                                Masyarakat dengan jumlah laporan valid terbanyak.
                             </p>
                         </div>
                     </div>
@@ -66,7 +66,7 @@ defineProps({
                     </h3>
 
                     <p class="mt-1 text-sm text-gray-500">
-                        Belum ada masyarakat yang mendapatkan poin.
+                        Belum ada masyarakat dengan laporan valid.
                     </p>
                 </div>
 
@@ -94,7 +94,7 @@ defineProps({
                                     <th
                                         class="px-6 py-4 text-right font-semibold text-gray-600"
                                     >
-                                        Total Poin
+                                        Total Laporan Valid
                                     </th>
                                 </tr>
                             </thead>
@@ -163,22 +163,16 @@ defineProps({
                                                 {{ user.email }}
                                             </p>
                                         </div>
-                                    </td>
-
-                                   
+                                    </td>                         
                                     <td class="px-6 py-4 text-right">
                                         <div
                                             class="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1.5"
                                         >
-                                            <Star
-                                                class="h-4 w-4 text-green-600"
-                                            />
+                                            <FileText class="h-4 w-4 text-green-600" />
 
-                                            <span
-                                                class="font-semibold text-green-700"
-                                            >
-                                                {{ Number(user.total_points) }}
-                                                poin
+                                            <span class="font-semibold text-green-700">
+                                                {{ Number(user.valid_reports_count ?? 0).toLocaleString('id-ID') }}
+                                                laporan
                                             </span>
                                         </div>
                                     </td>

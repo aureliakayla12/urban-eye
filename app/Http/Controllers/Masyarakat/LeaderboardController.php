@@ -36,11 +36,12 @@ class LeaderboardController extends Controller
             ->groupBy('user_id');
 
 
-        $rankedUsers = User::role('masyarakat')
+       $rankedUsers = User::role('masyarakat')
             ->whereExists(function ($query) {
                 $query->select(DB::raw(1))
                     ->from('reports')
-                    ->whereColumn('reports.user_id', 'users.id');
+                    ->whereColumn('reports.user_id', 'users.id')
+                    ->where('reports.verification_status', 'valid');
             })
             ->leftJoinSub(
                 $pointTotals,

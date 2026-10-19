@@ -1156,7 +1156,7 @@ const changeCategory = () => {
                         <div class="min-w-0 flex-1">
                             <p class="text-sm font-medium text-gray-500">Peringkat</p>
                             <p class="mt-2 text-3xl font-bold tracking-tight text-[#102A43]">{{ peringkat === '-' ? '-' : `#${peringkat}` }}</p>
-                            <p class="mt-1 text-xs text-gray-500">Peringkat poin sepanjang waktu</p>
+                            <p class="mt-1 text-xs text-gray-500">Berdasarkan laporan valid</p>
                         </div>
                     </div>
                 </div>
@@ -1265,9 +1265,11 @@ const changeCategory = () => {
                         <div>
                             <div class="flex items-center gap-2">
                                 <div class="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-amber-600"><Trophy :size="19" /></div>
-                                <h2 class="font-semibold text-[#102A43]">Leaderboard Mingguan</h2>
+                                <h2 class="font-semibold text-[#102A43]">Top 3 Kontributor</h2>
                             </div>
-                            <p class="mt-2 text-xs text-gray-500">Top 3 kontributor berdasarkan poin minggu ini.</p>
+                            <p class="mt-2 text-xs text-gray-500">
+                                Pengguna dengan laporan valid terbanyak sepanjang waktu.
+                            </p>
                         </div>
                         <Link :href="route('masyarakat.leaderboard.index')" class="shrink-0 text-xs font-semibold text-green-700 transition hover:text-green-900">
                             Lihat Semua <ArrowRight :size="13" class="ml-1 inline" />
@@ -1282,18 +1284,26 @@ const changeCategory = () => {
                             </div>
                             <div class="min-w-0 flex-1">
                                 <p class="truncate text-sm font-semibold text-[#102A43]">{{ item.name }}</p>
-                                <p class="mt-0.5 text-xs text-gray-500">Peringkat {{ index + 1 }} minggu ini</p>
+                                <p class="mt-0.5 text-xs text-gray-500">
+                                    Peringkat {{ index + 1 }}
+                                </p>
                             </div>
                             <div class="shrink-0 text-right">
-                                <p class="text-sm font-bold text-green-800">{{ formatNumber(item.points) }}</p>
-                                <p class="text-[10px] text-gray-500">poin</p>
+                               <p class="text-sm font-bold text-green-800">
+                                    {{ formatNumber(item.valid_reports_count ?? item.validReportsCount) }}
+                                </p>
+                                <p class="text-[10px] text-gray-500">laporan valid</p>
                             </div>
                         </div>
                     </div>
                     <div v-else class="flex min-h-[170px] flex-col items-center justify-center rounded-xl border border-dashed border-gray-200 bg-gray-50/70 px-4 text-center">
                         <div class="flex h-11 w-11 items-center justify-center rounded-full bg-amber-50 text-amber-600"><Trophy :size="21" /></div>
-                        <p class="mt-3 text-sm font-semibold text-gray-700">Belum ada perolehan poin minggu ini</p>
-                        <p class="mt-1 max-w-sm text-xs leading-5 text-gray-500">Jadilah salah satu kontributor teratas dengan mengirim laporan yang valid.</p>
+                       <p class="mt-3 text-sm font-semibold text-gray-700">
+                            Belum ada kontributor yang masuk peringkat.
+                        </p>
+                        <p class="mt-1 max-w-sm text-xs leading-5 text-gray-500">
+                            Peringkat akan muncul setelah ada laporan yang dinyatakan valid.
+                        </p>
                     </div>
                 </div>
             </section>

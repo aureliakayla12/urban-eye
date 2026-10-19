@@ -12,10 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class BadgeAwardService
 {
-    /**
-     * Evaluasi semua badge untuk satu pengguna.
-     * Mengembalikan badge yang baru diperoleh.
-     */
     public function checkAndAward(int $userId): Collection
     {
         $user = User::role('masyarakat')->find($userId);
@@ -62,7 +58,6 @@ class BadgeAwardService
                 continue;
             }
 
-            // Jangan menghapus atau memberikan ulang badge yang sudah dimiliki.
             $userBadge = UserBadge::firstOrCreate(
                 [
                     'user_id' => $userId,
@@ -74,7 +69,6 @@ class BadgeAwardService
             );
             
             if ($userBadge->wasRecentlyCreated) {
-                // Kirim notifikasi hanya untuk badge yang baru diperoleh.
                 Notification::create([
                     'user_id' => $userId,
                     'title' => 'Badge Baru Diperoleh!',
@@ -89,9 +83,6 @@ class BadgeAwardService
         return $newlyAwarded;
     }
 
-    /**
-     * Evaluasi semua pengguna masyarakat yang sudah terdaftar.
-     */
     public function checkAndAwardAll(): void
     {
         User::role('masyarakat')

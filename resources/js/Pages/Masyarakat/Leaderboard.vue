@@ -31,13 +31,28 @@ const props = defineProps({
     },
 })
 
+
 const hasReports = computed(() =>
     props.currentUser.hasReports === true ||
     props.currentUser.has_reports === true ||
     Number(props.currentUser.reportCount ?? props.currentUser.report_count ?? 0) > 0,
 )
 
-const hasRank = computed(() => hasReports.value && props.currentUser.rank !== null && props.currentUser.rank !== undefined && Number(props.currentUser.rank) > 0)
+const hasValidReports = computed(() =>
+    Number(
+        props.currentUser.validReportsCount ??
+        props.currentUser.valid_reports_count ??
+        0
+    ) > 0,
+)
+
+const hasRank = computed(() =>
+    hasValidReports.value &&
+    props.currentUser.rank !== null &&
+    props.currentUser.rank !== undefined &&
+    Number(props.currentUser.rank) > 0,
+)
+
 const topThree = computed(() => props.leaderboard.slice(0, 3))
 
 function initials(name) {
@@ -86,9 +101,15 @@ function medalClass(rank) {
                                 <div class="min-w-0">
                                     <p class="text-sm text-white/65">Peringkat Anda</p>
                                     <p v-if="hasRank" class="mt-1 text-2xl font-extrabold sm:text-3xl">#{{ currentUser.rank }}</p>
-                                    <p v-else class="mt-1 text-xl font-extrabold sm:text-2xl">Peringkat belum tersedia</p>
+                                    <p v-else class="mt-1 text-xl font-extrabold sm:text-2xl">Peringkat belum tersedia</p>                                   
                                     <p class="mt-1 text-sm text-white/85">
-                                        {{ hasReports ? 'Terima kasih sudah berkontribusi di UrbanEye.' : 'Kirim laporan pertamamu untuk mulai berkontribusi di leaderboard.' }}
+                                        {{
+                                            hasValidReports
+                                                ? 'Terima kasih sudah berkontribusi di UrbanEye.'
+                                                : hasReports
+                                                    ? 'Laporanmu belum memiliki laporan valid untuk masuk peringkat.'
+                                                    : 'Kirim laporan pertamamu untuk mulai berkontribusi di leaderboard.'
+                                        }}
                                     </p>
                                 </div>
                             </div>
@@ -149,8 +170,10 @@ function medalClass(rank) {
                     <!-- Rankings table -->
                     <article class="rounded-2xl bg-white p-5 shadow-sm sm:p-6">
                         <div class="mb-5">
-                            <h3 class="text-lg font-extrabold text-[#102A43]">Peringkat Kontributor</h3>
-                            <p class="mt-1 text-sm text-slate-500">Daftar pengguna yang telah membuat laporan dan mendapatkan badge baru.</p>
+                            <h3 class="text-lg font-extrabold text-[#102A43]">Peringkat Kontributor</h3>             
+                            <p class="mt-1 text-sm text-slate-500">
+                                Daftar pengguna berdasarkan jumlah laporan valid sepanjang waktu.
+                            </p>
                         </div>
 
                         <div v-if="leaderboard.length" class="overflow-x-auto">
@@ -203,8 +226,10 @@ function medalClass(rank) {
                         </div>
                         <div v-else class="flex min-h-[270px] flex-col items-center justify-center rounded-xl bg-slate-50 px-5 text-center">
                             <Trophy class="h-10 w-10 text-slate-300" />
-                            <p class="mt-4 text-sm font-bold text-slate-700">Belum ada data leaderboard.</p>
-                            <p class="mt-1 text-sm text-slate-500">Buat laporan dan tunggu verifikasi untuk mulai berkontribusi.</p>
+                            <p class="mt-4 text-sm font-bold text-slate-700">Belum ada data leaderboard.</p>     
+                            <p class="mt-1 text-sm text-slate-500">
+                                Peringkat akan muncul setelah ada laporan yang dinyatakan valid.
+                            </p>
                         </div>
                     </article>
 

@@ -150,25 +150,48 @@ class DashboardController extends Controller
             $data['badge'] = $userBadges->first()?->badge?->name ?? 'Belum Ada';
             $data['badge_count'] = $userBadges->count();
 
-            $communityUsersWithReports = User::role('masyarakat')
-                ->whereExists(function ($query) {
-                    $query->select(DB::raw(1))
-                        ->from('reports')
-                        ->whereColumn('reports.user_id', 'users.id');
-                });
+           
+            $validReportTotals = Report::query()
+                ->select('user_id')
+                ->selectRaw('COUNT(*) as valid_reports_count')
+                ->where('verification_status', 'valid')
+                ->groupBy('user_id');
 
             $lifetimePointTotals = UserPoint::query()
                 ->select('user_id')
-                ->selectRaw("SUM(CASE WHEN type = 'tambah' THEN points WHEN type = 'kurang' THEN -points ELSE 0 END) as total_points")
+                ->selectRaw("
+                    SUM(
+                        CASE
+                            WHEN type = 'tambah' THEN points
+                            WHEN type = 'kurang' THEN -points
+                            ELSE 0
+                        END
+                    ) as total_points
+                ")
                 ->groupBy('user_id');
 
-            $rankedUsers = (clone $communityUsersWithReports)
-                ->leftJoinSub($lifetimePointTotals, 'point_totals', 'users.id', '=', 'point_totals.user_id')
+            $rankedUsers = User::role('masyarakat')
+                ->joinSub(
+                    $validReportTotals,
+                    'valid_report_totals',
+                    'users.id',
+                    '=',
+                    'valid_report_totals.user_id'
+                )
+                ->leftJoinSub(
+                    $lifetimePointTotals,
+                    'point_totals',
+                    'users.id',
+                    '=',
+                    'point_totals.user_id'
+                )
                 ->select(
                     'users.id',
                     'users.name',
+                    'valid_report_totals.valid_reports_count',
                     DB::raw('COALESCE(point_totals.total_points, 0) as points')
                 )
+                ->orderByDesc('valid_reports_count')
                 ->orderByDesc('points')
                 ->orderBy('users.id')
                 ->get();
@@ -176,36 +199,21 @@ class DashboardController extends Controller
             $currentUserRankIndex = $rankedUsers->search(
                 fn ($rankedUser) => (int) $rankedUser->id === (int) $user->id
             );
+
             $data['peringkat'] = $currentUserRankIndex === false
                 ? '-'
                 : $currentUserRankIndex + 1;
 
-            $weekStart = now()->startOfWeek();
-            $weekEnd = now()->endOfWeek();
-
-            $weeklyPointTotals = UserPoint::query()
-                ->whereBetween('created_at', [$weekStart, $weekEnd])
-                ->select('user_id')
-                ->selectRaw("SUM(CASE WHEN type = 'tambah' THEN points WHEN type = 'kurang' THEN -points ELSE 0 END) as weekly_points")
-                ->groupBy('user_id');
-
-            $data['leaderboard'] = (clone $communityUsersWithReports)
-                ->joinSub($weeklyPointTotals, 'weekly_point_totals', 'users.id', '=', 'weekly_point_totals.user_id')
-                ->select(
-                    'users.id',
-                    'users.name',
-                    DB::raw('COALESCE(weekly_point_totals.weekly_points, 0) as points')
-                )
-                ->orderByDesc('points')
-                ->orderBy('users.id')
+            $data['leaderboard'] = $rankedUsers
                 ->take(3)
-                ->get()
                 ->map(fn ($leader) => [
                     'id' => (int) $leader->id,
                     'name' => $leader->name,
                     'points' => (int) $leader->points,
+                    'valid_reports_count' => (int) $leader->valid_reports_count,
                 ])
                 ->values();
+
         }
 
         return Inertia::render('Dashboard', $data);

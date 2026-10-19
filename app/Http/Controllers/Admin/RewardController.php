@@ -113,63 +113,59 @@ class RewardController extends Controller
 
     public function leaderboard()
     {
+        $validReportTotals = DB::table('reports')
+            ->select('user_id')
+            ->selectRaw('COUNT(*) as valid_reports_count')
+            ->where('verification_status', 'valid')
+            ->groupBy('user_id');
+
+        $pointTotals = DB::table('user_points')
+            ->select('user_id')
+            ->selectRaw("
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN type = 'tambah' THEN points
+                            WHEN type = 'kurang' THEN -points
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) as total_points
+            ")
+            ->groupBy('user_id');
+
         $leaderboard = User::role('masyarakat')
-            ->whereExists(function ($query) {
-                $query->selectRaw('1')
-                    ->from('reports')
-                    ->whereColumn('reports.user_id', 'users.id');
-            })
+            ->joinSub(
+                $validReportTotals,
+                'valid_report_totals',
+                'users.id',
+                '=',
+                'valid_report_totals.user_id'
+            )
+            ->leftJoinSub(
+                $pointTotals,
+                'point_totals',
+                'users.id',
+                '=',
+                'point_totals.user_id'
+            )
             ->select([
                 'users.id',
                 'users.name',
                 'users.email',
+                'valid_report_totals.valid_reports_count',
             ])
-            ->selectSub(function ($query) {
-                $query->from('user_points')
-                    ->selectRaw("
-                        COALESCE(
-                            SUM(
-                                CASE
-                                    WHEN type = 'tambah' THEN points
-                                    WHEN type = 'kurang' THEN -points
-                                    ELSE 0
-                                END
-                            ),
-                            0
-                        )
-                    ")
-                    ->whereColumn('user_points.user_id', 'users.id');
-            }, 'total_points')
+            ->selectRaw('COALESCE(point_totals.total_points, 0) as total_points')
+            ->orderByDesc('valid_reports_count')
             ->orderByDesc('total_points')
-            ->orderBy('users.name')
-            ->get()
-            ->filter(fn ($user) => (int) $user->total_points > 0)
-            ->take(10)
-            ->values();
+            ->orderBy('users.id')
+            ->limit(10)
+            ->get();
 
-            
-        $rank = 0;
-        $previousPoints = null;
-        $previousRank = 0;
-
-        $leaderboard = $leaderboard->map(
-            function ($user, $index) use (
-                &$rank,
-                &$previousPoints,
-                &$previousRank
-            ) {
-                $points = (int) $user->total_points;
-
-                if ($previousPoints === null) {
-                    $rank = 1;
-                } elseif ($points !== $previousPoints) {
-                    $rank = $index + 1;
-                }
-
-                $user->rank = $rank;
-
-                $previousPoints = $points;
-                $previousRank = $rank;
+        $leaderboard = $leaderboard->values()->map(
+            function ($user, $index) {
+                $user->rank = $index + 1;
 
                 return $user;
             }
